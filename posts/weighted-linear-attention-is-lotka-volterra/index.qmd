@@ -1,0 +1,8 @@
+---
+title: "Weighted Linear Attention is Lotka-Volterra Dynamics"
+author: "Charles Fisher"
+date: "2025-04-07"
+categories: [research, machine-learning, attention]
+image: The_Ecology_of_Attention_Figure_1.png
+draft: true
+---

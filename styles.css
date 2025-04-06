@@ -1,0 +1,76 @@
+/* Better overall spacing */
+.content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+  
+/* Add a horizontal line after the introduction */
+.quarto-title + p + p {
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+
+/* Fix post listings spacing */
+.quarto-listing .listing-item {
+    margin-bottom: 2.5rem;
+}
+  
+/* Add dividers between posts for better visual separation */
+.quarto-listing .listing-item:not(:last-child) {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #eee;
+}
+  
+/* Improve post title spacing */
+.listing-item .listing-title {
+    margin-bottom: 0.5rem;
+}
+  
+/* Better spacing for post metadata */
+.listing-author-date {
+    margin-bottom: 0.75rem;
+}
+  
+/* Improve category tag appearance */
+.listing-categories .listing-category {
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    background: #f8f9fa;
+}
+  
+/* Reduce excessive whitespace around post images */
+.quarto-listing img {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+  
+/* Better homepage intro paragraph spacing */
+.quarto-title-block + p {
+    margin-top: 1rem;
+}
+
+/* Remove horizontal line after References heading */
+h1:after, h2:after, h3:after {
+    display: none !important;
+    border: none !important;
+    content: none !important;
+}
+
+/* Style bibliography entries */
+.csl-entry {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+    text-indent: -2rem;
+}
+
+/* License footer styling */
+.license-footer {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+/* css styles */

@@ -1,0 +1,46 @@
+---
+title: "About"
+image: blackboard.jpg
+about:
+  template: jolla
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://x.com/charleskfisher
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/charleskfisher/
+    - icon: github
+      text: Github
+      href: https://github.com/drckf
+
+---
+
+::: {style="text-align: left;"}
+### About this blog 
+
+Technology is often developed out in the open, through open source projects that allow one to follow along 
+with the development process in addition to consuming the final product. But scientific research is usually done behind 
+closed doors, for reasons I don't entirely understand. The thinking process that leads to a paper isn't shared, except 
+among a few collaborators. This blog is my attempt at truly open scientific research. 
+
+The blog is called "Local Minimum" because many of the ideas I share here will be early and immature. It's a nod to the 
+way can systems can get stuck in a local minimum of an energy landscape. 
+
+
+### About the author
+Charles Fisher is typically interested in research at the intersection of physics, machine learning, and biology. 
+He has a PhD in biophysics from Harvard University, a BS in biophysics from the University of Michigan, and did 
+postdoctoral research in biophysics at Boston University and Ecole Normale Superieure in Paris. Following his time
+in academia, he moved to industry where he worked at Pfizer and Leap Motion before starting Unlearn.AI. He was CEO
+of Unlearn for nearly 8 years before stepping back to a board role so that he could get back to his roots and dive
+into research again. Hence, this blog. 
+
+
+### Acknowledgments
+I'm often discussing my research with Pankaj Mehta and his group at Boston University, Austin Huang, Anton Loukianov,
+and others. 
+
+:::
+
+

@@ -1,0 +1,24 @@
+---
+title: "Local Minimum"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+page-layout: full
+title-block-banner: true
+---
+
+## Welcome to the Local Minimum
+
+This is a technical blog with long form posts about my research before it is ready
+for publication in traditional journal articles. Most of this research will be at the 
+intersection of statistical physics, machine learning, and biology. 
+Some posts will be reviews, but most will be involve novel research and will
+include both theoretical and experimental analyses, and sometimes just discussion 
+of algorithms or code. For more information about this blog and its author, 
+check out the [About](about.qmd) page.
+
+<hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">

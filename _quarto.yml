@@ -1,0 +1,34 @@
+project:
+  type: website
+  output-dir: docs  # Add this line for GitHub Pages
+
+website:
+  title: "Local Minimum"  # Update the title
+  description: "Research-in-progress blog on ML, physics, and biology"  # Add a description
+  navbar:
+    right:
+      - about.qmd
+      - license.qmd
+      - icon: github
+        href: https://github.com/drckf # Update with your GitHub username
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+    html-math-method: 
+      method: mathjax
+      options:
+        tags: ams
+# comments:
+#   giscus:
+#     repo: drckf/local-minimum
+#     repo-id: [your-repo-id]
+#     category: Comments
+#     category-id: [your-category-id]
+#     mapping: pathname
+#     reactions-enabled: true
+#     loading: lazy
+
+
