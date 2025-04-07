@@ -1,0 +1,9 @@
+---
+title: "Weighted Linear Attention as Species Invasion"
+author: "Charles Fisher"
+date: "2025-04-09"
+categories: [research, machine-learning, attention]
+image: The_Ecology_of_Attention_Figure_1.png
+bibliography: weighted-linear-attention.bib
+draft: true
+---
