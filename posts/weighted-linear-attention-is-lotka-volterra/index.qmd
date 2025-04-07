@@ -2,7 +2,257 @@
 title: "Weighted Linear Attention is Lotka-Volterra Dynamics"
 author: "Charles Fisher"
 date: "2025-04-07"
-categories: [research, machine-learning, attention]
+categories: [research, machine-learning, ecology, attention, lotka-volterra]
 image: The_Ecology_of_Attention_Figure_1.png
-draft: true
+bibliography: weighted-linear-attention.bib
+draft: false
 ---
+
+
+## TLDR
+
+Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models 
+used for tasks such as language modeling. Here, I show that weighted linear attention can be interpreted as an 
+evolving ecological system in which tokens are species and their weights are species abundances. The weights evolve 
+under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. 
+This framework provides explicit formulas linking the statistics of the data distribution to ecological parameters 
+such as the carrying capacity and interaction coefficients of each token. 
+
+## Theory
+
+Although ecology and evolutionary biology have inspired a variety of computational algorithms 
+particularly in the area of non-convex optimization [@storn1997differential; @binitha2012survey], 
+there is little exploration of the relationship between ecological systems and neural networks. 
+In a classical paper on theoretical ecology, Robert MacArthur showed that the Lotka-Volterra 
+equations of competitive ecosystems minimize a quadratic Lyapunov function 
+[@arthur1969species; @macarthur1970species], establishing an interesting connection between 
+ecological systems and non-negative least squares regression problems. Initially, this insight was 
+primarily used to better understand the behavior of ecological communities, but recent work has taken 
+the other direction and shown that ecological models can be applied to machine learning problems like 
+training support vector machines [@mehta2019constrained; @howell2020machine].  
+
+In this post, I show that there is an exact correspondence between associative memories in the form of 
+weighted linear attention and ecological systems described by Lotka-Volterra dynamics 
+[@wangersky1978lotka; @schuster1983replicator; @bomze1983lotka; @bomze1995lotka; @cui2024houches]. 
+This mapping opens up new avenues for interpreting attention modules and other types of associative memories 
+in terms of well-established concepts from theoretical ecology and may also inspire new ways to interpret 
+ecological dynamics using concepts from machine learning. Specifically, each token in a sequence corresponds 
+to a species in an ecosystem. The weight of the token in the memory corresponds to its species abundance. 
+The arrival of a new token in a data stream is equivalent to the invasion of the ecosystem by a new species. 
+Tokens engage in competitive or mutualistic interactions determined by the statistics of their key, value, 
+and query embeddings. The schematic in @fig-fig1 illustrates the high-level concepts linking ecology and attention.
+
+![
+  **Mapping linear attention to ecology.** 
+  Schematic comparing (A) species interacting in an ecological community to 
+  (B) tokens interacting within a context window.
+](The_Ecology_of_Attention_Figure_1.png){#fig-fig1}
+
+Linearized attention modules are an important area of research in machine learning as a potential alternative 
+to softmax attention heads in transformers including modules such as linear attention, DeltaNet, xLSTMs, and 
+state-space models that scale linearly with sequence length 
+\cite{wang2025test, aksenov2024linear, schlag2021linear, yang2025parallelizing, katharopoulos2020transformers, 
+peng2021random, beck2025xlstm, qin2022cosformer, kasai2021finetuning, zhang2024hedgehog, chen2024dijiang, 
+sun2023retentive, orvieto2023resurrecting, katsch2023gateloop, de2024griffin, qin2024hgrn2, peng2024eagle, 
+yang2023gated, gu2023mamba, dao2024transformers, liu2024longhorn, sun2024learning, yang2024gated,behrouz2024titans}. 
+Here, I focus on a particular form of weighted linear attention module determined by an associative memory matrix,
+$$
+J = \sum_{l} w_{l} \, \vec{v}_{l} \, \vec{k}_{l}^T \,,
+$$
+where $l$ denotes the token position, $\vec{v}_l = W_{V} \vec{x}_l \in \mathbb{R}^{d_v}$ is a value vector, 
+$\vec{k}_l = W_{K} \vec{x}_l \in \mathbb{R}^{d_k}$ is a key vector, $\vec{x}_l \in \mathbb{R}^{n}$ is a token embedding, 
+and $w_l \geq 0$ is the weight of token $l$ in memory. Recall from the memory is simply matrix multiplication,
+$$
+\tilde{v}_l = J \, \vec{q}_l
+$$
+where $\vec{q}_l = W_Q \vec{x}_l \in \mathbb{R}^{d_k}$ is a query vector. The task is how to specify the weights 
+of the patterns in the associative memory in order to minimize the error in the recalled value vector. I've provided
+some background on weighted linear attention modules in [a previous post](/posts/weighted-linear-attention/index.qmd).
+
+The mean squared recall error for a batch of tokens $\{ \vec{x}_l \}_{l=1}^L$ is (up to a factor of $1/2$),
+$$
+C(\vec{w}) = \frac{1}{2 L} \sum_{l=1}^L || \vec{v}_l - J \, \vec{q}_l ||^2 \, .
+$$ {#eq-squared-loss}
+Thus, a sensible strategy is to choose the weights to minimize the squared error subject to the non-negativity 
+constraint. This is closely related to a recently introduced framework called ``test-time regression'' 
+aiming to unify different methods for associative recall [@wang2025test; @kohonen1972correlation; 
+@hinton2014parallel]. It turns out that the results that follow are largely applicable for a wide class 
+of loss functions, which I'll demonstrate in a future blog post.
+To learn the weights, the cost function can be minimized using a simple variant of 
+exponentiated gradient descent to satisfy the non-negativity constraint [@kivinen1995additive]. 
+The update rule for exponentiated gradient descent with non-negative weights is
+$$
+w_l' = w_l e^{-\eta \frac{\partial C}{\partial w_l}} \, .
+$$
+In the continuous-time limit (i.e., very small $\eta$), this update rule leads to the following differential equation
+$$
+\frac{d \, w_l}{d \, t} = - w_l \frac{\partial C}{\partial w_l}
+$$
+that describes the dynamics of the weights under the exponentiated gradient descent.
+
+After a bit of algebra, it's possible to compute the averages over the batch in order to derive the squared 
+recall error
+$$
+C(\vec{w}) 
+= \frac{1}{2} \text{Tr}\Big( \Sigma_{vv} \Big)
+- \text{Tr}\Big(J \, \Sigma_{qv} \Big)
++ \frac{1}{2} \text{Tr}\Big(J \, \Sigma_{qq} \, J^T \Big) 
+$$
+where
+$$
+\begin{align}
+\Sigma_{vv} &= \frac{1}{L} \sum_{l=1}^L \vec{v}_l \, \vec{v}_l^T \\
+\Sigma_{qv} &= \frac{1}{L} \sum_{l=1}^L \vec{q}_l \, \vec{v}_l^T \\
+\Sigma_{qq} &= \frac{1}{L} \sum_{l=1}^L \vec{q}_l \, \vec{q}_l^T
+\end{align}
+$$
+are observed correlation matrices. The derivative of the cost function with respect to the weights is
+$$
+\frac{\partial C}{\partial w_l} 
+= - s_l + \sum_{l'} A_{l, l'} \, w_{l'} \,.
+$$
+where
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l \,,
+\\
+A_{l,l'} &= \vec{v}_l^T \, \vec{v}_{l'} \, \vec{k}_{l'}^T \, \Sigma_{qq} \, \vec{k}_{l}
+\, .
+\end{align}
+$$
+In analogy with the ecological literature, I call $s_l$ the "intrinsic growth rate" of token $l$ and $A_{l,l'}$ 
+the "interaction coefficient" between tokens $l$ and $l'$. The following code illustrates how to compute these 
+quantities:
+
+```python
+def compute_correlations(q, v):
+    L = q.shape[0]
+    Sigma_vv = v.T @ v / L
+    Sigma_qv = q.T @ v / L
+    Sigma_qq = q.T @ q / L
+    return Sigma_vv, Sigma_qv, Sigma_qq
+
+def ecological_params(K, V, Sigma_qv, Sigma_qq):
+    s = (K @ Sigma_qv * V).sum(dim=1)
+    A = (V @ V.T) * (K @ Sigma_qq @ K.T)
+    return s, A
+```
+
+Plugging in these results yields the following differential equation describing the dynamics of the weights,
+$$
+\frac{d \, w_l}{d \, t} =  w_l \Big( s_l - \sum_{l'} A_{l, l'} \, w_{l'} \Big) \,,
+$$ {#eq-lotka-volterra}
+which is exactly the generalized Lotka-Volterra equation. A simple algorithm for integrating the 
+Lotka-Volterra equations is shown in the following code snippet:
+```python
+def integrate_lv(w, s, A, t_max, dt=0.01):
+    t = 0
+    while t < t_max:
+        w = w + dt * w * (s - A @ w)
+        w = w.clamp(min=0)
+        t += dt
+    return w
+```
+Although relatively straightforward, as far as I know the derivation of @eq-lotka-volterra as a way to 
+minimize the squared recall error for weighted linear attention is a new result. 
+
+This construction allows one to directly interpret the terms in @eq-lotka-volterra as ecologically inspired quantities. 
+For example, a token is a species. The weight of a token is the abundance of the species. The intrinsic growth rate of 
+species $l$ is $s_l$, which defines how quickly the weight of the corresponding token increases at the start of learning. 
+The total weight of a token is generally limited by its intrinsic growth rate $s_l$ and self-interaction $A_{l,l'}$ via 
+a quantity known as its carrying capacity
+$$
+\kappa_l 
+= \frac{s_l}{A_{l,l}} 
+= \frac{\vec{k}_l^T \, \Sigma_{qv} \, bvec{v}_l}{\vec{v}_l^T \, \vec{v}_{l} \, \vec{k}_{l}^T \, \Sigma_{qq} \, \vec{k}_{l}} \,,
+$$
+which determines the weight of a token in the absence of interactions with the other tokens.
+
+Of course, tokens do interact with each other. Two tokens compete if $A_{l,l'} = A_{l', l} > 0$ and they cooperate if
+$A_{l,l'} = A_{l', l} < 0$. There are no predator-prey style interactions (i.e., $A_{l,l'} = -A_{l', l}$) in this 
+model because the interaction matrix is symmetric. Since the interaction matrix is symmetric, the species abundances 
+will converge to a fixed point without any cycles. The interior fixed point is unique if $A^{-1} \, \vec{s}$ is 
+strictly positive, otherwise there can be multiple fixed points on the boundary in which one, or multiple, species 
+are extinct.
+
+@fig-interactions shows how the interactions between tokens in the context window are determined by the alignment of their 
+value vectors and the correlation of their attention scores. 
+
+![
+    **Interpreting interactions**. 
+    Interactions between tokens are related to the correlation 
+    of their attention scores and the alignment of their value vectors.
+](The_Ecology_of_Attention_Schematics_Interaction_Diagram.png){#fig-interactions fig-align="center" width="95%"}
+
+To illustrate this, define the attention score $\theta_{l,l'} = \vec{k}_l^T \, \vec{q}_{l'}$ and the alignment 
+score $\phi_{l,l'} = \vec{v}_l^T \, \vec{v}_{l'}$ between tokens $l$ and $l'$. Although the alignment scores are 
+symmetric, the attention scores are not; token $l$  may attend to token $l'$ differently from the way token $l'$ 
+attends to token $l$. By substituting the formula for the correlation matrix, one can derive an equation for the 
+intrinsic growth rate of token $l$ as
+$$
+\begin{align}
+s_l 
+&= \frac{1}{L} \sum_{l'} \theta_{l,l'} \, \phi_{l,l'} \,,
+\\
+&\sim \text{Covariance}\left(\text{attention}, \text{alignment}\right)
+\,.
+\end{align} 
+$$
+Thus, the intrinsic growth rate of a token is the (uncentered) covariance between its attention scores and alignment scores. 
+Token $l$ will have a high growth rate if its value is aligned with the values of the other tokens that attend to it.
+Similarly, the self-interaction is
+$$
+\begin{align}
+A_{l,l} 
+&= \phi_{l,l} \, \left( \frac{1}{L} \sum_{l'} \theta_{l,l'}^2 \right) \,,
+\\
+&\sim \text{Norm}^2\left(\text{value}\right) \cdot \text{Variance}\left(\text{attention}\right)
+\, .
+\end{align}
+$$
+Thus, the self-interaction coefficient for a token $l$ is the squared norm of its value vector multiplied by the 
+(uncentered) variance of its attention scores. Since the carrying capacity is the ratio of the growth rate to the 
+self-interaction, it looks like the covariance between the attention and alignment scores divided by the variance 
+of the attention scores and the norm of the value vector. The interaction between different tokens $l$ and $l'$ 
+has a similar interpretation
+$$
+\begin{align}
+A_{l,l'} 
+&= \phi_{l,l'} \left( \frac{1}{L} \sum_{l''} \theta_{l,l''} \, \theta_{l', l''} \right)
+\,, \\
+&\sim \text{Alignment} \cdot \text{Covariance}\left( \text{attention}, \text{attention} \right)
+\,.
+\end{align}
+$$
+Thus, two tokens are in competition if their values are aligned and they are attended to by similar tokens. 
+Such tokens provide similar information, so there is no need to store both of them if the memory has limited 
+capacity. Interestingly, tokens can also cooperate with each other. This happens if their values are aligned 
+but they have anti-correlated attention scores, or if they have opposite values with positively correlated 
+attention maps.
+
+## Conclusion
+
+Attention mechanisms have become the cornerstone of modern sequence models. However, because the standard 
+formulation of attention scales with the length of the context window squared, there has been a lot of recent 
+interest in alternative approaches with linear scaling. Most of these alternative architectures involve 
+weighted linear attention modules of some form. So far, these architectures based on key-value associative memories 
+have generally fallen short of their transformer counterparts, raising an important question of `why?'.
+
+Here, I have provided a new lens through which to view attention mechanisms--that of ecosystems. Specifically, 
+I've shown that weighted associative memories based on query-key-value recall mechanisms correspond to ecological 
+communities in which the tokens are species and the weights in the memory are their species abundances. In fact, 
+this is more than a colorful metaphor, and the dynamics of exponentiated gradient descent on a squared reconstruction
+loss are exactly described by Lotka-Volterra dynamics. 
+
+This theory highlights some simple tools for understanding the inner workings of attention mechanisms. For example, 
+the covariance between a token's attention scores and its alignment scores determines its intrinsic growth rate. 
+However, the intrinsic growth rate is, by itself, not enough to specify the weight of a token in the memory 
+because tokens also interact with each other. In fact, the alignment of two tokens value vectors and the 
+covariance of their attention scores determines if the tokens compete with each for space in the memory, 
+or if they actually cooperate and reinforce each other's weights.
+
+In the following post, [Weighted Linear Attention as Species Invasion](/posts/weighted-linear-attention-as-species-invasion/index.qmd),
+I will show that within a streaming context, online updating of an associative memory is equivalent to the 
+invasion of an ecosystem by a new species. And, I'll use this mapping to derive some novel ecologically 
+inspired attention modules, including a closed-form solution for optimal gated linear attention.
+
