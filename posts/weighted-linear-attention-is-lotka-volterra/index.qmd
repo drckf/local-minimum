@@ -164,7 +164,7 @@ a quantity known as its carrying capacity
 $$
 \kappa_l 
 = \frac{s_l}{A_{l,l}} 
-= \frac{\vec{k}_l^T \, \Sigma_{qv} \, bvec{v}_l}{\vec{v}_l^T \, \vec{v}_{l} \, \vec{k}_{l}^T \, \Sigma_{qq} \, \vec{k}_{l}} \,,
+= \frac{\vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l}{\vec{v}_l^T \, \vec{v}_{l} \, \vec{k}_{l}^T \, \Sigma_{qq} \, \vec{k}_{l}} \,,
 $$
 which determines the weight of a token in the absence of interactions with the other tokens.
 
