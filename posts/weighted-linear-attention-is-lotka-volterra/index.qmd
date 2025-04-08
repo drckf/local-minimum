@@ -256,3 +256,6 @@ I will show that within a streaming context, online updating of an associative m
 invasion of an ecosystem by a new species. And, I'll use this mapping to derive some novel ecologically 
 inspired attention modules, including a closed-form solution for optimal gated linear attention.
 
+::: {.license-footer}
+© 2025 Charles Fisher. This work is licensed under a [Creative Commons Attribution 4.0 International License](/license.html).
+::: 
