@@ -368,6 +368,9 @@ A_{l,l'}
 <p>Here, I have provided a new lens through which to view attention mechanisms–that of ecosystems. Specifically, I’ve shown that weighted associative memories based on query-key-value recall mechanisms correspond to ecological communities in which the tokens are species and the weights in the memory are their species abundances. In fact, this is more than a colorful metaphor, and the dynamics of exponentiated gradient descent on a squared reconstruction loss are exactly described by Lotka-Volterra dynamics.</p>
 <p>This theory highlights some simple tools for understanding the inner workings of attention mechanisms. For example, the covariance between a token’s attention scores and its alignment scores determines its intrinsic growth rate. However, the intrinsic growth rate is, by itself, not enough to specify the weight of a token in the memory because tokens also interact with each other. In fact, the alignment of two tokens value vectors and the covariance of their attention scores determines if the tokens compete with each for space in the memory, or if they actually cooperate and reinforce each other’s weights.</p>
 <p>In the following post, <a href="../../posts/weighted-linear-attention-as-species-invasion/index.html">Weighted Linear Attention as Species Invasion</a>, I will show that within a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. And, I’ll use this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention.</p>
+<div class="license-footer">
+<p>© 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.</p>
+</div>
 
 
 
