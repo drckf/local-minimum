@@ -1,0 +1,801 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Local Minimum</title>
+<link>https://drckf.github.io/local-minimum/</link>
+<atom:link href="https://drckf.github.io/local-minimum/index.xml" rel="self" type="application/rss+xml"/>
+<description>Research-in-progress blog on ML, physics, and biology</description>
+<generator>quarto-1.6.42</generator>
+<lastBuildDate>Tue, 08 Apr 2025 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Weighted Linear Attention as Species Invasion</title>
+  <dc:creator>Charles Fisher</dc:creator>
+  <link>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-as-species-invasion/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. In previous posts, I showed that weighted linear attention can be interpreted as an evolving ecological system in which tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. This framework provides explicit formulas linking the statistics of the data distribution to ecological parameters such as the carrying capacity and interaction coefficients of each token. This post focused on the streaming context to show that online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. I use this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention.</p>
+</section>
+<section id="review-of-previous-results" class="level2">
+<h2 class="anchored" data-anchor-id="review-of-previous-results">Review of Previous Results</h2>
+<p>In the previous post <a href="../../posts/weighted-linear-attention-is-lotka-volterra/index.html">Weighted Linear Attention is Lotka-Volterra Dynamics</a>, I showed that weighted linear attention modules can be interpreted as ecological systems where tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. To briefly review those results, I focus on a particular form of weighted linear attention module determined by an associative memory matrix, <img src="https://latex.codecogs.com/png.latex?%0AJ%20=%20%5Csum_%7Bl%7D%20w_%7Bl%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%5ET%20%5C,,%0A"> where <img src="https://latex.codecogs.com/png.latex?l"> denotes the token position, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bv%7D_l%20=%20W_%7BV%7D%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_v%7D"> is a value vector, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bk%7D_l%20=%20W_%7BK%7D%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D"> is a key vector, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bn%7D"> is a token embedding, and <img src="https://latex.codecogs.com/png.latex?w_l%20%5Cgeq%200"> is the weight of token <img src="https://latex.codecogs.com/png.latex?l"> in memory. Recall from the memory is simply matrix multiplication, <img src="https://latex.codecogs.com/png.latex?%0A%5Ctilde%7Bv%7D_l%20=%20J%20%5C,%20%5Cvec%7Bq%7D_l%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bq%7D_l%20=%20W_Q%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D"> is a query vector. The mean squared recall error for a batch of tokens <img src="https://latex.codecogs.com/png.latex?%5C%7B%20%5Cvec%7Bx%7D_l%20%5C%7D_%7Bl=1%7D%5EL"> is (up to a factor of <img src="https://latex.codecogs.com/png.latex?1/2">), <span id="eq-squared-loss"><img src="https://latex.codecogs.com/png.latex?%0AC(%5Cvec%7Bw%7D)%20=%20%5Cfrac%7B1%7D%7B2%20L%7D%20%5Csum_%7Bl=1%7D%5EL%20%7C%7C%20%5Cvec%7Bv%7D_l%20-%20J%20%5C,%20%5Cvec%7Bq%7D_l%20%7C%7C%5E2%20%5C,%20.%0A%5Cqquad(1)"></span> To learn the weights, the cost function can be minimized using a simple variant of exponentiated gradient descent to satisfy the non-negativity constraint <span class="citation" data-cites="kivinen1995additive">(Kivinen and Warmuth 1995)</span>. In the continuous-time limit, this update rule leads to the following differential equation <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bd%20%5C,%20t%7D%20=%20-%20w_l%20%5Cfrac%7B%5Cpartial%20C%7D%7B%5Cpartial%20w_l%7D%0A"> that describes the dynamics of the weights under the exponentiated gradient descent. After a bit of algebra, it’s possible to show that the following generalized Lokta-Volterra equation describes the dynamics of the weights, <span id="eq-lotka-volterra"><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bd%20%5C,%20t%7D%20=%20%20w_l%20%5CBig(%20s_l%20-%20%5Csum_%7Bl'%7D%20A_%7Bl,%20l'%7D%20%5C,%20w_%7Bl'%7D%20%5CBig)%20%5C,,%0A%5Cqquad(2)"></span> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqv%7D%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,,%0A%5C%5C%0AA_%7Bl,l'%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%0A%5C,%20,%0A%5Cend%7Balign%7D%0A"> <img src="https://latex.codecogs.com/png.latex?s_l"> is the intrinsic growth rate of token <img src="https://latex.codecogs.com/png.latex?l">, <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D"> is the interaction coefficient for tokens <img src="https://latex.codecogs.com/png.latex?l"> and <img src="https://latex.codecogs.com/png.latex?l'">, <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bqv%7D"> is the uncentered query-value correlation matrix, and <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bqq%7D"> is the uncentered query-query correlation matrix.</p>
+</section>
+<section id="learning-algorithms" class="level2">
+<h2 class="anchored" data-anchor-id="learning-algorithms">Learning Algorithms</h2>
+<p>The steps for learning the weights of the associative memory are shown as a code snippet below:</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> lv_memory(w0, q, k, v, t_max, dt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>):</span>
+<span id="cb1-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Compute memory matrix J from a full batch </span></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    of tokens using Lotka-Volterra dynamics"""</span></span>
+<span id="cb1-4">    Sigma_vv, Sigma_qv, Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> compute_correlations(q, v)</span>
+<span id="cb1-5">    s, A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ecological_params(k, v, Sigma_qv, Sigma_qq)</span>
+<span id="cb1-6">    w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> integrate_lv(w0, s, A, t_max, dt)</span>
+<span id="cb1-7">    J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.einsum(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'l,li,lj-&gt;ij'</span>, w, v, k)    </span>
+<span id="cb1-8">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> J</span></code></pre></div>
+<p>Essentially, learning in full batch mode amounts to calculating the correlation matrices, computing the growth rates and interaction coefficients, and then integrating the Lotka-Volterra equations. An example with randomly generated synthetic data is shown in Figure&nbsp;1. The simulations show that there is wide variation in the growth rates and the interaction coefficients of the tokens, indicating that certain tokens are much more important for the memory than others. Applying exponentiated gradient descent with automatic differentiation through the squared reconstruction error results in identical to the dynamics loss curves compared to integrating the Lotka-Volterra equations, indicating the derivations are correct. As expected, the loss decreases monotonically as the weights converge to a fixed point.</p>
+<div id="fig-correlation-analysis" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-correlation-analysis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-as-species-invasion/correlation_analysis.png" class="img-fluid quarto-figure quarto-figure-center figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-correlation-analysis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Synthetic example data. I randomly generated <img src="https://latex.codecogs.com/png.latex?Q">, <img src="https://latex.codecogs.com/png.latex?K">, and <img src="https://latex.codecogs.com/png.latex?V"> matrices with covariance matrices (A) <em>{vv}<img src="https://latex.codecogs.com/png.latex?,%20(B)%20%5CSigma_%7Bqq%7D">, and (C) </em>{qv}$. The resulting growth rates and interaction coefficients are shown in panels D and E. Panel F shows loss curves for the Lotka-Volterra dynamics along with an implementation that directly minimizes the squared loss function through automatic differentiation and exponentiated gradient descent. As expected, the loss curves are identical.
+</figcaption>
+</figure>
+</div>
+<p>Storing memories in full-batch mode is interesting from an interpretability standpoint because it allows one to understand linearized attention modules through an ecological lens. In practice, however, one is typically more interested in storing memories sequentially as new tokens arrive. The naive approach to sequential learning is to simply solve the full-batch algorithm again each time a new token arrives. However, this approach is inefficient because (i) it’s possible to warm-start the integrator from the previous solution and (ii) it’s not even necessary to update the weights if the new token can’t invade the ecosystem. It is more efficient to use an “invade and adjust” algorithm that updates the covariance matrices upon the arrival of a new token, then checks if the new token is able to invade the ecosystem and only adjusts the weights if necessary. For the Lotka-Volterra system, a new token <img src="https://latex.codecogs.com/png.latex?l"> cannot invade the ecosystem if <img src="https://latex.codecogs.com/png.latex?%0As_l%20-%20%5Csum_%7Bl'=1%7D%5E%7Bl-1%7D%20A_%7Bl,l'%7D%20w_%7Bl'%7D%20%5Cleq%200%20%5C,,%0A"> in which case <img src="https://latex.codecogs.com/png.latex?w_l"> should be set to zero. An implementation of an invade and adjust algorithm for sequential memory updating is shown in the following code snippet:</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> invade_and_adjust(Sigma_vv, Sigma_qv, Sigma_qq, q, v, k, V, K, l, w_prev, t_max<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, dt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>):</span>
+<span id="cb2-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Update memory with new token using online </span></span>
+<span id="cb2-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    Lotka-Volterra dynamics"""</span></span>
+<span id="cb2-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Update statistics</span></span>
+<span id="cb2-5">    l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-6">    z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> l</span>
+<span id="cb2-7">    Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v.T) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> l</span>
+<span id="cb2-8">    Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v.T) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> l</span>
+<span id="cb2-9">    Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> (q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> q.T) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> l</span>
+<span id="cb2-10"></span>
+<span id="cb2-11">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Check invasion</span></span>
+<span id="cb2-12">    s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (k.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v).item()</span>
+<span id="cb2-13">    A_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (v.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> V.T) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (K <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> k).T </span>
+<span id="cb2-14">    margin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> (A_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> w_prev).item()</span>
+<span id="cb2-15"></span>
+<span id="cb2-16">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Can't invade</span></span>
+<span id="cb2-17">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> margin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb2-18">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> Sigma_vv, Sigma_qv, Sigma_qq, V, K, w_prev, l</span>
+<span id="cb2-19"></span>
+<span id="cb2-20">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Can invade</span></span>
+<span id="cb2-21">    V_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.cat([V, v[<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>]], dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb2-22">    K_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.cat([K, k[<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>]], dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb2-23">    s, A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> compute_ecological_params(K_new, V_new, Sigma_qv, Sigma_qq)</span>
+<span id="cb2-24"></span>
+<span id="cb2-25">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Warm start</span></span>
+<span id="cb2-26">    eps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.tensor([<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1e-3</span>])</span>
+<span id="cb2-27">    w_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.cat([w_prev, eps])</span>
+<span id="cb2-28">    w_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> integrate_lv(w_new, s, A, t_max, dt)</span>
+<span id="cb2-29"></span>
+<span id="cb2-30">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> Sigma_vv, Sigma_qv, Sigma_qq, V_new, K_new, w_new, l</span></code></pre></div>
+<p>Similar invade and adjust style algorithms have previously been proposed for training support vector machines <span class="citation" data-cites="mehta2019constrained howell2020machine">(Mehta et al. 2019; Howell et al. 2020)</span>. These algorithms are exact in the sense that weights are always at a fixed point of the dynamical system, provided the system is allowed to reach a equilibrium after a successful invasion. This equilibrium point is not necessarily unique if it lies on the boundary, however. Instead, the weights of the tokens in the memory will depend on their order of arrival. The dependence of the order of the arrival of the species on the composition of the community is a well-known problem in ecology known as the historical contingency of community assembly <span class="citation" data-cites="fukami2015historical">(Fukami 2015)</span>.</p>
+<p>Although the invade and adjust algorithm is more efficient than solving the Lotka-Volterra from scratch with each new token, it requires computation of an <img src="https://latex.codecogs.com/png.latex?l%20%5Ctimes%20l"> interaction matrix just as with full-batch training. Thus, exact algorithms for learning the weights in weighted linear attention are quadratic in the sequence length. One of the main goals for exploring different types of linearized attention modules is to develop algorithms that are linear in sequence length, therefore it’s necessary to introduce some approximations to develop algorithms that have the desired scaling properties.</p>
+<p>A simple approximation is to assume that the arrival of a new token <img src="https://latex.codecogs.com/png.latex?l"> updates the memory matrix as <span id="eq-single-species-lv-memory-update"><img src="https://latex.codecogs.com/png.latex?%0AJ_l%20=%20%5Comega_f%20%5C,%20J_%7Bl-1%7D%20+%20%5Comega_i%20%5Cvec%7Bv%7D_l%20%5Cvec%7Bk%7D_l%5ET%20%5C,,%0A%5Cqquad(3)"></span> where <img src="https://latex.codecogs.com/png.latex?%5Comega_f%20%5Cgeq%200"> is a forget gate and <img src="https://latex.codecogs.com/png.latex?%5Comega_i%20%5Cgeq%200"> is an input gate <span class="citation" data-cites="beck2025xlstm">(Beck et al. 2025)</span>. This assumes that the incoming token <img src="https://latex.codecogs.com/png.latex?l"> interacts with a fixed memory defined by <img src="https://latex.codecogs.com/png.latex?J_%7Bl-1%7D"> and the arrival of the new token does not adjust the weights of any previous tokens. Given that this is a type of greedy update rule, I refer to this as greedy invasion. With this assumption, the cost function becomes, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0AC_l(%5Comega_i)%0A&amp;=%20%5Cfrac%7B1%7D%7B2%7D%20%5Ctext%7BTr%7D%5CBig(%20%5CSigma_%7Bvv%7D%5El%20%5CBig)%0A-%20%5Comega_f%20%5C,%20s_J%20+%20%5Cfrac%7B1%7D%7B2%7D%20%5Comega_f%5E2%20%5C,%20A_%7BJ,J%7D%0A%5C%5C%0A&amp;%5Cquad%20-%20%5Comega_i%20s_l%20+%20%5Cfrac%7B1%7D%7B2%7D%20%5Comega_i%5E2%20A_%7Bl,l%7D%0A+%20%5Comega_i%20%5C,%20%5Comega_f%20%5C,%20A_%7BJ,l%7D%0A%5Cend%7Balign%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_%7BJ%7D%20&amp;=%20%20%5Ctext%7BTr%7D%5CBig(J_%7Bl-1%7D%20%5C,%20%5CSigma_%7Bqv%7D%5El%20%5CBig)%0A%5C%5C%0As_%7Bl%7D%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqv%7D%5El%20%5C,%20%5Cvec%7Bv%7D_l%0A%5C%5C%0AA_%7BJ,%20J%7D%20&amp;=%20%5Ctext%7BTr%7D%5CBig(J_%7Bl-1%7D%20%5C,%20%5CSigma_%7Bqq%7D%5El%20%5C,%20J_%7Bl-1%7D%5ET%20%5CBig)%0A%5C%5C%0AA_%7Bl,%20l%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqq%7D%5El%20%5C,%20%5Cvec%7Bk%7D_l%0A%5C%5C%0AA_%7BJ,%20l%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20J_%7Bl-1%7D%20%5C,%20%5CSigma_%7Bqq%7D%5El%20%5C,%20%5Cvec%7Bk%7D_l%0A%5Cend%7Balign%7D%0A"> are online estimates for the intrinsic growth rates and interactions. As in the previous section on full-batch learning, learning the gates with exponentiated gradient descent in this context leads to a system of two coupled ordinary differential equations <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Cfrac%7Bd%20%5C,%20%5Comega_f%7D%7Bd%20%5C,%20t%7D%20&amp;=%20%5Comega_f%20%5Cleft(%20s_J%20-%20%5Comega_i%20A_%7BJ,l%7D%20-%20A_%7BJ,J%7D%20%5Comega_f%20%5Cright)%0A%5C%5C%0A%5Cfrac%7Bd%20%5C,%20%5Comega_i%7D%7Bd%20%5C,%20t%7D%20&amp;=%20%5Comega_i%20%5Cleft(%20s_l%20-%20%5Comega_f%20A_%7BJ,l%7D%20-%20A_%7Bl,l%7D%20%5Comega_i%20%5Cright)%0A%5Cend%7Balign%7D%0A"> describing a Lotka-Volterra model with two species. Assuming that the interaction matrix is invertible, the unconstrained solution is <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Comega_f%5E*%20&amp;=%20%5Cfrac%7BA_%7Bl,l%7D%20%5C,%20s_J%20-%20A_%7BJ,l%7D%20%5C,%20s_l%7D%7BA_%7BJ,J%7D%20%5C,%20A_%7Bl,l%7D%20-%20A_%7BJ,l%7D%5E2%7D,%0A%5C%5C%0A%5Comega_i%5E*%20&amp;=%20%5Cfrac%7BA_%7BJ,J%7D%20%5C,%20s_l%20-%20A_%7BJ,l%7D%20%5C,%20s_J%7D%7BA_%7BJ,J%7D%20%5C,%20A_%7Bl,l%7D%20-%20A_%7BJ,l%7D%5E2%7D%5C,.%0A%5Cend%7Balign%7D%0A"> Taking into account the non-negativity constraints yields <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Comega_f%20&amp;=%0A%5Cbegin%7Bcases%7D%0A%5Comega_f%5E*,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_i%5E*%20%3E%200,%20%5C%5C%5B2mm%5D%0A%5Cdisplaystyle%20%5Cfrac%7Bs_J%7D%7BA_%7BJ,J%7D%7D,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_i%5E*%20%5Cle%200,%0A%5Cend%7Bcases%7D%5C%5C%5B2mm%5D%0A%5Comega_i%20&amp;=%0A%5Cbegin%7Bcases%7D%0A%5Comega_i%5E*,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_f%5E*%20%3E%200,%5C%5C%5B2mm%5D%0A%5Cdisplaystyle%20%5Cfrac%7Bs_l%7D%7BA_%7Bl,l%7D%7D,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_f%5E*%20%5Cle%200,%0A%5Cend%7Bcases%7D%0A%5Cend%7Balign%7D%0A"> which is a closed-form solution for optimal gated linear attention. Alternatively, one could simplify the system even further by treating <img src="https://latex.codecogs.com/png.latex?%5Comega_f"> as a user specified hyperparameter, in which case <img src="https://latex.codecogs.com/png.latex?%0A%5Comega_i%20=%20%5Cmax%20%5CBig%5C%7B0,%20%5Cfrac%7Bs_l%20-%20%5Comega_f%20A_%7BJ,l%7D%7D%7BA_%7Bl,l%7D%7D%20%5CBig%5C%7D%20%5C,,%0A"> is the corresponding optimal input gate. In either case, the memory matrix is updated using Equation&nbsp;3. This greedy invasion update can be interpreted as adapting the carrying capacity of the new token in response to ecological pressure—i.e., competition or cooperation—with the current contents of memory. The algorithm is shown as a code snippet in the following code snippet:</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> greedy_invasion_update(J_prev, v, k, Sigma_qv, Sigma_qq):</span>
+<span id="cb3-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Lotka-Volterra-inspired gated update </span></span>
+<span id="cb3-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    to memory matrix"""</span></span>
+<span id="cb3-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Compute ecological parameters</span></span>
+<span id="cb3-5">    s_J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.trace(J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qv)</span>
+<span id="cb3-6">    s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v</span>
+<span id="cb3-7">    A_JJ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.trace(J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> J_prev.T)</span>
+<span id="cb3-8">    A_ll <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> k)</span>
+<span id="cb3-9">    A_Jl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> k</span>
+<span id="cb3-10"></span>
+<span id="cb3-11">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Compute unconstrained gates</span></span>
+<span id="cb3-12">    denom <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A_JJ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> A_ll <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A_Jl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb3-13">    omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (A_ll <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A_Jl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_l) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> denom</span>
+<span id="cb3-14">    omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (A_JJ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A_Jl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_J) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> denom</span>
+<span id="cb3-15"></span>
+<span id="cb3-16">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Apply non-negativity constraints</span></span>
+<span id="cb3-17">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb3-18">        omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> s_J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> A_JJ</span>
+<span id="cb3-19">        omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span></span>
+<span id="cb3-20">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">elif</span> omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb3-21">        omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> A_ll</span>
+<span id="cb3-22">        omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span></span>
+<span id="cb3-23"></span>
+<span id="cb3-24">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Gated memory update</span></span>
+<span id="cb3-25">    J_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> torch.outer(v, k)</span>
+<span id="cb3-26">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> J_new</span></code></pre></div>
+<p>Figure&nbsp;2 compares the performance of the invade-and-adjust algorithm to greedy invasion, along with a baseline of linear attention with equally weighted memories. The invade-and-adjust algorithm has the lowest squared error for all token counts, which is expected because it provides a theoretical lower bound. Both the invade-and-adjust and greedy invasion algorithms significantly outperform the baseline of equally weighted linear attention, with greedy invasion performing slightly worse than invade-and-adjust even though the former is linear in sequence length whereas the latter is quadratic. The ecologically inspired updates improve over standard linear attention because they do not store all tokens equally and, in fact, do not even store all tokens as shown in the bottom panel of Figure&nbsp;2.</p>
+<div id="fig-fig4" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fig4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-as-species-invasion/online_memory_cost_comparison.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fig4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Comparison of memory update algorithms. (Top) The ecological methods (Invade-and-Adjust, Greedy Invasion) consistently achieve lower squared reconstruction errors (cost) than equally weighted linear attention by selectively updating memory based on invasion fitness. (Bottom) Cumulative number of tokens stored. Ecological updates adaptively reject redundant or non-informative tokens, leading to more compact and efficient memory representations.
+</figcaption>
+</figure>
+</div>
+<p>Comparing these different variations of weighted linear attention raises some potentially interesting questions about the tradeoffs associated with these approaches. Invade-and-adjust provably minimizes the squared reconstruction error, but this comes at the cost of complexity that is the square of the sequence length. Greedy invasion, by contrast, is fully recurrent and linear in the sequence length but it does not have an obvious parallel implementation. Linear attention, of course, is both linear in the sequence length and easy to parallelize. The simulations presented here only explore a single realization of the dynamics of memory formation with some synthetic data and don’t constitute a rigorous characterization of these tradeoffs, but this mapping to ecological dynamics should provide a rich theoretical framework to explore these tradeoffs in future work.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In this post, I’ve show that within a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. And, I used this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention. So far, this series of posts has focused on the theory linking attention mechanisms to ecological systems rather than the exploration of practical implications, but I speculate that this theoretical framework will be useful for developing ecology-inspired approaches to mechanistic interpretability, KV-cache compression, and the design of subquadratic attention modules.</p>
+<p>So far, the theoretical framework I’ve been developing hinges on learning the weights in the weighted linear attention module in order to minimize the squared reconstruction error of the recalled values. In the next post, I’ll show that this framework is actually more general and similar dynamical models arise from a wide class of loss functions.</p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-beck2025xlstm" class="csl-entry">
+Beck, Maximilian, Korbinian Pöppel, Markus Spanring, Andreas Auer, Oleksandra Prudnikova, Michael Kopp, Günter Klambauer, Johannes Brandstetter, and Sepp Hochreiter. 2025. <span>“Xlstm: Extended Long Short-Term Memory.”</span> <em>Advances in Neural Information Processing Systems</em> 37: 107547–603.
+</div>
+<div id="ref-fukami2015historical" class="csl-entry">
+Fukami, Tadashi. 2015. <span>“Historical Contingency in Community Assembly: Integrating Niches, Species Pools, and Priority Effects.”</span> <em>Annual Review of Ecology, Evolution, and Systematics</em> 46 (1): 1–23.
+</div>
+<div id="ref-howell2020machine" class="csl-entry">
+Howell, Owen, Cui Wenping, Robert Marsland, and Pankaj Mehta. 2020. <span>“Machine Learning as Ecology.”</span> <em>Journal of Physics A: Mathematical and Theoretical</em> 53 (33): 334001.
+</div>
+<div id="ref-kivinen1995additive" class="csl-entry">
+Kivinen, Jyrki, and Manfred K Warmuth. 1995. <span>“Additive Versus Exponentiated Gradient Updates for Linear Prediction.”</span> In <em>Proceedings of the Twenty-Seventh Annual ACM Symposium on Theory of Computing</em>, 209–18.
+</div>
+<div id="ref-mehta2019constrained" class="csl-entry">
+Mehta, Pankaj, Wenping Cui, Ching-Hao Wang, and Robert Marsland III. 2019. <span>“Constrained Optimization as Ecological Dynamics with Applications to Random Quadratic Programming in High Dimensions.”</span> <em>Physical Review E</em> 99 (5): 052111.
+</div>
+</div></section></div> ]]></description>
+  <category>research</category>
+  <category>machine-learning</category>
+  <category>attention</category>
+  <guid>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-as-species-invasion/</guid>
+  <pubDate>Tue, 08 Apr 2025 07:00:00 GMT</pubDate>
+  <media:content url="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-as-species-invasion/species-invasion-thumbnail.png" medium="image" type="image/png" height="102" width="144"/>
+</item>
+<item>
+  <title>Weighted Linear Attention is Lotka-Volterra Dynamics</title>
+  <dc:creator>Charles Fisher</dc:creator>
+  <link>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-is-lotka-volterra/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. Here, I show that weighted linear attention can be interpreted as an evolving ecological system in which tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. This framework provides explicit formulas linking the statistics of the data distribution to ecological parameters such as the carrying capacity and interaction coefficients of each token.</p>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<p>Although ecology and evolutionary biology have inspired a variety of computational algorithms particularly in the area of non-convex optimization <span class="citation" data-cites="storn1997differential binitha2012survey">(Storn and Price 1997; Binitha, Sathya, et al. 2012)</span>, there is little exploration of the relationship between ecological systems and neural networks. In a classical paper on theoretical ecology, Robert MacArthur showed that the Lotka-Volterra equations of competitive ecosystems minimize a quadratic Lyapunov function <span class="citation" data-cites="arthur1969species macarthur1970species">(Arthur 1969; MacArthur 1970)</span>, establishing an interesting connection between ecological systems and non-negative least squares regression problems. Initially, this insight was primarily used to better understand the behavior of ecological communities, but recent work has taken the other direction and shown that ecological models can be applied to machine learning problems like training support vector machines <span class="citation" data-cites="mehta2019constrained howell2020machine">(Mehta et al. 2019; Howell et al. 2020)</span>.</p>
+<p>In this post, I show that there is an exact correspondence between associative memories in the form of weighted linear attention and ecological systems described by Lotka-Volterra dynamics <span class="citation" data-cites="wangersky1978lotka schuster1983replicator bomze1983lotka bomze1995lotka cui2024houches">(Wangersky 1978; Schuster and Sigmund 1983; Bomze 1983, 1995; Cui, Marsland III, and Mehta 2024)</span>. This mapping opens up new avenues for interpreting attention modules and other types of associative memories in terms of well-established concepts from theoretical ecology and may also inspire new ways to interpret ecological dynamics using concepts from machine learning. Specifically, each token in a sequence corresponds to a species in an ecosystem. The weight of the token in the memory corresponds to its species abundance. The arrival of a new token in a data stream is equivalent to the invasion of the ecosystem by a new species. Tokens engage in competitive or mutualistic interactions determined by the statistics of their key, value, and query embeddings. The schematic in Figure&nbsp;1 illustrates the high-level concepts linking ecology and attention.</p>
+<div id="fig-fig1" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fig1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-is-lotka-volterra/The_Ecology_of_Attention_Figure_1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fig1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: <strong>Mapping linear attention to ecology.</strong> Schematic comparing (A) species interacting in an ecological community to (B) tokens interacting within a context window.
+</figcaption>
+</figure>
+</div>
+<p>Linearized attention modules are an important area of research in machine learning as a potential alternative to softmax attention heads in transformers including modules such as linear attention, DeltaNet, xLSTMs, and state-space models that scale linearly with sequence length . Here, I focus on a particular form of weighted linear attention module determined by an associative memory matrix, <img src="https://latex.codecogs.com/png.latex?%0AJ%20=%20%5Csum_%7Bl%7D%20w_%7Bl%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%5ET%20%5C,,%0A"> where <img src="https://latex.codecogs.com/png.latex?l"> denotes the token position, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bv%7D_l%20=%20W_%7BV%7D%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_v%7D"> is a value vector, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bk%7D_l%20=%20W_%7BK%7D%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D"> is a key vector, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bn%7D"> is a token embedding, and <img src="https://latex.codecogs.com/png.latex?w_l%20%5Cgeq%200"> is the weight of token <img src="https://latex.codecogs.com/png.latex?l"> in memory. Recall from the memory is simply matrix multiplication, <img src="https://latex.codecogs.com/png.latex?%0A%5Ctilde%7Bv%7D_l%20=%20J%20%5C,%20%5Cvec%7Bq%7D_l%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bq%7D_l%20=%20W_Q%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D"> is a query vector. The task is how to specify the weights of the patterns in the associative memory in order to minimize the error in the recalled value vector. I’ve provided some background on weighted linear attention modules in <a href="../../posts/weighted-linear-attention/index.html">a previous post</a>.</p>
+<p>The mean squared recall error for a batch of tokens <img src="https://latex.codecogs.com/png.latex?%5C%7B%20%5Cvec%7Bx%7D_l%20%5C%7D_%7Bl=1%7D%5EL"> is (up to a factor of <img src="https://latex.codecogs.com/png.latex?1/2">), <span id="eq-squared-loss"><img src="https://latex.codecogs.com/png.latex?%0AC(%5Cvec%7Bw%7D)%20=%20%5Cfrac%7B1%7D%7B2%20L%7D%20%5Csum_%7Bl=1%7D%5EL%20%7C%7C%20%5Cvec%7Bv%7D_l%20-%20J%20%5C,%20%5Cvec%7Bq%7D_l%20%7C%7C%5E2%20%5C,%20.%0A%5Cqquad(1)"></span> Thus, a sensible strategy is to choose the weights to minimize the squared error subject to the non-negativity constraint. This is closely related to a recently introduced framework called ``test-time regression’’ aiming to unify different methods for associative recall <span class="citation" data-cites="wang2025test kohonen1972correlation hinton2014parallel">(Wang, Shi, and Fox 2025; Kohonen 1972; Hinton and Anderson 2014)</span>. It turns out that the results that follow are largely applicable for a wide class of loss functions, which I’ll demonstrate in a future blog post. To learn the weights, the cost function can be minimized using a simple variant of exponentiated gradient descent to satisfy the non-negativity constraint <span class="citation" data-cites="kivinen1995additive">(Kivinen and Warmuth 1995)</span>. The update rule for exponentiated gradient descent with non-negative weights is <img src="https://latex.codecogs.com/png.latex?%0Aw_l'%20=%20w_l%20e%5E%7B-%5Ceta%20%5Cfrac%7B%5Cpartial%20C%7D%7B%5Cpartial%20w_l%7D%7D%20%5C,%20.%0A"> In the continuous-time limit (i.e., very small <img src="https://latex.codecogs.com/png.latex?%5Ceta">), this update rule leads to the following differential equation <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bd%20%5C,%20t%7D%20=%20-%20w_l%20%5Cfrac%7B%5Cpartial%20C%7D%7B%5Cpartial%20w_l%7D%0A"> that describes the dynamics of the weights under the exponentiated gradient descent.</p>
+<p>After a bit of algebra, it’s possible to compute the averages over the batch in order to derive the squared recall error <img src="https://latex.codecogs.com/png.latex?%0AC(%5Cvec%7Bw%7D)%0A=%20%5Cfrac%7B1%7D%7B2%7D%20%5Ctext%7BTr%7D%5CBig(%20%5CSigma_%7Bvv%7D%20%5CBig)%0A-%20%5Ctext%7BTr%7D%5CBig(J%20%5C,%20%5CSigma_%7Bqv%7D%20%5CBig)%0A+%20%5Cfrac%7B1%7D%7B2%7D%20%5Ctext%7BTr%7D%5CBig(J%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20J%5ET%20%5CBig)%0A"> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5CSigma_%7Bvv%7D%20&amp;=%20%5Cfrac%7B1%7D%7BL%7D%20%5Csum_%7Bl=1%7D%5EL%20%5Cvec%7Bv%7D_l%20%5C,%20%5Cvec%7Bv%7D_l%5ET%20%5C%5C%0A%5CSigma_%7Bqv%7D%20&amp;=%20%5Cfrac%7B1%7D%7BL%7D%20%5Csum_%7Bl=1%7D%5EL%20%5Cvec%7Bq%7D_l%20%5C,%20%5Cvec%7Bv%7D_l%5ET%20%5C%5C%0A%5CSigma_%7Bqq%7D%20&amp;=%20%5Cfrac%7B1%7D%7BL%7D%20%5Csum_%7Bl=1%7D%5EL%20%5Cvec%7Bq%7D_l%20%5C,%20%5Cvec%7Bq%7D_l%5ET%0A%5Cend%7Balign%7D%0A"> are observed correlation matrices. The derivative of the cost function with respect to the weights is <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20C%7D%7B%5Cpartial%20w_l%7D%0A=%20-%20s_l%20+%20%5Csum_%7Bl'%7D%20A_%7Bl,%20l'%7D%20%5C,%20w_%7Bl'%7D%20%5C,.%0A"> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqv%7D%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,,%0A%5C%5C%0AA_%7Bl,l'%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%0A%5C,%20.%0A%5Cend%7Balign%7D%0A"> In analogy with the ecological literature, I call <img src="https://latex.codecogs.com/png.latex?s_l"> the “intrinsic growth rate” of token <img src="https://latex.codecogs.com/png.latex?l"> and <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D"> the “interaction coefficient” between tokens <img src="https://latex.codecogs.com/png.latex?l"> and <img src="https://latex.codecogs.com/png.latex?l'">. The following code illustrates how to compute these quantities:</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> compute_correlations(q, v):</span>
+<span id="cb1-2">    L <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> q.shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb1-3">    Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> L</span>
+<span id="cb1-4">    Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> q.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> L</span>
+<span id="cb1-5">    Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> q.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> q <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> L</span>
+<span id="cb1-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> Sigma_vv, Sigma_qv, Sigma_qq</span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> ecological_params(K, V, Sigma_qv, Sigma_qq):</span>
+<span id="cb1-9">    s <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (K <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> V).<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">sum</span>(dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb1-10">    A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (V <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> V.T) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (K <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> K.T)</span>
+<span id="cb1-11">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> s, A</span></code></pre></div>
+<p>Plugging in these results yields the following differential equation describing the dynamics of the weights, <span id="eq-lotka-volterra"><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bd%20%5C,%20t%7D%20=%20%20w_l%20%5CBig(%20s_l%20-%20%5Csum_%7Bl'%7D%20A_%7Bl,%20l'%7D%20%5C,%20w_%7Bl'%7D%20%5CBig)%20%5C,,%0A%5Cqquad(2)"></span> which is exactly the generalized Lotka-Volterra equation. A simple algorithm for integrating the Lotka-Volterra equations is shown in the following code snippet:</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> integrate_lv(w, s, A, t_max, dt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>):</span>
+<span id="cb2-2">    t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb2-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">while</span> t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;</span> t_max:</span>
+<span id="cb2-4">        w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (s <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> w)</span>
+<span id="cb2-5">        w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> w.clamp(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb2-6">        t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> dt</span>
+<span id="cb2-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> w</span></code></pre></div>
+<p>Although relatively straightforward, as far as I know the derivation of Equation&nbsp;2 as a way to minimize the squared recall error for weighted linear attention is a new result.</p>
+<p>This construction allows one to directly interpret the terms in Equation&nbsp;2 as ecologically inspired quantities. For example, a token is a species. The weight of a token is the abundance of the species. The intrinsic growth rate of species <img src="https://latex.codecogs.com/png.latex?l"> is <img src="https://latex.codecogs.com/png.latex?s_l">, which defines how quickly the weight of the corresponding token increases at the start of learning. The total weight of a token is generally limited by its intrinsic growth rate <img src="https://latex.codecogs.com/png.latex?s_l"> and self-interaction <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D"> via a quantity known as its carrying capacity <img src="https://latex.codecogs.com/png.latex?%0A%5Ckappa_l%0A=%20%5Cfrac%7Bs_l%7D%7BA_%7Bl,l%7D%7D%0A=%20%5Cfrac%7B%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqv%7D%20%5C,%20%5Cvec%7Bv%7D_l%7D%7B%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5Cvec%7Bv%7D_%7Bl%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%5ET%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%7D%20%5C,,%0A"> which determines the weight of a token in the absence of interactions with the other tokens.</p>
+<p>Of course, tokens do interact with each other. Two tokens compete if <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D%20=%20A_%7Bl',%20l%7D%20%3E%200"> and they cooperate if <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D%20=%20A_%7Bl',%20l%7D%20%3C%200">. There are no predator-prey style interactions (i.e., <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D%20=%20-A_%7Bl',%20l%7D">) in this model because the interaction matrix is symmetric. Since the interaction matrix is symmetric, the species abundances will converge to a fixed point without any cycles. The interior fixed point is unique if <img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D%20%5C,%20%5Cvec%7Bs%7D"> is strictly positive, otherwise there can be multiple fixed points on the boundary in which one, or multiple, species are extinct.</p>
+<p>Figure&nbsp;2 shows how the interactions between tokens in the context window are determined by the alignment of their value vectors and the correlation of their attention scores.</p>
+<div id="fig-interactions" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-interactions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-is-lotka-volterra/The_Ecology_of_Attention_Schematics_Interaction_Diagram.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-interactions-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: <strong>Interpreting interactions</strong>. Interactions between tokens are related to the correlation of their attention scores and the alignment of their value vectors.
+</figcaption>
+</figure>
+</div>
+<p>To illustrate this, define the attention score <img src="https://latex.codecogs.com/png.latex?%5Ctheta_%7Bl,l'%7D%20=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5Cvec%7Bq%7D_%7Bl'%7D"> and the alignment score <img src="https://latex.codecogs.com/png.latex?%5Cphi_%7Bl,l'%7D%20=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D"> between tokens <img src="https://latex.codecogs.com/png.latex?l"> and <img src="https://latex.codecogs.com/png.latex?l'">. Although the alignment scores are symmetric, the attention scores are not; token <img src="https://latex.codecogs.com/png.latex?l"> may attend to token <img src="https://latex.codecogs.com/png.latex?l'"> differently from the way token <img src="https://latex.codecogs.com/png.latex?l'"> attends to token <img src="https://latex.codecogs.com/png.latex?l">. By substituting the formula for the correlation matrix, one can derive an equation for the intrinsic growth rate of token <img src="https://latex.codecogs.com/png.latex?l"> as <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%0A&amp;=%20%5Cfrac%7B1%7D%7BL%7D%20%5Csum_%7Bl'%7D%20%5Ctheta_%7Bl,l'%7D%20%5C,%20%5Cphi_%7Bl,l'%7D%20%5C,,%0A%5C%5C%0A&amp;%5Csim%20%5Ctext%7BCovariance%7D%5Cleft(%5Ctext%7Battention%7D,%20%5Ctext%7Balignment%7D%5Cright)%0A%5C,.%0A%5Cend%7Balign%7D%0A"> Thus, the intrinsic growth rate of a token is the (uncentered) covariance between its attention scores and alignment scores. Token <img src="https://latex.codecogs.com/png.latex?l"> will have a high growth rate if its value is aligned with the values of the other tokens that attend to it. Similarly, the self-interaction is <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0AA_%7Bl,l%7D%0A&amp;=%20%5Cphi_%7Bl,l%7D%20%5C,%20%5Cleft(%20%5Cfrac%7B1%7D%7BL%7D%20%5Csum_%7Bl'%7D%20%5Ctheta_%7Bl,l'%7D%5E2%20%5Cright)%20%5C,,%0A%5C%5C%0A&amp;%5Csim%20%5Ctext%7BNorm%7D%5E2%5Cleft(%5Ctext%7Bvalue%7D%5Cright)%20%5Ccdot%20%5Ctext%7BVariance%7D%5Cleft(%5Ctext%7Battention%7D%5Cright)%0A%5C,%20.%0A%5Cend%7Balign%7D%0A"> Thus, the self-interaction coefficient for a token <img src="https://latex.codecogs.com/png.latex?l"> is the squared norm of its value vector multiplied by the (uncentered) variance of its attention scores. Since the carrying capacity is the ratio of the growth rate to the self-interaction, it looks like the covariance between the attention and alignment scores divided by the variance of the attention scores and the norm of the value vector. The interaction between different tokens <img src="https://latex.codecogs.com/png.latex?l"> and <img src="https://latex.codecogs.com/png.latex?l'"> has a similar interpretation <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0AA_%7Bl,l'%7D%0A&amp;=%20%5Cphi_%7Bl,l'%7D%20%5Cleft(%20%5Cfrac%7B1%7D%7BL%7D%20%5Csum_%7Bl''%7D%20%5Ctheta_%7Bl,l''%7D%20%5C,%20%5Ctheta_%7Bl',%20l''%7D%20%5Cright)%0A%5C,,%20%5C%5C%0A&amp;%5Csim%20%5Ctext%7BAlignment%7D%20%5Ccdot%20%5Ctext%7BCovariance%7D%5Cleft(%20%5Ctext%7Battention%7D,%20%5Ctext%7Battention%7D%20%5Cright)%0A%5C,.%0A%5Cend%7Balign%7D%0A"> Thus, two tokens are in competition if their values are aligned and they are attended to by similar tokens. Such tokens provide similar information, so there is no need to store both of them if the memory has limited capacity. Interestingly, tokens can also cooperate with each other. This happens if their values are aligned but they have anti-correlated attention scores, or if they have opposite values with positively correlated attention maps.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Attention mechanisms have become the cornerstone of modern sequence models. However, because the standard formulation of attention scales with the length of the context window squared, there has been a lot of recent interest in alternative approaches with linear scaling. Most of these alternative architectures involve weighted linear attention modules of some form. So far, these architectures based on key-value associative memories have generally fallen short of their transformer counterparts, raising an important question of `why?’.</p>
+<p>Here, I have provided a new lens through which to view attention mechanisms–that of ecosystems. Specifically, I’ve shown that weighted associative memories based on query-key-value recall mechanisms correspond to ecological communities in which the tokens are species and the weights in the memory are their species abundances. In fact, this is more than a colorful metaphor, and the dynamics of exponentiated gradient descent on a squared reconstruction loss are exactly described by Lotka-Volterra dynamics.</p>
+<p>This theory highlights some simple tools for understanding the inner workings of attention mechanisms. For example, the covariance between a token’s attention scores and its alignment scores determines its intrinsic growth rate. However, the intrinsic growth rate is, by itself, not enough to specify the weight of a token in the memory because tokens also interact with each other. In fact, the alignment of two tokens value vectors and the covariance of their attention scores determines if the tokens compete with each for space in the memory, or if they actually cooperate and reinforce each other’s weights.</p>
+<p>In the following post, <a href="../../posts/weighted-linear-attention-as-species-invasion/index.html">Weighted Linear Attention as Species Invasion</a>, I will show that within a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. And, I’ll use this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention.</p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-arthur1969species" class="csl-entry">
+Arthur, Robert Mac. 1969. <span>“Species Packing, and What Competition Minimizes.”</span> <em>Proceedings of the National Academy of Sciences</em> 64 (4): 1369–71.
+</div>
+<div id="ref-binitha2012survey" class="csl-entry">
+Binitha, S, S Siva Sathya, et al. 2012. <span>“A Survey of Bio Inspired Optimization Algorithms.”</span> <em>International Journal of Soft Computing and Engineering</em> 2 (2): 137–51.
+</div>
+<div id="ref-bomze1983lotka" class="csl-entry">
+Bomze, Immanuel M. 1983. <span>“Lotka-Volterra Equation and Replicator Dynamics: A Two-Dimensional Classification.”</span> <em>Biological Cybernetics</em> 48 (3): 201–11.
+</div>
+<div id="ref-bomze1995lotka" class="csl-entry">
+———. 1995. <span>“Lotka-Volterra Equation and Replicator Dynamics: New Issues in Classification.”</span> <em>Biological Cybernetics</em> 72 (5): 447–53.
+</div>
+<div id="ref-cui2024houches" class="csl-entry">
+Cui, Wenping, Robert Marsland III, and Pankaj Mehta. 2024. <span>“Les Houches Lectures on Community Ecology: From Niche Theory to Statistical Mechanics.”</span> <em>ArXiv</em>, arXiv–2403.
+</div>
+<div id="ref-hinton2014parallel" class="csl-entry">
+Hinton, Geoffrey E, and James A Anderson. 2014. <em>Parallel Models of Associative Memory: Updated Edition</em>. Psychology press.
+</div>
+<div id="ref-howell2020machine" class="csl-entry">
+Howell, Owen, Cui Wenping, Robert Marsland, and Pankaj Mehta. 2020. <span>“Machine Learning as Ecology.”</span> <em>Journal of Physics A: Mathematical and Theoretical</em> 53 (33): 334001.
+</div>
+<div id="ref-kivinen1995additive" class="csl-entry">
+Kivinen, Jyrki, and Manfred K Warmuth. 1995. <span>“Additive Versus Exponentiated Gradient Updates for Linear Prediction.”</span> In <em>Proceedings of the Twenty-Seventh Annual ACM Symposium on Theory of Computing</em>, 209–18.
+</div>
+<div id="ref-kohonen1972correlation" class="csl-entry">
+Kohonen, Teuvo. 1972. <span>“Correlation Matrix Memories.”</span> <em>IEEE Transactions on Computers</em> 100 (4): 353–59.
+</div>
+<div id="ref-macarthur1970species" class="csl-entry">
+MacArthur, Robert. 1970. <span>“Species Packing and Competitive Equilibrium for Many Species.”</span> <em>Theoretical Population Biology</em> 1 (1): 1–11.
+</div>
+<div id="ref-mehta2019constrained" class="csl-entry">
+Mehta, Pankaj, Wenping Cui, Ching-Hao Wang, and Robert Marsland III. 2019. <span>“Constrained Optimization as Ecological Dynamics with Applications to Random Quadratic Programming in High Dimensions.”</span> <em>Physical Review E</em> 99 (5): 052111.
+</div>
+<div id="ref-schuster1983replicator" class="csl-entry">
+Schuster, Peter, and Karl Sigmund. 1983. <span>“Replicator Dynamics.”</span> <em>Journal of Theoretical Biology</em> 100 (3): 533–38.
+</div>
+<div id="ref-storn1997differential" class="csl-entry">
+Storn, Rainer, and Kenneth Price. 1997. <span>“Differential Evolution–a Simple and Efficient Heuristic for Global Optimization over Continuous Spaces.”</span> <em>Journal of Global Optimization</em> 11: 341–59.
+</div>
+<div id="ref-wang2025test" class="csl-entry">
+Wang, Ke Alexander, Jiaxin Shi, and Emily B Fox. 2025. <span>“Test-Time Regression: A Unifying Framework for Designing Sequence Models with Associative Memory.”</span> <em>arXiv Preprint arXiv:2501.12352</em>.
+</div>
+<div id="ref-wangersky1978lotka" class="csl-entry">
+Wangersky, Peter J. 1978. <span>“Lotka-Volterra Population Models.”</span> <em>Annual Review of Ecology and Systematics</em> 9: 189–218.
+</div>
+</div></section></div> ]]></description>
+  <category>research</category>
+  <category>machine-learning</category>
+  <category>ecology</category>
+  <category>attention</category>
+  <category>lotka-volterra</category>
+  <guid>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-is-lotka-volterra/</guid>
+  <pubDate>Mon, 07 Apr 2025 07:00:00 GMT</pubDate>
+  <media:content url="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-is-lotka-volterra/The_Ecology_of_Attention_Figure_1.png" medium="image" type="image/png" height="60" width="144"/>
+</item>
+<item>
+  <title>What is Weighted Linear Attention?</title>
+  <dc:creator>Charles Fisher</dc:creator>
+  <link>https://drckf.github.io/local-minimum/posts/weighted-linear-attention/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Weighted linear attention is a type of key-value associative memory defined by the matrix <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0AJ%20=%20%5Csum_%7Bl'%7D%20w_%7Bl'%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%0A%5Cend%7Bequation%7D%0A"> and an associative recall formula <img src="https://latex.codecogs.com/png.latex?%5Ctilde%7Bv%7D_l%20=%20J%20%5Cvec%7Bq%7D_l"> that retrieves a value correpsonding to a query vector. These modules are interesting components for neural sequence models because they can be viewed as alternatives to softmax attention that may be more efficient for long context windows.</p>
+</section>
+<section id="softmax-attention" class="level2">
+<h2 class="anchored" data-anchor-id="softmax-attention">Softmax Attention</h2>
+<p>The softmax attention module was a key innovation in the development of transformer models that are commonly used for natural language processing and other applications in machine learning <span class="citation" data-cites="vaswani2017attention">(Vaswani et al. 2017)</span>. At a high level, attention leverages the idea that the meaning of a word in a document could change depending on the other words in the document. Therefore, in order to determine the meaning of a given word (or a component of a word called a token) we need to compare it to the rest of the words in the document.</p>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5En"> for <img src="https://latex.codecogs.com/png.latex?l%20=%201,%20%5Cldots,%20L"> be a sequence of tokens, <img src="https://latex.codecogs.com/png.latex?W_Q"> and <img src="https://latex.codecogs.com/png.latex?W_K"> be <img src="https://latex.codecogs.com/png.latex?d_k%20%5Ctimes%20n"> matrices, and <img src="https://latex.codecogs.com/png.latex?W_V"> be a <img src="https://latex.codecogs.com/png.latex?d_v%20%5Ctimes%20n"> matrix. The queries, keys, and values are given by <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Cvec%7Bq%7D_l%20&amp;=%20W_Q%20%5C,%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D%20%5C%5C%0A%5Cvec%7Bk%7D_l%20&amp;=%20W_K%20%5C,%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D%20%5C%5C%0A%5Cvec%7Bv%7D_l%20&amp;=%20W_V%20%5C,%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_v%7D%0A%5Cend%7Balign%7D%0A"> The softmax attention module defines an <img src="https://latex.codecogs.com/png.latex?L%20%5Ctimes%20L"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BA%7D"> with elements <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathcal%7BA%7D_%7Bl,l'%7D%20=%20%5Cfrac%7Be%5E%7B%20d_k%5E%7B-1/2%7D%20%5Cvec%7Bq%7D_l%5ET%20%5Cvec%7Bk%7D_%7Bl'%7D%20%7D%7D%7B%20%5Csum_%7Bl''%7D%20e%5E%7Bd_k%5E%7B-1/2%7D%20%5Cvec%7Bq%7D_l%5ET%20%5Cvec%7Bk%7D_%7Bl''%7D%20%7D%7D%0A"> that describes how query <img src="https://latex.codecogs.com/png.latex?l"> attends to key <img src="https://latex.codecogs.com/png.latex?l'">. Thus, the value retrived for query <img src="https://latex.codecogs.com/png.latex?l"> is <img src="https://latex.codecogs.com/png.latex?%0A%5Ctilde%7Bv%7D_l%20=%20%5Csum_%7Bl'%7D%20%5Cmathcal%7BA%7D_%7Bl,l'%7D%20%5Cvec%7Bv%7D_%7Bl'%7D%0A"> Of course, there are many variations of this general module that have been introduced in the last few years, but I’m not going to get into those because the original formulation has the necessary elements for this introduction.</p>
+<p>Softmax attention is relatively easy to implement in parallel because it is stateless. This means that it efficiently utilizes the capabilities of modern GPUs, but it also requires a large amount of memory and computational resources because it involves computing an <img src="https://latex.codecogs.com/png.latex?L%20%5Ctimes%20L"> matrix. Thus, softmax attention uses resources that are quadratic in the length of the context window. Although one can use a variety of tricks to mitigate this problem, it nevertheless represents a fundamental limitation to the length of sequences that transformers are able to process.</p>
+</section>
+<section id="weighted-linear-attention" class="level2">
+<h2 class="anchored" data-anchor-id="weighted-linear-attention">Weighted Linear Attention</h2>
+<p>In the last few years, there has been renewed interest in stateful architectures for modeling sequential data such as language or time series <span class="citation" data-cites="wang2025test aksenov2024linear schlag2021linear yang2025parallelizing katharopoulos2020transformers peng2021random beck2025xlstm qin2022cosformer kasai2021finetuning zhang2024hedgehog chen2024dijiang sun2023retentive orvieto2023resurrecting katsch2023gateloop de2024griffin qin2024hgrn2 peng2024eagle yang2023gated gu2023mamba dao2024transformers liu2024longhorn sun2024learning yang2024gated behrouz2024titans">(Wang, Shi, and Fox 2025; Aksenov et al. 2024; Schlag, Irie, and Schmidhuber 2021; Songlin Yang et al. 2025, 2023; Katharopoulos et al. 2020; H. Peng et al. 2021; Beck et al. 2025; Qin et al. 2022, 2024; Kasai et al. 2021; Zhang et al. 2024; Chen et al. 2024; Yutao Sun et al. 2023; Orvieto et al. 2023; Katsch 2023; De et al. 2024; B. Peng et al. 2024; Gu and Dao 2023; Dao and Gu 2024; Liu et al. 2024; Yu Sun et al. 2024; Songlin Yang, Kautz, and Hatamizadeh 2024; Behrouz, Zhong, and Mirrokni 2024)</span>. Stateful models are a more memory and compute efficient alternative to stateless models like transformers because they scale linearly with the length of the sequence in contrast to the quadratic scaling of transformers. In principle, stateful language models could have much cheaper inference costs and would be able to operate over essentially infinite context windows.</p>
+<p>Modern stateful sequence models typically use a key-value associative memory as an alternative to the softmax attention heads in transformers. A key-value associative memory is a <img src="https://latex.codecogs.com/png.latex?d_v%20%5Ctimes%20d_k"> matrix <img src="https://latex.codecogs.com/png.latex?J_l"> that is typically, but not necessarily, updated through a recurrent relation such as <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0AJ_l%20=%20%5Comega_%7Bf,l%7D%20%5C,%20J_%7Bl-1%7D%20+%20%5Comega_%7Bi,l%7D%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,%20%5Cvec%7Bk%7D_l%5ET%0A%5Cend%7Bequation%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Comega_%7Bf,l%7D%20%5Cgeq%200"> is a forget gate and <img src="https://latex.codecogs.com/png.latex?%5Comega_%7Bi,l%7D%20%5Cgeq%200"> is an input gate. The input and forget gates could be constants, functions of the current state, or could even be functions of all previous states in the sequence. A value is retrieved from the memory by multiplication with a query vector <img src="https://latex.codecogs.com/png.latex?%5Ctilde%7Bv%7D_l%20=%20J%20%5C,%20%5Cvec%7Bq%7D_l">, where I am denoting the retrieved value with a tilde to emphasize that <img src="https://latex.codecogs.com/png.latex?%5Ctilde%7Bv%7D_i"> will generally not equal <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bv%7D_i"> unless the memory has perfect recall. See Figure 1 below for examples of different linear attention mechanisms.</p>
+<p>It’s trivial to see that an associative memory matrix trained through this type of recurrent update rule will take the form <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0AJ%20=%20%5Csum_%7Bl'%7D%20w_%7Bl'%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%0A%5Cend%7Bequation%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?w_%7Bl'%7D%20%5Cgeq%200"> is the weight assigned to token <img src="https://latex.codecogs.com/png.latex?l'"> in the memory. I will refer to key-value associative memories with this structure as “weighted linear attention” modules.</p>
+<p>To illustrate the connection between the recurrent update and the weighted linear attention form, consider unrolling the recurrence. Starting with <img src="https://latex.codecogs.com/png.latex?%0AJ_l%20=%20%5Comega_%7Bf,l%7D%20J_%7Bl-1%7D%20+%20%5Comega_%7Bi,l%7D%5C,%20%5Cvec%7Bv%7D_l%5C,%20%5Cvec%7Bk%7D_l%5ET,%0A"> recursively substituting <img src="https://latex.codecogs.com/png.latex?J_%7Bl-1%7D"> gives <img src="https://latex.codecogs.com/png.latex?%0AJ_l%20=%20%5Csum_%7Bl'=1%7D%5E%7Bl%7D%20%5Cleft(%20%5Cprod_%7Bl''=l'+1%7D%5E%7Bl%7D%20%5Comega_%7Bf,l''%7D%20%5Cright)%20%5Comega_%7Bi,l'%7D%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET.%0A"> This shows that the associative memory <img src="https://latex.codecogs.com/png.latex?J_l"> is a weighted sum of outer products of values and keys, where each token’s contribution is scaled by a weight <img src="https://latex.codecogs.com/png.latex?w_%7Bl'%7D%20=%20%5Cleft(%20%5Cprod_%7Bl''=l'+1%7D%5E%7Bl%7D%20%5Comega_%7Bf,l''%7D%20%5Cright)%20%5Comega_%7Bi,l'%7D">. These weights capture how much past tokens are retained in memory, clarifying how stateful, linear attention aggregates information over time.</p>
+<p>Although much of the practical interest in linear attention architectures is the ability to define them through recurrent update rules, it’s not clear that these recurrent update rules optimize their memory capacity. That is, there may be alternative ways to learn the weights that lead to better performing associative memories, at least in theory. I’ll explore this in a series of upcoming blog posts focused on a surprising connection between weighted linear attention modules and ecological systems.</p>
+<p>Specifically, I will show that weighted linear attention can be interpreted as an evolving ecological system in which tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. This framework provides explicit formulas linking the statistics of the data distribution to ecological parameters such as the carrying capacity and interaction coefficients of each token. In a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. I use this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention. Follow along with the next post in this series <a href="../../posts/weighted-linear-attention-is-lotka-volterra/">Weighted Linear Attention is Lotka-Volterra Dynamics</a>.</p>
+<hr>
+<p>The following table from Yang et al (2024) highlights a number of models that use various types of linear attention modules and recurrent update rules:</p>
+<div id="fig-linear-attention" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-linear-attention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="https://drckf.github.io/local-minimum/posts/weighted-linear-attention/neurips24_poster_deltanet.jpg" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-linear-attention-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Types of Recurrent Updates for Linear Attention. (Source: <span class="citation" data-cites="yang2024parallelizing">S. Yang et al. (2024)</span>)
+</figcaption>
+</figure>
+</div>
+<hr>
+<div class="license-footer">
+<p>© 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.</p>
+</div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-aksenov2024linear" class="csl-entry">
+Aksenov, Yaroslav, Nikita Balagansky, Sofia Maria Lo Cicero Vaina, Boris Shaposhnikov, Alexey Gorbatovski, and Daniil Gavrilov. 2024. <span>“Linear Transformers with Learnable Kernel Functions Are Better in-Context Models.”</span> <em>arXiv Preprint arXiv:2402.10644</em>.
+</div>
+<div id="ref-beck2025xlstm" class="csl-entry">
+Beck, Maximilian, Korbinian Pöppel, Markus Spanring, Andreas Auer, Oleksandra Prudnikova, Michael Kopp, Günter Klambauer, Johannes Brandstetter, and Sepp Hochreiter. 2025. <span>“Xlstm: Extended Long Short-Term Memory.”</span> <em>Advances in Neural Information Processing Systems</em> 37: 107547–603.
+</div>
+<div id="ref-behrouz2024titans" class="csl-entry">
+Behrouz, Ali, Peilin Zhong, and Vahab Mirrokni. 2024. <span>“Titans: Learning to Memorize at Test Time.”</span> <em>arXiv Preprint arXiv:2501.00663</em>.
+</div>
+<div id="ref-chen2024dijiang" class="csl-entry">
+Chen, Hanting, Zhicheng Liu, Xutao Wang, Yuchuan Tian, and Yunhe Wang. 2024. <span>“Dijiang: Efficient Large Language Models Through Compact Kernelization.”</span> <em>arXiv Preprint arXiv:2403.19928</em>.
+</div>
+<div id="ref-dao2024transformers" class="csl-entry">
+Dao, Tri, and Albert Gu. 2024. <span>“Transformers Are Ssms: Generalized Models and Efficient Algorithms Through Structured State Space Duality.”</span> <em>arXiv Preprint arXiv:2405.21060</em>.
+</div>
+<div id="ref-de2024griffin" class="csl-entry">
+De, Soham, Samuel L Smith, Anushan Fernando, Aleksandar Botev, George Cristian-Muraru, Albert Gu, Ruba Haroun, et al. 2024. <span>“Griffin: Mixing Gated Linear Recurrences with Local Attention for Efficient Language Models.”</span> <em>arXiv Preprint arXiv:2402.19427</em>.
+</div>
+<div id="ref-gu2023mamba" class="csl-entry">
+Gu, Albert, and Tri Dao. 2023. <span>“Mamba: Linear-Time Sequence Modeling with Selective State Spaces.”</span> <em>arXiv Preprint arXiv:2312.00752</em>.
+</div>
+<div id="ref-kasai2021finetuning" class="csl-entry">
+Kasai, Jungo, Hao Peng, Yizhe Zhang, Dani Yogatama, Gabriel Ilharco, Nikolaos Pappas, Yi Mao, Weizhu Chen, and Noah A Smith. 2021. <span>“Finetuning Pretrained Transformers into Rnns.”</span> <em>arXiv Preprint arXiv:2103.13076</em>.
+</div>
+<div id="ref-katharopoulos2020transformers" class="csl-entry">
+Katharopoulos, Angelos, Apoorv Vyas, Nikolaos Pappas, and François Fleuret. 2020. <span>“Transformers Are Rnns: Fast Autoregressive Transformers with Linear Attention.”</span> In <em>International Conference on Machine Learning</em>, 5156–65. PMLR.
+</div>
+<div id="ref-katsch2023gateloop" class="csl-entry">
+Katsch, Tobias. 2023. <span>“Gateloop: Fully Data-Controlled Linear Recurrence for Sequence Modeling.”</span> <em>arXiv Preprint arXiv:2311.01927</em>.
+</div>
+<div id="ref-liu2024longhorn" class="csl-entry">
+Liu, Bo, Rui Wang, Lemeng Wu, Yihao Feng, Peter Stone, and Qiang Liu. 2024. <span>“Longhorn: State Space Models Are Amortized Online Learners.”</span> <em>arXiv Preprint arXiv:2407.14207</em>.
+</div>
+<div id="ref-orvieto2023resurrecting" class="csl-entry">
+Orvieto, Antonio, Samuel L Smith, Albert Gu, Anushan Fernando, Caglar Gulcehre, Razvan Pascanu, and Soham De. 2023. <span>“Resurrecting Recurrent Neural Networks for Long Sequences.”</span> In <em>International Conference on Machine Learning</em>, 26670–98. PMLR.
+</div>
+<div id="ref-peng2024eagle" class="csl-entry">
+Peng, Bo, Daniel Goldstein, Quentin Anthony, Alon Albalak, Eric Alcaide, Stella Biderman, Eugene Cheah, et al. 2024. <span>“Eagle and Finch: Rwkv with Matrix-Valued States and Dynamic Recurrence.”</span> <em>arXiv Preprint arXiv:2404.05892</em> 3.
+</div>
+<div id="ref-peng2021random" class="csl-entry">
+Peng, Hao, Nikolaos Pappas, Dani Yogatama, Roy Schwartz, Noah A Smith, and Lingpeng Kong. 2021. <span>“Random Feature Attention.”</span> <em>arXiv Preprint arXiv:2103.02143</em>.
+</div>
+<div id="ref-qin2022cosformer" class="csl-entry">
+Qin, Zhen, Weixuan Sun, Hui Deng, Dongxu Li, Yunshen Wei, Baohong Lv, Junjie Yan, Lingpeng Kong, and Yiran Zhong. 2022. <span>“Cosformer: Rethinking Softmax in Attention.”</span> <em>arXiv Preprint arXiv:2202.08791</em>.
+</div>
+<div id="ref-qin2024hgrn2" class="csl-entry">
+Qin, Zhen, Songlin Yang, Weixuan Sun, Xuyang Shen, Dong Li, Weigao Sun, and Yiran Zhong. 2024. <span>“Hgrn2: Gated Linear Rnns with State Expansion.”</span> <em>arXiv Preprint arXiv:2404.07904</em>.
+</div>
+<div id="ref-schlag2021linear" class="csl-entry">
+Schlag, Imanol, Kazuki Irie, and Jürgen Schmidhuber. 2021. <span>“Linear Transformers Are Secretly Fast Weight Programmers.”</span> In <em>International Conference on Machine Learning</em>, 9355–66. PMLR.
+</div>
+<div id="ref-sun2024learning" class="csl-entry">
+Sun, Yu, Xinhao Li, Karan Dalal, Jiarui Xu, Arjun Vikram, Genghan Zhang, Yann Dubois, et al. 2024. <span>“Learning to (Learn at Test Time): Rnns with Expressive Hidden States.”</span> <em>arXiv Preprint arXiv:2407.04620</em>.
+</div>
+<div id="ref-sun2023retentive" class="csl-entry">
+Sun, Yutao, Li Dong, Shaohan Huang, Shuming Ma, Yuqing Xia, Jilong Xue, Jianyong Wang, and Furu Wei. 2023. <span>“Retentive Network: A Successor to Transformer for Large Language Models.”</span> <em>arXiv Preprint arXiv:2307.08621</em>.
+</div>
+<div id="ref-vaswani2017attention" class="csl-entry">
+Vaswani, Ashish, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Łukasz Kaiser, and Illia Polosukhin. 2017. <span>“Attention Is All You Need.”</span> <em>Advances in Neural Information Processing Systems</em> 30.
+</div>
+<div id="ref-wang2025test" class="csl-entry">
+Wang, Ke Alexander, Jiaxin Shi, and Emily B Fox. 2025. <span>“Test-Time Regression: A Unifying Framework for Designing Sequence Models with Associative Memory.”</span> <em>arXiv Preprint arXiv:2501.12352</em>.
+</div>
+<div id="ref-yang2024gated" class="csl-entry">
+Yang, Songlin, Jan Kautz, and Ali Hatamizadeh. 2024. <span>“Gated Delta Networks: Improving Mamba2 with Delta Rule.”</span> <em>arXiv Preprint arXiv:2412.06464</em>.
+</div>
+<div id="ref-yang2023gated" class="csl-entry">
+Yang, Songlin, Bailin Wang, Yikang Shen, Rameswar Panda, and Yoon Kim. 2023. <span>“Gated Linear Attention Transformers with Hardware-Efficient Training.”</span> <em>arXiv Preprint arXiv:2312.06635</em>.
+</div>
+<div id="ref-yang2025parallelizing" class="csl-entry">
+Yang, Songlin, Bailin Wang, Yu Zhang, Yikang Shen, and Yoon Kim. 2025. <span>“Parallelizing Linear Transformers with the Delta Rule over Sequence Length.”</span> <em>Advances in Neural Information Processing Systems</em> 37: 115491–522.
+</div>
+<div id="ref-yang2024parallelizing" class="csl-entry">
+Yang, S., B. Wang, Y. Zhang, Y. Shen, and Y. Kim. 2024. <span>“Parallelizing Linear Transformers with the Delta Rule over Sequence Length.”</span> <em>NeurIPS</em>.
+</div>
+<div id="ref-zhang2024hedgehog" class="csl-entry">
+Zhang, Michael, Kush Bhatia, Hermann Kumbong, and Christopher Ré. 2024. <span>“The Hedgehog &amp; the Porcupine: Expressive Linear Attentions with Softmax Mimicry.”</span> <em>arXiv Preprint arXiv:2402.04347</em>.
+</div>
+</div></section></div> ]]></description>
+  <category>review</category>
+  <category>machine-learning</category>
+  <category>attention</category>
+  <guid>https://drckf.github.io/local-minimum/posts/weighted-linear-attention/</guid>
+  <pubDate>Sun, 06 Apr 2025 07:00:00 GMT</pubDate>
+  <media:content url="https://drckf.github.io/local-minimum/posts/weighted-linear-attention/thumbnail.jpg" medium="image" type="image/jpeg"/>
+</item>
+</channel>
+</rss>
