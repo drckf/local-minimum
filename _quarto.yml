@@ -5,13 +5,16 @@ project:
 website:
   title: "Local Minimum"
   description: "Research-in-progress blog on ML, physics, and biology"
+  site-url: https://drckf.github.io/local-minimum/
   navbar:
     right:
       - about.qmd
       - license.qmd
       - icon: github
         href: https://github.com/drckf
-  
+      - icon: rss
+        href: index.xml
+
   comments:
     giscus:
       repo: drckf/local-minimum
