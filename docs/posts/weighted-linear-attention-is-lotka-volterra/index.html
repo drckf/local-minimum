@@ -368,9 +368,6 @@ A_{l,l'}
 <p>Here, I have provided a new lens through which to view attention mechanisms–that of ecosystems. Specifically, I’ve shown that weighted associative memories based on query-key-value recall mechanisms correspond to ecological communities in which the tokens are species and the weights in the memory are their species abundances. In fact, this is more than a colorful metaphor, and the dynamics of exponentiated gradient descent on a squared reconstruction loss are exactly described by Lotka-Volterra dynamics.</p>
 <p>This theory highlights some simple tools for understanding the inner workings of attention mechanisms. For example, the covariance between a token’s attention scores and its alignment scores determines its intrinsic growth rate. However, the intrinsic growth rate is, by itself, not enough to specify the weight of a token in the memory because tokens also interact with each other. In fact, the alignment of two tokens value vectors and the covariance of their attention scores determines if the tokens compete with each for space in the memory, or if they actually cooperate and reinforce each other’s weights.</p>
 <p>In the following post, <a href="../../posts/weighted-linear-attention-as-species-invasion/index.html">Weighted Linear Attention as Species Invasion</a>, I will show that within a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. And, I’ll use this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention.</p>
-<div class="license-footer">
-<p>© 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.</p>
-</div>
 
 
 
@@ -423,6 +420,56 @@ Wang, Ke Alexander, Jiaxin Shi, and Emily B Fox. 2025. <span>“Test-Time Regres
 Wangersky, Peter J. 1978. <span>“Lotka-Volterra Population Models.”</span> <em>Annual Review of Ecology and Systematics</em> 9: 189–218.
 </div>
 </div></section></div></main> <!-- /main -->
+<hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
+
+<h2>Subscribe to Updates</h2>
+
+<p>Enter your email below if you want to subscribe to be automatically notified of new posts.</p>
+
+<form action="https://assets.mailerlite.com/jsonp/1441877/forms/151220238201914872/subscribe" method="post" target="_blank" style="max-width: 500px; margin-bottom: 30px;">
+  <div style="display: flex; margin-bottom: 10px;">
+    <input type="email" name="fields[email]" placeholder="Your email address" required="" style="flex-grow: 1; padding: 8px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    <button type="submit" style="background-color: #1677be; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+      Subscribe
+    </button>
+  </div>
+  <p style="font-size: 0.8em; color: #666;">
+    We respect your privacy. Unsubscribe at any time.
+  </p>
+  <input type="hidden" name="ml-submit" value="1">
+  <input type="hidden" name="anticsrf" value="true">
+</form>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form[action*="mailerlite"]');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = form.querySelector('input[name="fields[email]"]').value;
+        const formData = new FormData();
+        formData.append('fields[email]', email);
+        formData.append('ml-submit', '1');
+        formData.append('anticsrf', 'true');
+        
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors'
+        })
+        .then(() => {
+          // Show success message
+          form.innerHTML = '<p style="color: #1677be; font-weight: bold;">Thank you! You\'ve successfully subscribed to Local Minimum updates.</p>';
+        });
+      });
+    }
+  });
+</script>
+
+<div class="license-footer" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.8em; color: #666;">
+  © 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.
+</div>
+
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
