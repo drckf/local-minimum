@@ -402,9 +402,6 @@ Figure&nbsp;2: Comparison of memory update algorithms. (Top) The ecological meth
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>In this post, I’ve show that within a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. And, I used this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention. So far, this series of posts has focused on the theory linking attention mechanisms to ecological systems rather than the exploration of practical implications, but I speculate that this theoretical framework will be useful for developing ecology-inspired approaches to mechanistic interpretability, KV-cache compression, and the design of subquadratic attention modules.</p>
 <p>So far, the theoretical framework I’ve been developing hinges on learning the weights in the weighted linear attention module in order to minimize the squared reconstruction error of the recalled values. In the next post, I’ll show that this framework is actually more general and similar dynamical models arise from a wide class of loss functions.</p>
-<div class="license-footer">
-<p>© 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.</p>
-</div>
 
 
 
@@ -603,9 +600,6 @@ Figure&nbsp;2: <strong>Interpreting interactions</strong>. Interactions between 
 <p>Here, I have provided a new lens through which to view attention mechanisms–that of ecosystems. Specifically, I’ve shown that weighted associative memories based on query-key-value recall mechanisms correspond to ecological communities in which the tokens are species and the weights in the memory are their species abundances. In fact, this is more than a colorful metaphor, and the dynamics of exponentiated gradient descent on a squared reconstruction loss are exactly described by Lotka-Volterra dynamics.</p>
 <p>This theory highlights some simple tools for understanding the inner workings of attention mechanisms. For example, the covariance between a token’s attention scores and its alignment scores determines its intrinsic growth rate. However, the intrinsic growth rate is, by itself, not enough to specify the weight of a token in the memory because tokens also interact with each other. In fact, the alignment of two tokens value vectors and the covariance of their attention scores determines if the tokens compete with each for space in the memory, or if they actually cooperate and reinforce each other’s weights.</p>
 <p>In the following post, <a href="../../posts/weighted-linear-attention-as-species-invasion/index.html">Weighted Linear Attention as Species Invasion</a>, I will show that within a streaming context, online updating of an associative memory is equivalent to the invasion of an ecosystem by a new species. And, I’ll use this mapping to derive some novel ecologically inspired attention modules, including a closed-form solution for optimal gated linear attention.</p>
-<div class="license-footer">
-<p>© 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.</p>
-</div>
 
 
 
@@ -706,10 +700,6 @@ Wangersky, Peter J. 1978. <span>“Lotka-Volterra Population Models.”</span> <
 Figure&nbsp;1: Types of Recurrent Updates for Linear Attention. (Source: <span class="citation" data-cites="yang2024parallelizing">S. Yang et al. (2024)</span>)
 </figcaption>
 </figure>
-</div>
-<hr>
-<div class="license-footer">
-<p>© 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.</p>
 </div>
 
 

@@ -135,9 +135,3 @@ The following table from Yang et al (2024) highlights a number of models that us
 types of linear attention modules and recurrent update rules:
 
 ![Types of Recurrent Updates for Linear Attention. (Source: @yang2024parallelizing)](neurips24_poster_deltanet.jpg){#fig-linear-attention}
-
----
-
-::: {.license-footer}
-© 2025 Charles Fisher. This work is licensed under a [Creative Commons Attribution 4.0 International License](/license.html).
-::: 

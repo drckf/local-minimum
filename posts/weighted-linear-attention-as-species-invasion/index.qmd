@@ -309,6 +309,3 @@ So far, the theoretical framework I've been developing hinges on learning the we
 module in order to minimize the squared reconstruction error of the recalled values. In the next post, I'll show 
 that this framework is actually more general and similar dynamical models arise from a wide class of loss functions.
 
-::: {.license-footer}
-© 2025 Charles Fisher. This work is licensed under a [Creative Commons Attribution 4.0 International License](/license.html).
-::: 

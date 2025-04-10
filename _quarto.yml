@@ -36,5 +36,6 @@ format:
       method: mathjax
       options:
         tags: ams
+    include-after-body: _freeze/after-content.html
 
 

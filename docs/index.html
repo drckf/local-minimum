@@ -214,7 +214,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDYXR0ZW50aW9u" data-listing-date-sort="1744095600000" data-listing-file-modified-sort="1744142225206" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2495">
+<div class="quarto-post image-right" data-index="0" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDYXR0ZW50aW9u" data-listing-date-sort="1744095600000" data-listing-file-modified-sort="1744243383231" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2478">
 <div class="thumbnail">
 <p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">
 <p><img loading="lazy" src="./posts/weighted-linear-attention-as-species-invasion/species-invasion-thumbnail.png" class="thumbnail-image"></p>
@@ -253,7 +253,7 @@ Charles Fisher
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744009200000" data-listing-file-modified-sort="1744142236696" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2011">
+<div class="quarto-post image-right" data-index="1" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744009200000" data-listing-file-modified-sort="1744243383231" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1994">
 <div class="thumbnail">
 <p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">
 <p><img loading="lazy" src="./posts/weighted-linear-attention-is-lotka-volterra/The_Ecology_of_Attention_Figure_1.png" class="thumbnail-image"></p>
@@ -298,7 +298,7 @@ Charles Fisher
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="cmV2aWV3JTJDbWFjaGluZS1sZWFybmluZyUyQ2F0dGVudGlvbg==" data-listing-date-sort="1743922800000" data-listing-file-modified-sort="1743985566813" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1027">
+<div class="quarto-post image-right" data-index="2" data-categories="cmV2aWV3JTJDbWFjaGluZS1sZWFybmluZyUyQ2F0dGVudGlvbg==" data-listing-date-sort="1743922800000" data-listing-file-modified-sort="1744243383232" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1010">
 <div class="thumbnail">
 <p><a href="./posts/weighted-linear-attention/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention/index.html" class="no-external">
 <p><img loading="lazy" src="./posts/weighted-linear-attention/thumbnail.jpg" class="thumbnail-image"></p>
@@ -344,6 +344,55 @@ Charles Fisher
 No matching items
 </div>
 </div></main> <!-- /main -->
+<hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
+
+<h2>Subscribe to Updates</h2>
+
+<p>Enter your email below if you want to subscribe to be automatically notified of new posts.</p>
+
+<form action="https://assets.mailerlite.com/jsonp/1441877/forms/151220238201914872/subscribe" method="post" target="_blank" style="max-width: 500px; margin-bottom: 30px;">
+  <div style="display: flex; margin-bottom: 10px;">
+    <input type="email" name="fields[email]" placeholder="Your email address" required="" style="flex-grow: 1; padding: 8px; margin-right: 10px; border: 1px solid #ccc; border-radius: 4px;">
+    <button type="submit" style="background-color: #1677be; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+      Subscribe
+    </button>
+  </div>
+  <p style="font-size: 0.8em; color: #666;">
+    We respect your privacy. Unsubscribe at any time.
+  </p>
+  <input type="hidden" name="ml-submit" value="1">
+  <input type="hidden" name="anticsrf" value="true">
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form[action*="mailerlite"]');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const email = form.querySelector('input[name="fields[email]"]').value;
+          const formData = new FormData();
+          formData.append('fields[email]', email);
+          formData.append('ml-submit', '1');
+          formData.append('anticsrf', 'true');
+          
+          fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+          })
+          .then(() => {
+            // Show success message
+            form.innerHTML = '<p style="color: #1677be; font-weight: bold;">Thank you! You\'ve successfully subscribed to Local Minimum updates. You will receive a welcome email shortly; please check your spam folder if you don\'t see it.</p>';
+          });
+        });
+      }
+    });
+  </script>
+
+<div class="license-footer" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.8em; color: #666;">
+  © 2025 Charles Fisher. This work is licensed under a <a href="./license.html">Creative Commons Attribution 4.0 International License</a>.
+</div>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
