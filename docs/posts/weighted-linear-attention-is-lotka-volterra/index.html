@@ -441,35 +441,34 @@ Wangersky, Peter J. 1978. <span>“Lotka-Volterra Population Models.”</span> <
 </form>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form[action*="mailerlite"]');
-    if (form) {
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = form.querySelector('input[name="fields[email]"]').value;
-        const formData = new FormData();
-        formData.append('fields[email]', email);
-        formData.append('ml-submit', '1');
-        formData.append('anticsrf', 'true');
-        
-        fetch(form.action, {
-          method: 'POST',
-          body: formData,
-          mode: 'no-cors'
-        })
-        .then(() => {
-          // Show success message
-          form.innerHTML = '<p style="color: #1677be; font-weight: bold;">Thank you! You\'ve successfully subscribed to Local Minimum updates.</p>';
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form[action*="mailerlite"]');
+      if (form) {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const email = form.querySelector('input[name="fields[email]"]').value;
+          const formData = new FormData();
+          formData.append('fields[email]', email);
+          formData.append('ml-submit', '1');
+          formData.append('anticsrf', 'true');
+          
+          fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors'
+          })
+          .then(() => {
+            // Show success message
+            form.innerHTML = '<p style="color: #1677be; font-weight: bold;">Thank you! You\'ve successfully subscribed to Local Minimum updates. You will receive a welcome email shortly; please check your spam folder if you don\'t see it.</p>';
+          });
         });
-      });
-    }
-  });
-</script>
+      }
+    });
+  </script>
 
 <div class="license-footer" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.8em; color: #666;">
   © 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.
 </div>
-
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
