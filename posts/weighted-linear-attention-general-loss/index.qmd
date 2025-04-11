@@ -1,0 +1,203 @@
+---
+title: "Weighted Linear Attention with Other Loss Functions"
+author: "Charles Fisher"
+date: "2025-04-14"
+categories: [research, machine-learning, ecology, attention, lotka-volterra]
+image: qkv-matching.png
+bibliography: weighted-linear-attention.bib
+draft: false
+---
+
+## TLDR
+
+In this post, I extend the ecological interpretation of weighted linear attention by analyzing how different 
+loss functions — including categorical cross-entropy and pairwise binary cross-entropy — shape the dynamics 
+of memory weights. Despite their distinct objectives, all losses lead to gradient flows that can be written 
+in the form of generalized Lotka-Volterra equations, where the functional response encodes the form of memory 
+interference. This suggests that a wide class of attention mechanisms can be unified under a common dynamical 
+framework and highlights how the choice of loss function governs competition, specialization, and adaptation 
+within memory. I'll explore the universality of these results in the next post. 
+
+## Review of Previous Results
+
+In a previous post [Weighted Linear Attention is Lotka-Volterra Dynamics](
+    /posts/weighted-linear-attention-is-lotka-volterra/index.qmd), 
+I showed that weighted linear attention modules can be interpreted as ecological systems where tokens are 
+species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized 
+via exponentiated gradient descent to minimize the squared recall error. To briefly review those results,
+I focus on a particular form of weighted linear attention module determined by an associative memory matrix,
+$$
+J = \sum_{l} w_{l} \, \vec{v}_{l} \, \vec{k}_{l}^T \,,
+$$
+where $l$ denotes the token position, $\vec{v}_l = W_{V} \vec{x}_l \in \mathbb{R}^{d_v}$ is a value vector, 
+$\vec{k}_l = W_{K} \vec{x}_l \in \mathbb{R}^{d_k}$ is a key vector, $\vec{x}_l \in \mathbb{R}^{n}$ is a token embedding, 
+and $w_l \geq 0$ is the weight of token $l$ in memory. Recall from the memory is simply matrix multiplication,
+$$
+\tilde{v}_l = J \, \vec{q}_l
+$$
+where $\vec{q}_l = W_Q \vec{x}_l \in \mathbb{R}^{d_k}$ is a query vector.  The mean squared recall error for a 
+batch of tokens $\{ \vec{x}_l \}_{l=1}^L$ is (up to a factor of $1/2$),
+$$
+C(\vec{w}) = \frac{1}{2 L} \sum_{l=1}^L || \vec{v}_l - J \, \vec{q}_l ||^2 \, .
+$$ {#eq-squared-loss}
+To learn the weights, the cost function can be minimized using a simple variant of 
+exponentiated gradient descent to satisfy the non-negativity constraint. 
+In the continuous-time limit, this update rule leads to the following differential equation
+$$
+\frac{d \, w_l}{d \, t} = - w_l \frac{\partial C}{\partial w_l}
+$$
+that describes the dynamics of the weights under the exponentiated gradient descent.
+After a bit of algebra, it's possible to show that the following generalized Lotka-Volterra equation
+describes the dynamics of the weights,
+$$
+\frac{d \, w_l}{d \, t} =  w_l \Big( s_l - \sum_{l'} A_{l, l'} \, w_{l'} \Big) \,,
+$$ {#eq-lotka-volterra}
+where
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l \,,
+\\
+A_{l,l'} &= \vec{v}_l^T \, \vec{v}_{l'} \, \vec{k}_{l'}^T \, \Sigma_{qq} \, \vec{k}_{l}
+\, ,
+\end{align}
+$$
+$s_l$ is the intrinsic growth rate of token $l$, $A_{l,l'}$ is the interaction coefficient for tokens $l$ and $l'$, 
+$\Sigma_{qv}$ is the uncentered query-value correlation matrix, and $\Sigma_{qq}$ is the 
+uncentered query-query correlation matrix. 
+
+## Cross Entropy Loss
+
+As before, consider the memory matrix $J = \sum_{l=1}^L w_l \vec{v}_l \, \vec{k}_l^T$ with memory retrieval 
+$\tilde{v}_i = J \, \vec{q}_i$. In addition, define the similarity between the retrieved vector and each stored 
+value as
+$$
+Z_{ij} = \tilde{v}_i^T \, \vec{v}_j = \vec{q}_i^T \, J^T \, \vec{v}_j \,.
+$$
+Instead of minimizing the squared reconstruction error $C(\vec{w})$, we now minimize the cross-entropy loss:
+$$
+\begin{align}
+\mathcal{L}(\vec{w})
+&= -\frac{1}{L} \sum_{i=1}^L \log \left( \frac{e^{Z_{ii}}}{\sum_{j=1}^L e^{Z_{ij}}} \right)
+\\
+&= -\frac{1}{L} \sum_{i=1}^L \left( Z_{ii} - \log \sum_{j=1}^L e^{Z_{ij}} \right)
+\end{align}
+$$
+In contrast to the squared loss that focused on reconstruction, the cross entropy loss measures the ability 
+to recall a particular token from the memory. After some algebra, we can derive the derivative of the cross-entropy 
+loss as
+$$
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+&= - \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l
++ \frac{1}{L} \sum_{i=1}^L \sum_{j=1}^L \mathrm{softmax}(Z_i)_j \cdot \vec{v}_l^T \, \vec{v}_j \, \vec{k}_l^T \, \vec{q}_i \,,
+\end{align}
+$$
+where
+$$
+\mathrm{softmax}(Z_i)_j = \frac{e^{\vec{q}_i^T \, J^T \, \vec{v}_j}}{ \sum_k e^{\vec{q}_i^T \, J^T \, \vec{v}_k}} \,,
+$$
+is the probability of retrieving token $j$ in response to query $i$. If we define this probability as 
+$$
+P_{ij}(\vec{w}) = \mathrm{softmax}(Z_i)_j 
+$$ 
+then we can rewrite the gradient as
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= - \vec{k}_l^T \left( \Sigma_{qv} - \frac{1}{L} \sum_{ij} \vec{q}_i \, P_{ij}(\vec{w}) \, \vec{v}_j^T \right) \vec{v}_l \, .
+$$
+Therefore, we arrive at the dynamical equation 
+$$
+\frac{d \, w_l}{d \, t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+$$
+where the "functional response" is
+$$
+A_{l,l'}(\vec{w}) = \vec{k}_l^T \, \vec{q}_{l'} \left( \sum_{j} P_{l',j}(\vec{w}) \vec{v}_j^T  \right) \vec{v}_l \,.
+$$
+
+
+## Pairwise Binary Cross Entropy Loss
+
+Minimizing the standard cross-entropy loss treats the problem of learning the weights of the associative memory 
+as a multiclass classification problem. An alternative is to treat it as a series of pairwise binary classification 
+problems. The pairwise binary cross-entropy loss is defined as:
+$$
+\mathcal{L}(\vec{w}) = - \frac{1}{L(L-1)} \sum_{i \neq j} \log \frac{ e^{Z_{ij}} }{ e^{Z_{ii}} + e^{Z_{ij}} },
+$$
+where 
+$$
+Z_{ij} = \vec{q}_i^T J^T \vec{v}_j \,.
+$$
+Differentiating this loss with respect to a memory weight $w_l$, we obtain:
+$$
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+= - \vec{k}_l^T \left( \frac{1}{L(L-1)} \sum_{i \neq j} \vec{q}_i\, \sigma(\Delta_{ij})\, (\vec{v}_j - \vec{v}_i)^T \right) \vec{v}_l
+\end{align}
+$$
+where the logit margin is
+$$
+\Delta_{ij} = \vec{q}_i^T J^T \vec{v}_j - \vec{q}_i^T J^T \vec{v}_i \,.
+$$
+We use a trick inside the parentheses in which we simultaneously add and subtract $\Sigma_{qv}$ and rearrange to find
+$$
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+= - \vec{k}_l^T \left( \Sigma_{qv} - \frac{1}{L} \sum_{i} \left( \vec{q}_i \vec{v}_i^T + \frac{1}{L-1} \sum_j \vec{q}_i \, (1 - \delta_{ij}) \, \sigma(\Delta_{ij})\, (\vec{v}_i - \vec{v}_j)^T \right) \right) \vec{v}_l \,.
+\end{align}
+$$
+Now, if we define 
+$$
+T_{ij}(\vec{w}) = \frac{1}{L - 1} \left( \sigma(\Delta_{ij}) - \delta_{ij} \sum_{k \ne i} \sigma(\Delta_{ik}) \right)
+$$
+then we arrive at
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= - \vec{k}_l^T \left( \Sigma_{qv} - \frac{1}{L} \sum_{ij} \vec{q}_i \, T_{ij}(\vec{w}) \, \vec{v}_j^T \right) \vec{v}_l \, .
+$$
+which has the same form as the expression for the categorical cross entropy loss. Therefore, we arrive at the 
+dynamical equation 
+$$
+\frac{d \, w_l}{d \, t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+$$
+where the "functional response" is
+$$
+A_{l,l'}(\vec{w}) = \vec{k}_l^T \, \vec{q}_{l'} \left( \sum_{j} T_{l',j}(\vec{w}) \vec{v}_j^T  \right) \vec{v}_l \,.
+$$
+
+## Quadratic Loss Revisited
+
+Using our previous results for the quadratic loss, the derivative of the cost function with respect to the weights is
+$$
+\frac{\partial C}{\partial w_l} 
+= - \vec{k}_l^T  \left( \Sigma_{qv} - \sum_{j} \Sigma_{qq} \, \vec{k}_{j} \, \vec{v}_{j}^T \, w_{j} \right) \vec{v}_l \,.
+$$
+which we can rearrange into
+$$
+\frac{\partial C}{\partial w_l} 
+= - \vec{k}_l^T  \left( \Sigma_{qv} - \frac{1}{L} \sum_{ij} \vec{q}_i  \, T_{ij}(\vec{w}) \, \vec{v}_{j}^T \right) \vec{v}_l \,.
+$$
+where
+$$
+T_{ij}(\vec{w}) = w_{j}  \, \vec{q}_i^T \, \vec{k}_{j} \, .
+$$
+Therefore, once again we arrive at the dynamical equation 
+$$
+\frac{d \, w_l}{d \, t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+$$
+where the "functional response" is
+$$
+A_{l,l'}(\vec{w}) = \vec{k}_l^T \, \vec{q}_{l'} \left( \sum_{j} T_{l',j}(\vec{w}) \vec{v}_j^T  \right) \vec{v}_l \,.
+$$
+
+## Conclusion
+
+In all three cases — quadratic loss, categorical cross-entropy, and pairwise binary cross-entropy — we find that 
+the learning dynamics of weighted linear attention can be written as a generalized Lotka-Volterra system, 
+where the functional response $A_{l,l'}(\vec{w})$ depends on the loss. The fact that such different loss functions 
+all reduce to the same core dynamical structure is surprising — and points to a deeper underlying principle 
+in how attention mechanisms can be organized, optimized, and interpreted. This result hints at a unifying ecological 
+interpretation of attention mechanisms -- which I'll explore more in the next post -- and reveals how different 
+loss functions shape memory competition and specialization.

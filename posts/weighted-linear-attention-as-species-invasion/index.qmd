@@ -2,7 +2,7 @@
 title: "Weighted Linear Attention as Species Invasion"
 author: "Charles Fisher"
 date: "2025-04-08"
-categories: [research, machine-learning, attention]
+categories: [research, machine-learning, ecology, attention, lotka-volterra]
 image: species-invasion-thumbnail.png
 bibliography: weighted-linear-attention.bib
 draft: false

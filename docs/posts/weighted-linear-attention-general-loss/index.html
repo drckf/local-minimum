@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Charles Fisher">
+<meta name="dcterms.date" content="2025-04-14">
 
-<title>Local Minimum</title>
+<title>Weighted Linear Attention with Other Loss Functions – Local Minimum</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -128,17 +99,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Local Minimum" href="index.xml" data-external="1"></head>
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Local Minimum</span>
     </a>
   </div>
@@ -149,11 +120,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./license.html"> 
+    <a class="nav-link" href="../../license.html"> 
 <span class="menu-text">License</span></a>
   </li>  
   <li class="nav-item compact">
@@ -162,7 +133,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -176,225 +147,161 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Local Minimum</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Weighted Linear Attention with Other Loss Functions</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">research</div>
+                <div class="quarto-category">machine-learning</div>
+                <div class="quarto-category">ecology</div>
+                <div class="quarto-category">attention</div>
+                <div class="quarto-category">lotka-volterra</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Charles Fisher </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 14, 2025</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="YXR0ZW50aW9u">attention <span class="quarto-category-count">(4)</span></div><div class="category" data-category="ZWNvbG9neQ==">ecology <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bG90a2Etdm9sdGVycmE=">lotka-volterra <span class="quarto-category-count">(3)</span></div><div class="category" data-category="bWFjaGluZS1sZWFybmluZw==">machine-learning <span class="quarto-category-count">(4)</span></div><div class="category" data-category="cmVzZWFyY2g=">research <span class="quarto-category-count">(3)</span></div><div class="category" data-category="cmV2aWV3">review <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-<section id="welcome-to-the-local-minimum" class="level2">
-<h2 class="anchored" data-anchor-id="welcome-to-the-local-minimum">Welcome to the Local Minimum</h2>
-<p>This is a technical blog with long form posts about my research before it is ready for publication in traditional journal articles. Most of this research will be at the intersection of statistical physics, machine learning, and biology. Some posts will be reviews, but most will be involve novel research and will include both theoretical and experimental analyses, and sometimes just discussion of algorithms or code. For more information about this blog and its author, check out the <a href="./about.html">About</a> page.</p>
-<hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
-
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>In this post, I extend the ecological interpretation of weighted linear attention by analyzing how different loss functions — including categorical cross-entropy and pairwise binary cross-entropy — shape the dynamics of memory weights. Despite their distinct objectives, all losses lead to gradient flows that can be written in the form of generalized Lotka-Volterra equations, where the functional response encodes the form of memory interference. This suggests that a wide class of attention mechanisms can be unified under a common dynamical framework and highlights how the choice of loss function governs competition, specialization, and adaptation within memory. I’ll explore the universality of these results in the next post.</p>
+</section>
+<section id="review-of-previous-results" class="level2">
+<h2 class="anchored" data-anchor-id="review-of-previous-results">Review of Previous Results</h2>
+<p>In a previous post <a href="../../posts/weighted-linear-attention-is-lotka-volterra/index.html">Weighted Linear Attention is Lotka-Volterra Dynamics</a>, I showed that weighted linear attention modules can be interpreted as ecological systems where tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. To briefly review those results, I focus on a particular form of weighted linear attention module determined by an associative memory matrix, <span class="math display">\[
+J = \sum_{l} w_{l} \, \vec{v}_{l} \, \vec{k}_{l}^T \,,
+\]</span> where <span class="math inline">\(l\)</span> denotes the token position, <span class="math inline">\(\vec{v}_l = W_{V} \vec{x}_l \in \mathbb{R}^{d_v}\)</span> is a value vector, <span class="math inline">\(\vec{k}_l = W_{K} \vec{x}_l \in \mathbb{R}^{d_k}\)</span> is a key vector, <span class="math inline">\(\vec{x}_l \in \mathbb{R}^{n}\)</span> is a token embedding, and <span class="math inline">\(w_l \geq 0\)</span> is the weight of token <span class="math inline">\(l\)</span> in memory. Recall from the memory is simply matrix multiplication, <span class="math display">\[
+\tilde{v}_l = J \, \vec{q}_l
+\]</span> where <span class="math inline">\(\vec{q}_l = W_Q \vec{x}_l \in \mathbb{R}^{d_k}\)</span> is a query vector. The mean squared recall error for a batch of tokens <span class="math inline">\(\{ \vec{x}_l \}_{l=1}^L\)</span> is (up to a factor of <span class="math inline">\(1/2\)</span>), <span id="eq-squared-loss"><span class="math display">\[
+C(\vec{w}) = \frac{1}{2 L} \sum_{l=1}^L || \vec{v}_l - J \, \vec{q}_l ||^2 \, .
+\qquad(1)\]</span></span> To learn the weights, the cost function can be minimized using a simple variant of exponentiated gradient descent to satisfy the non-negativity constraint. In the continuous-time limit, this update rule leads to the following differential equation <span class="math display">\[
+\frac{d \, w_l}{d \, t} = - w_l \frac{\partial C}{\partial w_l}
+\]</span> that describes the dynamics of the weights under the exponentiated gradient descent. After a bit of algebra, it’s possible to show that the following generalized Lotka-Volterra equation describes the dynamics of the weights, <span id="eq-lotka-volterra"><span class="math display">\[
+\frac{d \, w_l}{d \, t} =  w_l \Big( s_l - \sum_{l'} A_{l, l'} \, w_{l'} \Big) \,,
+\qquad(2)\]</span></span> where <span class="math display">\[
+\begin{align}
+s_l &amp;= \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l \,,
+\\
+A_{l,l'} &amp;= \vec{v}_l^T \, \vec{v}_{l'} \, \vec{k}_{l'}^T \, \Sigma_{qq} \, \vec{k}_{l}
+\, ,
+\end{align}
+\]</span> <span class="math inline">\(s_l\)</span> is the intrinsic growth rate of token <span class="math inline">\(l\)</span>, <span class="math inline">\(A_{l,l'}\)</span> is the interaction coefficient for tokens <span class="math inline">\(l\)</span> and <span class="math inline">\(l'\)</span>, <span class="math inline">\(\Sigma_{qv}\)</span> is the uncentered query-value correlation matrix, and <span class="math inline">\(\Sigma_{qq}\)</span> is the uncentered query-query correlation matrix.</p>
+</section>
+<section id="cross-entropy-loss" class="level2">
+<h2 class="anchored" data-anchor-id="cross-entropy-loss">Cross Entropy Loss</h2>
+<p>As before, consider the memory matrix <span class="math inline">\(J = \sum_{l=1}^L w_l \vec{v}_l \, \vec{k}_l^T\)</span> with memory retrieval <span class="math inline">\(\tilde{v}_i = J \, \vec{q}_i\)</span>. In addition, define the similarity between the retrieved vector and each stored value as <span class="math display">\[
+Z_{ij} = \tilde{v}_i^T \, \vec{v}_j = \vec{q}_i^T \, J^T \, \vec{v}_j \,.
+\]</span> Instead of minimizing the squared reconstruction error <span class="math inline">\(C(\vec{w})\)</span>, we now minimize the cross-entropy loss: <span class="math display">\[
+\begin{align}
+\mathcal{L}(\vec{w})
+&amp;= -\frac{1}{L} \sum_{i=1}^L \log \left( \frac{e^{Z_{ii}}}{\sum_{j=1}^L e^{Z_{ij}}} \right)
+\\
+&amp;= -\frac{1}{L} \sum_{i=1}^L \left( Z_{ii} - \log \sum_{j=1}^L e^{Z_{ij}} \right)
+\end{align}
+\]</span> In contrast to the squared loss that focused on reconstruction, the cross entropy loss measures the ability to recall a particular token from the memory. After some algebra, we can derive the derivative of the cross-entropy loss as <span class="math display">\[
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+&amp;= - \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l
++ \frac{1}{L} \sum_{i=1}^L \sum_{j=1}^L \mathrm{softmax}(Z_i)_j \cdot \vec{v}_l^T \, \vec{v}_j \, \vec{k}_l^T \, \vec{q}_i \,,
+\end{align}
+\]</span> where <span class="math display">\[
+\mathrm{softmax}(Z_i)_j = \frac{e^{\vec{q}_i^T \, J^T \, \vec{v}_j}}{ \sum_k e^{\vec{q}_i^T \, J^T \, \vec{v}_k}} \,,
+\]</span> is the probability of retrieving token <span class="math inline">\(j\)</span> in response to query <span class="math inline">\(i\)</span>. If we define this probability as <span class="math display">\[
+P_{ij}(\vec{w}) = \mathrm{softmax}(Z_i)_j
+\]</span> then we can rewrite the gradient as <span class="math display">\[
+\frac{\partial \mathcal{L}}{\partial w_l}
+= - \vec{k}_l^T \left( \Sigma_{qv} - \frac{1}{L} \sum_{ij} \vec{q}_i \, P_{ij}(\vec{w}) \, \vec{v}_j^T \right) \vec{v}_l \, .
+\]</span> Therefore, we arrive at the dynamical equation <span class="math display">\[
+\frac{d \, w_l}{d \, t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+\]</span> where the “functional response” is <span class="math display">\[
+A_{l,l'}(\vec{w}) = \vec{k}_l^T \, \vec{q}_{l'} \left( \sum_{j} P_{l',j}(\vec{w}) \vec{v}_j^T  \right) \vec{v}_l \,.
+\]</span></p>
+</section>
+<section id="pairwise-binary-cross-entropy-loss" class="level2">
+<h2 class="anchored" data-anchor-id="pairwise-binary-cross-entropy-loss">Pairwise Binary Cross Entropy Loss</h2>
+<p>Minimizing the standard cross-entropy loss treats the problem of learning the weights of the associative memory as a multiclass classification problem. An alternative is to treat it as a series of pairwise binary classification problems. The pairwise binary cross-entropy loss is defined as: <span class="math display">\[
+\mathcal{L}(\vec{w}) = - \frac{1}{L(L-1)} \sum_{i \neq j} \log \frac{ e^{Z_{ij}} }{ e^{Z_{ii}} + e^{Z_{ij}} },
+\]</span> where <span class="math display">\[
+Z_{ij} = \vec{q}_i^T J^T \vec{v}_j \,.
+\]</span> Differentiating this loss with respect to a memory weight <span class="math inline">\(w_l\)</span>, we obtain: <span class="math display">\[
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+= - \vec{k}_l^T \left( \frac{1}{L(L-1)} \sum_{i \neq j} \vec{q}_i\, \sigma(\Delta_{ij})\, (\vec{v}_j - \vec{v}_i)^T \right) \vec{v}_l
+\end{align}
+\]</span> where the logit margin is <span class="math display">\[
+\Delta_{ij} = \vec{q}_i^T J^T \vec{v}_j - \vec{q}_i^T J^T \vec{v}_i \,.
+\]</span> We use a trick inside the parentheses in which we simultaneously add and subtract <span class="math inline">\(\Sigma_{qv}\)</span> and rearrange to find <span class="math display">\[
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+= - \vec{k}_l^T \left( \Sigma_{qv} - \frac{1}{L} \sum_{i} \left( \vec{q}_i \vec{v}_i^T + \frac{1}{L-1} \sum_j \vec{q}_i \, (1 - \delta_{ij}) \, \sigma(\Delta_{ij})\, (\vec{v}_i - \vec{v}_j)^T \right) \right) \vec{v}_l \,.
+\end{align}
+\]</span> Now, if we define <span class="math display">\[
+T_{ij}(\vec{w}) = \frac{1}{L - 1} \left( \sigma(\Delta_{ij}) - \delta_{ij} \sum_{k \ne i} \sigma(\Delta_{ik}) \right)
+\]</span> then we arrive at <span class="math display">\[
+\frac{\partial \mathcal{L}}{\partial w_l}
+= - \vec{k}_l^T \left( \Sigma_{qv} - \frac{1}{L} \sum_{ij} \vec{q}_i \, T_{ij}(\vec{w}) \, \vec{v}_j^T \right) \vec{v}_l \, .
+\]</span> which has the same form as the expression for the categorical cross entropy loss. Therefore, we arrive at the dynamical equation <span class="math display">\[
+\frac{d \, w_l}{d \, t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+\]</span> where the “functional response” is <span class="math display">\[
+A_{l,l'}(\vec{w}) = \vec{k}_l^T \, \vec{q}_{l'} \left( \sum_{j} T_{l',j}(\vec{w}) \vec{v}_j^T  \right) \vec{v}_l \,.
+\]</span></p>
+</section>
+<section id="quadratic-loss-revisited" class="level2">
+<h2 class="anchored" data-anchor-id="quadratic-loss-revisited">Quadratic Loss Revisited</h2>
+<p>Using our previous results for the quadratic loss, the derivative of the cost function with respect to the weights is <span class="math display">\[
+\frac{\partial C}{\partial w_l}
+= - \vec{k}_l^T  \left( \Sigma_{qv} - \sum_{j} \Sigma_{qq} \, \vec{k}_{j} \, \vec{v}_{j}^T \, w_{j} \right) \vec{v}_l \,.
+\]</span> which we can rearrange into <span class="math display">\[
+\frac{\partial C}{\partial w_l}
+= - \vec{k}_l^T  \left( \Sigma_{qv} - \frac{1}{L} \sum_{ij} \vec{q}_i  \, T_{ij}(\vec{w}) \, \vec{v}_{j}^T \right) \vec{v}_l \,.
+\]</span> where <span class="math display">\[
+T_{ij}(\vec{w}) = w_{j}  \, \vec{q}_i^T \, \vec{k}_{j} \, .
+\]</span> Therefore, once again we arrive at the dynamical equation <span class="math display">\[
+\frac{d \, w_l}{d \, t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+\]</span> where the “functional response” is <span class="math display">\[
+A_{l,l'}(\vec{w}) = \vec{k}_l^T \, \vec{q}_{l'} \left( \sum_{j} T_{l',j}(\vec{w}) \vec{v}_j^T  \right) \vec{v}_l \,.
+\]</span></p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>In all three cases — quadratic loss, categorical cross-entropy, and pairwise binary cross-entropy — we find that the learning dynamics of weighted linear attention can be written as a generalized Lotka-Volterra system, where the functional response <span class="math inline">\(A_{l,l'}(\vec{w})\)</span> depends on the loss. The fact that such different loss functions all reduce to the same core dynamical structure is surprising — and points to a deeper underlying principle in how attention mechanisms can be organized, optimized, and interpreted. This result hints at a unifying ecological interpretation of attention mechanisms – which I’ll explore more in the next post – and reveals how different loss functions shape memory competition and specialization.</p>
 
 
 </section>
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744614000000" data-listing-file-modified-sort="1744415159125" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1136">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-general-loss/qkv-matching.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">Weighted Linear Attention with Other Loss Functions</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">In this post, I extend the ecological interpretation of weighted linear attention by analyzing how different loss functions — including categorical cross-entropy and…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">
-<div class="listing-date">
-Apr 14, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744095600000" data-listing-file-modified-sort="1744302086661" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2478">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-as-species-invasion/species-invasion-thumbnail.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">Weighted Linear Attention as Species Invasion</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. In previous…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">
-<div class="listing-date">
-Apr 8, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744009200000" data-listing-file-modified-sort="1744302086662" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1994">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-is-lotka-volterra/The_Ecology_of_Attention_Figure_1.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">Weighted Linear Attention is Lotka-Volterra Dynamics</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. Here, I show…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">
-<div class="listing-date">
-Apr 7, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="cmV2aWV3JTJDbWFjaGluZS1sZWFybmluZyUyQ2F0dGVudGlvbg==" data-listing-date-sort="1743922800000" data-listing-file-modified-sort="1744302086662" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1010">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention/thumbnail.jpg" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external">What is Weighted Linear Attention?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmV2aWV3'); return false;">
-review
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external">Weighted linear attention is a type of key-value associative memory defined by the matrix <span class="math display">\[
-\begin{equation}
-J = \sum_{l'} w_{l'} \, \vec{v}_{l'} \…</span><span class="math inline"></span></a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external">
-<div class="listing-date">
-Apr 6, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
 
 <h2>Subscribe to Updates</h2>
@@ -442,7 +349,7 @@ No matching items
   </script>
 
 <div class="license-footer" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.8em; color: #666;">
-  © 2025 Charles Fisher. This work is licensed under a <a href="./license.html">Creative Commons Attribution 4.0 International License</a>.
+  © 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.
 </div>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -861,6 +768,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<script src="https://giscus.app/client.js" data-repo="drckf/local-minimum" data-repo-id="R_kgDOOVGEfA" data-category="Announcements" data-category-id="DIC_kwDOOVGEfM4Co189" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="light">
 </div> <!-- /content -->
 
 
