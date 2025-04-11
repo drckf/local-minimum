@@ -10,7 +10,7 @@
 <atom:link href="https://drckf.github.io/local-minimum/index.xml" rel="self" type="application/rss+xml"/>
 <description>Research-in-progress blog on ML, physics, and biology</description>
 <generator>quarto-1.6.42</generator>
-<lastBuildDate>Sat, 12 Apr 2025 07:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 14 Apr 2025 07:00:00 GMT</lastBuildDate>
 <item>
   <title>Weighted Linear Attention with Other Loss Functions</title>
   <dc:creator>Charles Fisher</dc:creator>
@@ -55,7 +55,7 @@
   <category>attention</category>
   <category>lotka-volterra</category>
   <guid>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-general-loss/</guid>
-  <pubDate>Sat, 12 Apr 2025 07:00:00 GMT</pubDate>
+  <pubDate>Mon, 14 Apr 2025 07:00:00 GMT</pubDate>
   <media:content url="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-general-loss/qkv-matching.png" medium="image" type="image/png" height="96" width="144"/>
 </item>
 <item>

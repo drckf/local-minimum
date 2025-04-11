@@ -1,7 +1,7 @@
 ---
 title: "Weighted Linear Attention with Other Loss Functions"
 author: "Charles Fisher"
-date: "2025-04-12"
+date: "2025-04-14"
 categories: [research, machine-learning, ecology, attention, lotka-volterra]
 image: qkv-matching.png
 bibliography: weighted-linear-attention.bib
