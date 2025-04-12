@@ -1,0 +1,9 @@
+---
+title: "Weighted Linear Attention with Mahalanobis Loss"
+author: "Charles Fisher"
+date: "2025-04-16"
+categories: [research, machine-learning, ecology, attention, lotka-volterra]
+image: mahalanobis-thumbnail.png
+bibliography: weighted-linear-attention.bib
+draft: True
+---
