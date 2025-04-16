@@ -7,3 +7,73 @@ image: mahalanobis-thumbnail.png
 bibliography: weighted-linear-attention.bib
 draft: True
 ---
+
+## TLDR
+
+
+## Review of Previous Results
+
+In a previous post [Weighted Linear Attention is Lotka-Volterra Dynamics](
+    /posts/weighted-linear-attention-is-lotka-volterra/index.qmd), 
+I showed that weighted linear attention modules can be interpreted as ecological systems where tokens are 
+species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized 
+via exponentiated gradient descent to minimize the squared recall error. To briefly review those results,
+I focus on a particular form of weighted linear attention module determined by an associative memory matrix,
+$$
+J = \sum_{l} w_{l} \, \vec{v}_{l} \, \vec{k}_{l}^T \,,
+$$
+where $l$ denotes the token position, $\vec{v}_l = W_{V} \vec{x}_l \in \mathbb{R}^{d_v}$ is a value vector, 
+$\vec{k}_l = W_{K} \vec{x}_l \in \mathbb{R}^{d_k}$ is a key vector, $\vec{x}_l \in \mathbb{R}^{n}$ is a token embedding, 
+and $w_l \geq 0$ is the weight of token $l$ in memory. Recall from the memory is simply matrix multiplication,
+$$
+\tilde{v}_l = J \, \vec{q}_l
+$$
+where $\vec{q}_l = W_Q \vec{x}_l \in \mathbb{R}^{d_k}$ is a query vector.  The mean squared recall error for a 
+batch of tokens $\{ \vec{x}_l \}_{l=1}^L$ is (up to a factor of $1/2$),
+$$
+C(\vec{w}) = \frac{1}{2 L} \sum_{l=1}^L || \vec{v}_l - J \, \vec{q}_l ||^2 \, .
+$$ {#eq-squared-loss}
+To learn the weights, the cost function can be minimized using a simple variant of 
+exponentiated gradient descent to satisfy the non-negativity constraint. 
+In the continuous-time limit, this update rule leads to the following differential equation
+$$
+\frac{d \, w_l}{d \, t} = - w_l \frac{\partial C}{\partial w_l}
+$$
+that describes the dynamics of the weights under the exponentiated gradient descent.
+After a bit of algebra, it's possible to show that the following generalized Lotka-Volterra equation
+describes the dynamics of the weights,
+$$
+\frac{d \, w_l}{d \, t} =  w_l \Big( s_l - \sum_{l'} A_{l, l'} \, w_{l'} \Big) \,,
+$$ {#eq-lotka-volterra}
+where
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l \,,
+\\
+A_{l,l'} &= \vec{v}_l^T \, \vec{v}_{l'} \, \vec{k}_{l'}^T \, \Sigma_{qq} \, \vec{k}_{l}
+\, ,
+\end{align}
+$$
+$s_l$ is the intrinsic growth rate of token $l$, $A_{l,l'}$ is the interaction coefficient for tokens $l$ and $l'$, 
+$\Sigma_{qv}$ is the uncentered query-value correlation matrix, and $\Sigma_{qq}$ is the 
+uncentered query-query correlation matrix. 
+
+## Mahalanobis Loss
+
+The squared Mahalanobis loss defined by
+$$
+C(\vec{w}) = \frac{1}{2 L} \sum_{l=1}^L (\vec{v}_l - J \, \vec{q}_l)^T \Sigma_{vv}^{-1} (\vec{v}_l - J \, \vec{q}_l)  \, .
+$$ {#eq-mahalanobis-loss}
+is closely related to @eq-squared-loss except that distances take into account the geometry of the value vectors 
+through their correlation matrix $\Sigma_{vv}$.
+
+$$
+\frac{d \, w_l}{dt} = w_l \left( s_l - \sum_{l'} A_{l,l'}\, w_{l'} \right) \,,
+$$
+where
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \left( \frac{1}{L}\sum_{i=1}^L \vec{q}_i\, (\vec{v}_i^T \Sigma_{vv}^{-1}) \right) \vec{v}_l \,, \\[1mm]
+A_{l,l'} &= \vec{v}_l^T \, \Sigma_{vv}^{-1} \, \vec{v}_{l'} \, \vec{k}_{l'}^T \left( \frac{1}{L}\sum_{i=1}^L \vec{q}_i \vec{q}_i^T \right) \vec{k}_l \,.
+\end{align}
+$$
