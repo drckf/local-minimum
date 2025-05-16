@@ -10,7 +10,518 @@
 <atom:link href="https://drckf.github.io/local-minimum/index.xml" rel="self" type="application/rss+xml"/>
 <description>Research-in-progress blog on ML, physics, and biology</description>
 <generator>quarto-1.6.42</generator>
-<lastBuildDate>Mon, 14 Apr 2025 07:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 17 Apr 2025 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Lotka-Volterra Neural Networks</title>
+  <dc:creator>Charles Fisher</dc:creator>
+  <link>https://drckf.github.io/local-minimum/posts/lvnet/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This is a short post to explore an analogy between deep neural networks and island biogeography in ecology. Yes – I know that, at first glance, this probably sounds ridiculous. Hopefully, I can convince you that it’s at least interesting, and may even be useful for something.</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"></span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> typing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> Any, Dict, Optional</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> math <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> sqrt</span>
+<span id="cb1-4"></span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mlx.nn <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> nn</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mlorchard.models.base <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> base</span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mlorchard.models.layers <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> layers</span>
+<span id="cb1-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mlorchard.models.activations <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> act</span>
+<span id="cb1-9"></span>
+<span id="cb1-10"></span>
+<span id="cb1-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> SymmetricLinear(base.OrchardLayer):</span>
+<span id="cb1-12">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, input_dim: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>, rank: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>, iters: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>):</span>
+<span id="cb1-13">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb1-14">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.input_dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> input_dim</span>
+<span id="cb1-15">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rank <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rank</span>
+<span id="cb1-16">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> iters</span>
+<span id="cb1-17">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> layers.Linear(rank, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.input_dim)</span>
+<span id="cb1-18"></span>
+<span id="cb1-19">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb1-20">        b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear.bias</span>
+<span id="cb1-21">        w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.linear.weight</span>
+<span id="cb1-22">        scale <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> (sqrt(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rank) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters)</span>
+<span id="cb1-23">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> w <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> w.T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> scale <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> b</span>
+<span id="cb1-24">        </span>
+<span id="cb1-25"></span>
+<span id="cb1-26"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> LVBlock(base.OrchardLayer):</span>
+<span id="cb1-27">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(</span>
+<span id="cb1-28">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>,</span>
+<span id="cb1-29">            input_dim: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>,</span>
+<span id="cb1-30">            iters: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb1-31">            rank: Optional[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>,</span>
+<span id="cb1-32">            normalize: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb1-33">        ):</span>
+<span id="cb1-34">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb1-35">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.input_dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> input_dim</span>
+<span id="cb1-36">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.normalize <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> normalize</span>
+<span id="cb1-37">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> iters</span>
+<span id="cb1-38">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rank <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> input_dim <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> rank <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">is</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span> rank</span>
+<span id="cb1-39">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.normalize:</span>
+<span id="cb1-40">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.main_norm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> layers.LayerNorm(input_dim, affine<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb1-41">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.main_linear <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> SymmetricLinear(input_dim, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rank, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters)</span>
+<span id="cb1-42">    </span>
+<span id="cb1-43">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> _single_pass(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb1-44">        dx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x</span>
+<span id="cb1-45">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.normalize:</span>
+<span id="cb1-46">            dx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.main_norm(dx)</span>
+<span id="cb1-47">            dx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> sqrt(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.input_dim)</span>
+<span id="cb1-48">        dx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.main_linear(dx)</span>
+<span id="cb1-49">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> nn.relu(x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dx)</span>
+<span id="cb1-50"></span>
+<span id="cb1-51">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb1-52">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters):</span>
+<span id="cb1-53">            x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>._single_pass(x)</span>
+<span id="cb1-54">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> x</span>
+<span id="cb1-55"></span>
+<span id="cb1-56"></span>
+<span id="cb1-57"></span>
+<span id="cb1-58"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">class</span> LVNet(base.OrchardLayer):</span>
+<span id="cb1-59">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>(</span>
+<span id="cb1-60">            <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>,</span>
+<span id="cb1-61">            input_dim: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>,</span>
+<span id="cb1-62">            hidden_dim: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>,</span>
+<span id="cb1-63">            output_dim: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>,</span>
+<span id="cb1-64">            num_blocks: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb1-65">            iters: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb1-66">            rank: Optional[<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">None</span>,</span>
+<span id="cb1-67">            normalize: <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>,</span>
+<span id="cb1-68">        ):</span>
+<span id="cb1-69">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">assert</span> num_blocks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"num_blocks must be at least 1"</span></span>
+<span id="cb1-70">        <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">super</span>().<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">__init__</span>()</span>
+<span id="cb1-71">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.input_dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> input_dim</span>
+<span id="cb1-72">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.hidden_dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> hidden_dim</span>
+<span id="cb1-73">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.output_dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> output_dim</span>
+<span id="cb1-74">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.num_blocks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> num_blocks</span>
+<span id="cb1-75">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.normalize <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> normalize</span>
+<span id="cb1-76">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> iters</span>
+<span id="cb1-77">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rank <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> rank</span>
+<span id="cb1-78"></span>
+<span id="cb1-79">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Build the sequence of blocks</span></span>
+<span id="cb1-80">        blocks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> []</span>
+<span id="cb1-81"></span>
+<span id="cb1-82">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># If input_dim != hidden_dim, add a linear layer and ReLU</span></span>
+<span id="cb1-83">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> input_dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span> hidden_dim:</span>
+<span id="cb1-84">            blocks.append(</span>
+<span id="cb1-85">                layers.Linear(input_dim, hidden_dim)</span>
+<span id="cb1-86">            )</span>
+<span id="cb1-87">            blocks.append(</span>
+<span id="cb1-88">                act.ReLU()</span>
+<span id="cb1-89">            )</span>
+<span id="cb1-90">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Middle blocks: hidden_dim -&gt; hidden_dim</span></span>
+<span id="cb1-91">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> _ <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(num_blocks):</span>
+<span id="cb1-92">            blocks.append(</span>
+<span id="cb1-93">                LVBlock(</span>
+<span id="cb1-94">                    input_dim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.hidden_dim,</span>
+<span id="cb1-95">                    normalize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.normalize,</span>
+<span id="cb1-96">                    iters<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.iters,</span>
+<span id="cb1-97">                    rank<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.rank,</span>
+<span id="cb1-98">                )</span>
+<span id="cb1-99">            )</span>
+<span id="cb1-100">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Final block: hidden_dim -&gt; output_dim</span></span>
+<span id="cb1-101">        blocks.append(</span>
+<span id="cb1-102">            layers.Linear(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.hidden_dim, <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.output_dim)</span>
+<span id="cb1-103">        )</span>
+<span id="cb1-104"></span>
+<span id="cb1-105">        <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Wrap in a sequential container</span></span>
+<span id="cb1-106">        <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.model <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> layers.Sequential(blocks)</span>
+<span id="cb1-107"></span>
+<span id="cb1-108">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> forward(<span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>, x):</span>
+<span id="cb1-109">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">self</span>.model(x)</span></code></pre></div>
+
+
+
+ ]]></description>
+  <category>research</category>
+  <category>machine-learning</category>
+  <category>ecology</category>
+  <category>lotka-volterra</category>
+  <guid>https://drckf.github.io/local-minimum/posts/lvnet/</guid>
+  <pubDate>Thu, 17 Apr 2025 07:00:00 GMT</pubDate>
+  <media:content url="https://drckf.github.io/local-minimum/posts/lvnet/islands.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>Weighted Linear Attention with Other Loss Functions</title>
   <dc:creator>Charles Fisher</dc:creator>

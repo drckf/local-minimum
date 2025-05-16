@@ -1,0 +1,125 @@
+---
+title: "Lotka-Volterra Neural Networks"
+author: "Charles Fisher"
+date: "2025-04-17"
+categories: [research, machine-learning, ecology, lotka-volterra]
+image: islands.png
+draft: false
+---
+
+This is a short post to explore an analogy between deep neural networks and island biogeography in ecology. 
+Yes -- I know that, at first glance, this probably sounds ridiculous. Hopefully, I can convince you that it's
+at least interesting, and may even be useful for something. 
+
+
+```python
+
+from typing import Any, Dict, Optional
+from math import sqrt
+
+import mlx.nn as nn
+import mlorchard.models.base as base
+import mlorchard.models.layers as layers
+import mlorchard.models.activations as act
+
+
+class SymmetricLinear(base.OrchardLayer):
+    def __init__(self, input_dim: int, rank: int, iters: int = 1):
+        super().__init__()
+        self.input_dim = input_dim
+        self.rank = rank
+        self.iters = iters
+        self.linear = layers.Linear(rank, self.input_dim)
+
+    def forward(self, x):
+        b = self.linear.bias
+        w = self.linear.weight
+        scale = 1 / (sqrt(self.rank) * self.iters)
+        return x @ w @ w.T * scale + b
+        
+
+class LVBlock(base.OrchardLayer):
+    def __init__(
+            self,
+            input_dim: int,
+            iters: int = 1,
+            rank: Optional[int] = None,
+            normalize: bool = False,
+        ):
+        super().__init__()
+        self.input_dim = input_dim
+        self.normalize = normalize
+        self.iters = iters
+        self.rank = input_dim if rank is None else rank
+        if self.normalize:
+            self.main_norm = layers.LayerNorm(input_dim, affine=False)
+        self.main_linear = SymmetricLinear(input_dim, self.rank, self.iters)
+    
+    def _single_pass(self, x):
+        dx = x
+        if self.normalize:
+            dx = self.main_norm(dx)
+            dx = dx / sqrt(self.input_dim)
+        dx = x * self.main_linear(dx)
+        return nn.relu(x + dx)
+
+    def forward(self, x):
+        for _ in range(self.iters):
+            x = self._single_pass(x)
+        return x
+
+
+
+class LVNet(base.OrchardLayer):
+    def __init__(
+            self,
+            input_dim: int,
+            hidden_dim: int,
+            output_dim: int,
+            num_blocks: int = 1,
+            iters: int = 1,
+            rank: Optional[int] = None,
+            normalize: bool = False,
+        ):
+        assert num_blocks >= 1, "num_blocks must be at least 1"
+        super().__init__()
+        self.input_dim = input_dim
+        self.hidden_dim = hidden_dim
+        self.output_dim = output_dim
+        self.num_blocks = num_blocks
+        self.normalize = normalize
+        self.iters = iters
+        self.rank = rank
+
+        # Build the sequence of blocks
+        blocks = []
+
+        # If input_dim != hidden_dim, add a linear layer and ReLU
+        if input_dim != hidden_dim:
+            blocks.append(
+                layers.Linear(input_dim, hidden_dim)
+            )
+            blocks.append(
+                act.ReLU()
+            )
+        # Middle blocks: hidden_dim -> hidden_dim
+        for _ in range(num_blocks):
+            blocks.append(
+                LVBlock(
+                    input_dim=self.hidden_dim,
+                    normalize=self.normalize,
+                    iters=self.iters,
+                    rank=self.rank,
+                )
+            )
+        # Final block: hidden_dim -> output_dim
+        blocks.append(
+            layers.Linear(self.hidden_dim, self.output_dim)
+        )
+
+        # Wrap in a sequential container
+        self.model = layers.Sequential(blocks)
+
+    def forward(self, x):
+        return self.model(x)
+```
