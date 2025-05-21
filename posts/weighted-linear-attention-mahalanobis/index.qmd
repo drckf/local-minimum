@@ -1,14 +1,22 @@
 ---
 title: "Weighted Linear Attention with Mahalanobis Loss"
 author: "Charles Fisher"
-date: "2025-04-16"
+date: "2025-05-20"
 categories: [research, machine-learning, ecology, attention, lotka-volterra]
 image: mahalanobis-thumbnail.png
 bibliography: weighted-linear-attention.bib
-draft: True
+draft: False
 ---
 
 ## TLDR
+
+Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models 
+used for tasks such as language modeling. In previous posts, I showed that weighted linear attention can be interpreted 
+as an evolving ecological system in which tokens are species and their weights are species abundances. The weights 
+evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared 
+recall error. The squared error, however, doesn't take into account the variance of, or correlations between, 
+different elements of the value vectors. Here, I extend the approach by deriving similar results that minimize
+the Mahalanobis distance in both batch and online learning settings. 
 
 
 ## Review of Previous Results
@@ -65,8 +73,9 @@ $$
 C(\vec{w}) = \frac{1}{2 L} \sum_{l=1}^L (\vec{v}_l - J \, \vec{q}_l)^T \Sigma_{vv}^{-1} (\vec{v}_l - J \, \vec{q}_l)  \, .
 $$ {#eq-mahalanobis-loss}
 is closely related to @eq-squared-loss except that distances take into account the geometry of the value vectors 
-through their correlation matrix $\Sigma_{vv}$.
-
+through their correlation matrix $\Sigma_{vv}$. After following a calculation similar to the previous posts on the 
+mapping between weighted linear attention and Lotka-Volterra systems, one arrives at a differential equation for the 
+training dynamics
 $$
 \frac{d \, w_l}{dt} = w_l \left( s_l - \sum_{l'} A_{l,l'}\, w_{l'} \right) \,,
 $$
@@ -74,6 +83,142 @@ where
 $$
 \begin{align}
 s_l &= \vec{k}_l^T \left( \frac{1}{L}\sum_{i=1}^L \vec{q}_i\, (\vec{v}_i^T \Sigma_{vv}^{-1}) \right) \vec{v}_l \,, \\[1mm]
-A_{l,l'} &= \vec{v}_l^T \, \Sigma_{vv}^{-1} \, \vec{v}_{l'} \, \vec{k}_{l'}^T \left( \frac{1}{L}\sum_{i=1}^L \vec{q}_i \vec{q}_i^T \right) \vec{k}_l \,.
+A_{l,l'} &= \vec{v}_l^T \, \Sigma_{vv}^{-1} \, \vec{v}_{l'} \, \vec{k}_{l'}^T \left( \frac{1}{L}\sum_{i=1}^L \vec{q}_i \vec{q}_i^T \right) \vec{k}_l \,,
 \end{align}
 $$
+are the intrinsic growth rates and the interaction coefficients, respectively. In terms of the correlation matrices,
+the ecological parameters are
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \Sigma_{qv} \, \Sigma_{vv}^{-1} \, \vec{v}_l \,, \\[1mm]
+A_{l,l'} &= \vec{v}_l^T \, \Sigma_{vv}^{-1} \, \vec{v}_{l'} \, \vec{k}_{l'}^T  \, \Sigma_{qq} \, \vec{k}_l \,.
+\end{align}
+$$
+Notice that if we define
+$$
+\vec{\nu}_l = \Sigma_{vv}^{-1/2} \vec{v}_l \,,
+$$
+corresponding to a whitened version of the value vector, then the intrinsic growth rates and interaction coefficients
+can be written as 
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \, \Sigma_{q \nu} \, \vec{\nu}_l \,, \\[1mm]
+A_{l,l'} &= \vec{\nu}_l^T \, \vec{\nu}_{l'} \, \vec{k}_{l'}^T \Sigma_{qq} \vec{k}_l \,.
+\end{align}
+$$
+which is identical to the previous result with the standard squared loss except it uses the whitened value vectors.  
+
+## Online Learning
+
+Following the same logic as in the previous post [Weighted Linear Attention as Species Invasion](
+    /posts/weighted-linear-attention-as-species-invasion/index.qmd), I will use a simple approximation for the 
+online learning scenario by assuming that the arrival of a new token $l$ updates the memory matrix as
+$$
+J_l = \omega_f \, J_{l-1} + \omega_i \, \vec{v}_l \, \vec{k}_l^T \,,
+$$ {#eq-single-species-lv-memory-update}
+where $\omega_f \geq 0$ is a forget gate and $\omega_i \geq 0$ is an input gate [@beck2025xlstm]. 
+This assumes that the incoming token $l$ interacts with a fixed memory defined by $J_{l-1}$ and the arrival 
+of the new token does not adjust the weights of any previous tokens. Given that this is a type of greedy 
+update rule, I refer to this as greedy invasion. With this assumption, the Mahalanobis cost function becomes,
+$$
+\begin{align}
+C_l(\omega_i) 
+&= \frac{1}{2} d_v
+- \omega_f \, s_J + \frac{1}{2} \omega_f^2 \, A_{J,J}
+\\
+&\quad - \omega_i s_l + \frac{1}{2} \omega_i^2 A_{l,l}
++ \omega_i \, \omega_f \, A_{J,l}
+\end{align}
+$$
+where
+$$
+\begin{align}
+s_{J} &=  \text{Tr}\Big(\Sigma_{vv}^{-1} J_{l-1} \, \Sigma_{qv} \Big)
+\\
+s_{l} &= \vec{k}_l^T \, \Sigma_{qv} \, \Sigma_{vv}^{-1} \vec{v}_l 
+\\
+A_{J, J} &= \text{Tr}\Big(\Sigma_{vv}^{-1} \, J_{l-1} \, \Sigma_{qq} \, J_{l-1}^T \Big)
+\\
+A_{l, l} &= \vec{v}_l^T \, \Sigma_{vv}^{-1} \, \vec{v}_l \, \vec{k}_l^T \, \Sigma_{qq} \, \vec{k}_l
+\\
+A_{J, l} &= \vec{v}_l^T \, \Sigma_{vv}^{-1} \, J_{l-1} \, \Sigma_{qq} \, \vec{k}_l
+\end{align}
+$$
+are online estimates for the intrinsic growth rates and interactions and the correlation matrices 
+are computed from online updates based on the currently observed tokens. In the previous post, I included a 
+superscript on the correlation matrices such as $\Sigma_{qq}^l$ to denote that they were computed from $l$ tokens,
+but I've suppressed that notation here for simplicity. These formulas are nearly identical to those in the previous
+post on the standard quadratic loss, except for the appearance of the $\Sigma_{vv}^{-1}$ terms. 
+
+As in the previous post, learning the gates with exponentiated gradient descent in the online context leads to 
+a system of two coupled ordinary differential equations
+$$
+\begin{align}
+\frac{d \, \omega_f}{d \, t} &= \omega_f \left( s_J - \omega_i A_{J,l} - A_{J,J} \omega_f \right)
+\\
+\frac{d \, \omega_i}{d \, t} &= \omega_i \left( s_l - \omega_f A_{J,l} - A_{l,l} \omega_i \right)
+\end{align}
+$$
+describing a Lotka-Volterra model with two species. Assuming that the interaction matrix is invertible, 
+the unconstrained solution is
+$$
+\begin{align}
+\omega_f^* &= \frac{A_{l,l} \, s_J - A_{J,l} \, s_l}{A_{J,J} \, A_{l,l} - A_{J,l}^2},
+\\
+\omega_i^* &= \frac{A_{J,J} \, s_l - A_{J,l} \, s_J}{A_{J,J} \, A_{l,l} - A_{J,l}^2}\,.
+\end{align}
+$$
+Taking into account the non-negativity constraints yields
+$$
+\begin{align}
+\omega_f &=
+\begin{cases}
+\omega_f^*, & \text{if } \omega_i^* > 0, \\[2mm]
+\displaystyle \frac{s_J}{A_{J,J}}, & \text{if } \omega_i^* \le 0,
+\end{cases}\\[2mm]
+\omega_i &=
+\begin{cases}
+\omega_i^*, & \text{if } \omega_f^* > 0,\\[2mm]
+\displaystyle \frac{s_l}{A_{l,l}}, & \text{if } \omega_f^* \le 0,
+\end{cases}
+\end{align}
+$$
+which is a closed-form solution for optimal gated linear attention. Alternatively, one could simplify the 
+system even further by treating $\omega_f$ as a user specified hyperparameter, in which case 
+$$
+\omega_i = \max \Big\{0, \frac{s_l - \omega_f A_{J,l}}{A_{l,l}} \Big\} \,,
+$$
+is the corresponding optimal input gate. The resulting algorithm is shown below.
+
+```python
+def greedy_invasion_update(J_prev, v, k, Sigma_vv, Sigma_qv, Sigma_qq):
+    """Lotka-Volterra-inspired gated update 
+    to memory matrix"""
+    # invert value correlation matrix
+    inv_Sigma_vv = torch.linalg.inv(Sigma_vv)
+
+    # Compute ecological parameters
+    s_J = torch.trace(inv_Sigma_vv @ J_prev @ Sigma_qv)
+    s_l = k @ Sigma_qv @ inv_Sigma_vv @ v
+    A_JJ = torch.trace(inv_Sigma_vv @ J_prev @ Sigma_qq @ J_prev.T)
+    A_ll = (v @ inv_Sigma_vv @ v) * (k @ Sigma_qq @ k)
+    A_Jl = v @ inv_Sigma_vv @ J_prev @ Sigma_qq @ k
+
+    # Compute unconstrained gates
+    denom = A_JJ * A_ll - A_Jl**2
+    omega_f = (A_ll * s_J - A_Jl * s_l) / denom
+    omega_i = (A_JJ * s_l - A_Jl * s_J) / denom
+
+    # Apply non-negativity constraints
+    if omega_i <= 0:
+        omega_f = s_J / A_JJ
+        omega_i = 0.0
+    elif omega_f <= 0:
+        omega_i = s_l / A_ll
+        omega_f = 0.0
+
+    # Gated memory update
+    J_new = omega_f * J_prev + omega_i * torch.outer(v, k)
+    return J_new
+```
+
