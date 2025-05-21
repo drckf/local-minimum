@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/weighted-linear-attention-mahalanobis/index.html",
       "/posts/weighted-linear-attention-general-loss/index.html",
       "/posts/weighted-linear-attention-as-species-invasion/index.html",
       "/posts/weighted-linear-attention-is-lotka-volterra/index.html",

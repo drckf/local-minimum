@@ -10,7 +10,215 @@
 <atom:link href="https://drckf.github.io/local-minimum/index.xml" rel="self" type="application/rss+xml"/>
 <description>Research-in-progress blog on ML, physics, and biology</description>
 <generator>quarto-1.6.42</generator>
-<lastBuildDate>Mon, 14 Apr 2025 07:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 20 May 2025 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Weighted Linear Attention with Mahalanobis Loss</title>
+  <dc:creator>Charles Fisher</dc:creator>
+  <link>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-mahalanobis/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. In previous posts, I showed that weighted linear attention can be interpreted as an evolving ecological system in which tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. The squared error, however, doesn’t take into account the variance of, or correlations between, different elements of the value vectors. Here, I extend the approach by deriving similar results that minimize the Mahalanobis distance in both batch and online learning settings.</p>
+</section>
+<section id="review-of-previous-results" class="level2">
+<h2 class="anchored" data-anchor-id="review-of-previous-results">Review of Previous Results</h2>
+<p>In a previous post <a href="../../posts/weighted-linear-attention-is-lotka-volterra/index.html">Weighted Linear Attention is Lotka-Volterra Dynamics</a>, I showed that weighted linear attention modules can be interpreted as ecological systems where tokens are species and their weights are species abundances. The weights evolve under Lotka-Volterra dynamics when optimized via exponentiated gradient descent to minimize the squared recall error. To briefly review those results, I focus on a particular form of weighted linear attention module determined by an associative memory matrix, <img src="https://latex.codecogs.com/png.latex?%0AJ%20=%20%5Csum_%7Bl%7D%20w_%7Bl%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%5ET%20%5C,,%0A"> where <img src="https://latex.codecogs.com/png.latex?l"> denotes the token position, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bv%7D_l%20=%20W_%7BV%7D%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_v%7D"> is a value vector, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bk%7D_l%20=%20W_%7BK%7D%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D"> is a key vector, <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bn%7D"> is a token embedding, and <img src="https://latex.codecogs.com/png.latex?w_l%20%5Cgeq%200"> is the weight of token <img src="https://latex.codecogs.com/png.latex?l"> in memory. Recall from the memory is simply matrix multiplication, <img src="https://latex.codecogs.com/png.latex?%0A%5Ctilde%7Bv%7D_l%20=%20J%20%5C,%20%5Cvec%7Bq%7D_l%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cvec%7Bq%7D_l%20=%20W_Q%20%5Cvec%7Bx%7D_l%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bd_k%7D"> is a query vector. The mean squared recall error for a batch of tokens <img src="https://latex.codecogs.com/png.latex?%5C%7B%20%5Cvec%7Bx%7D_l%20%5C%7D_%7Bl=1%7D%5EL"> is (up to a factor of <img src="https://latex.codecogs.com/png.latex?1/2">), <span id="eq-squared-loss"><img src="https://latex.codecogs.com/png.latex?%0AC(%5Cvec%7Bw%7D)%20=%20%5Cfrac%7B1%7D%7B2%20L%7D%20%5Csum_%7Bl=1%7D%5EL%20%7C%7C%20%5Cvec%7Bv%7D_l%20-%20J%20%5C,%20%5Cvec%7Bq%7D_l%20%7C%7C%5E2%20%5C,%20.%0A%5Cqquad(1)"></span> To learn the weights, the cost function can be minimized using a simple variant of exponentiated gradient descent to satisfy the non-negativity constraint. In the continuous-time limit, this update rule leads to the following differential equation <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bd%20%5C,%20t%7D%20=%20-%20w_l%20%5Cfrac%7B%5Cpartial%20C%7D%7B%5Cpartial%20w_l%7D%0A"> that describes the dynamics of the weights under the exponentiated gradient descent. After a bit of algebra, it’s possible to show that the following generalized Lotka-Volterra equation describes the dynamics of the weights, <span id="eq-lotka-volterra"><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bd%20%5C,%20t%7D%20=%20%20w_l%20%5CBig(%20s_l%20-%20%5Csum_%7Bl'%7D%20A_%7Bl,%20l'%7D%20%5C,%20w_%7Bl'%7D%20%5CBig)%20%5C,,%0A%5Cqquad(2)"></span> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqv%7D%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,,%0A%5C%5C%0AA_%7Bl,l'%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl%7D%0A%5C,%20,%0A%5Cend%7Balign%7D%0A"> <img src="https://latex.codecogs.com/png.latex?s_l"> is the intrinsic growth rate of token <img src="https://latex.codecogs.com/png.latex?l">, <img src="https://latex.codecogs.com/png.latex?A_%7Bl,l'%7D"> is the interaction coefficient for tokens <img src="https://latex.codecogs.com/png.latex?l"> and <img src="https://latex.codecogs.com/png.latex?l'">, <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bqv%7D"> is the uncentered query-value correlation matrix, and <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bqq%7D"> is the uncentered query-query correlation matrix.</p>
+</section>
+<section id="mahalanobis-loss" class="level2">
+<h2 class="anchored" data-anchor-id="mahalanobis-loss">Mahalanobis Loss</h2>
+<p>The squared Mahalanobis loss defined by <span id="eq-mahalanobis-loss"><img src="https://latex.codecogs.com/png.latex?%0AC(%5Cvec%7Bw%7D)%20=%20%5Cfrac%7B1%7D%7B2%20L%7D%20%5Csum_%7Bl=1%7D%5EL%20(%5Cvec%7Bv%7D_l%20-%20J%20%5C,%20%5Cvec%7Bq%7D_l)%5ET%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20(%5Cvec%7Bv%7D_l%20-%20J%20%5C,%20%5Cvec%7Bq%7D_l)%20%20%5C,%20.%0A%5Cqquad(3)"></span> is closely related to Equation&nbsp;1 except that distances take into account the geometry of the value vectors through their correlation matrix <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bvv%7D">. After following a calculation similar to the previous posts on the mapping between weighted linear attention and Lotka-Volterra systems, one arrives at a differential equation for the training dynamics <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bd%20%5C,%20w_l%7D%7Bdt%7D%20=%20w_l%20%5Cleft(%20s_l%20-%20%5Csum_%7Bl'%7D%20A_%7Bl,l'%7D%5C,%20w_%7Bl'%7D%20%5Cright)%20%5C,,%0A"> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5Cleft(%20%5Cfrac%7B1%7D%7BL%7D%5Csum_%7Bi=1%7D%5EL%20%5Cvec%7Bq%7D_i%5C,%20(%5Cvec%7Bv%7D_i%5ET%20%5CSigma_%7Bvv%7D%5E%7B-1%7D)%20%5Cright)%20%5Cvec%7Bv%7D_l%20%5C,,%20%5C%5C%5B1mm%5D%0AA_%7Bl,l'%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%20%5Cleft(%20%5Cfrac%7B1%7D%7BL%7D%5Csum_%7Bi=1%7D%5EL%20%5Cvec%7Bq%7D_i%20%5Cvec%7Bq%7D_i%5ET%20%5Cright)%20%5Cvec%7Bk%7D_l%20%5C,,%0A%5Cend%7Balign%7D%0A"> are the intrinsic growth rates and the interaction coefficients, respectively. In terms of the correlation matrices, the ecological parameters are <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5CSigma_%7Bqv%7D%20%5C,%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,,%20%5C%5C%5B1mm%5D%0AA_%7Bl,l'%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5C,%20%5Cvec%7Bv%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%20%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_l%20%5C,.%0A%5Cend%7Balign%7D%0A"> Notice that if we define <img src="https://latex.codecogs.com/png.latex?%0A%5Cvec%7B%5Cnu%7D_l%20=%20%5CSigma_%7Bvv%7D%5E%7B-1/2%7D%20%5Cvec%7Bv%7D_l%20%5C,,%0A"> corresponding to a whitened version of the value vector, then the intrinsic growth rates and interaction coefficients can be written as <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_l%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bq%20%5Cnu%7D%20%5C,%20%5Cvec%7B%5Cnu%7D_l%20%5C,,%20%5C%5C%5B1mm%5D%0AA_%7Bl,l'%7D%20&amp;=%20%5Cvec%7B%5Cnu%7D_l%5ET%20%5C,%20%5Cvec%7B%5Cnu%7D_%7Bl'%7D%20%5C,%20%5Cvec%7Bk%7D_%7Bl'%7D%5ET%20%5CSigma_%7Bqq%7D%20%5Cvec%7Bk%7D_l%20%5C,.%0A%5Cend%7Balign%7D%0A"> which is identical to the previous result with the standard squared loss except it uses the whitened value vectors.</p>
+</section>
+<section id="online-learning" class="level2">
+<h2 class="anchored" data-anchor-id="online-learning">Online Learning</h2>
+<p>Following the same logic as in the previous post <a href="../../posts/weighted-linear-attention-as-species-invasion/index.html">Weighted Linear Attention as Species Invasion</a>, I will use a simple approximation for the online learning scenario by assuming that the arrival of a new token <img src="https://latex.codecogs.com/png.latex?l"> updates the memory matrix as <span id="eq-single-species-lv-memory-update"><img src="https://latex.codecogs.com/png.latex?%0AJ_l%20=%20%5Comega_f%20%5C,%20J_%7Bl-1%7D%20+%20%5Comega_i%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,%20%5Cvec%7Bk%7D_l%5ET%20%5C,,%0A%5Cqquad(4)"></span> where <img src="https://latex.codecogs.com/png.latex?%5Comega_f%20%5Cgeq%200"> is a forget gate and <img src="https://latex.codecogs.com/png.latex?%5Comega_i%20%5Cgeq%200"> is an input gate <span class="citation" data-cites="beck2025xlstm">(Beck et al. 2025)</span>. This assumes that the incoming token <img src="https://latex.codecogs.com/png.latex?l"> interacts with a fixed memory defined by <img src="https://latex.codecogs.com/png.latex?J_%7Bl-1%7D"> and the arrival of the new token does not adjust the weights of any previous tokens. Given that this is a type of greedy update rule, I refer to this as greedy invasion. With this assumption, the Mahalanobis cost function becomes, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0AC_l(%5Comega_i)%0A&amp;=%20%5Cfrac%7B1%7D%7B2%7D%20d_v%0A-%20%5Comega_f%20%5C,%20s_J%20+%20%5Cfrac%7B1%7D%7B2%7D%20%5Comega_f%5E2%20%5C,%20A_%7BJ,J%7D%0A%5C%5C%0A&amp;%5Cquad%20-%20%5Comega_i%20s_l%20+%20%5Cfrac%7B1%7D%7B2%7D%20%5Comega_i%5E2%20A_%7Bl,l%7D%0A+%20%5Comega_i%20%5C,%20%5Comega_f%20%5C,%20A_%7BJ,l%7D%0A%5Cend%7Balign%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0As_%7BJ%7D%20&amp;=%20%20%5Ctext%7BTr%7D%5CBig(%5CSigma_%7Bvv%7D%5E%7B-1%7D%20J_%7Bl-1%7D%20%5C,%20%5CSigma_%7Bqv%7D%20%5CBig)%0A%5C%5C%0As_%7Bl%7D%20&amp;=%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqv%7D%20%5C,%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5Cvec%7Bv%7D_l%0A%5C%5C%0AA_%7BJ,%20J%7D%20&amp;=%20%5Ctext%7BTr%7D%5CBig(%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5C,%20J_%7Bl-1%7D%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20J_%7Bl-1%7D%5ET%20%5CBig)%0A%5C%5C%0AA_%7Bl,%20l%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5C,%20%5Cvec%7Bv%7D_l%20%5C,%20%5Cvec%7Bk%7D_l%5ET%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_l%0A%5C%5C%0AA_%7BJ,%20l%7D%20&amp;=%20%5Cvec%7Bv%7D_l%5ET%20%5C,%20%5CSigma_%7Bvv%7D%5E%7B-1%7D%20%5C,%20J_%7Bl-1%7D%20%5C,%20%5CSigma_%7Bqq%7D%20%5C,%20%5Cvec%7Bk%7D_l%0A%5Cend%7Balign%7D%0A"> are online estimates for the intrinsic growth rates and interactions and the correlation matrices are computed from online updates based on the currently observed tokens. In the previous post, I included a superscript on the correlation matrices such as <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bqq%7D%5El"> to denote that they were computed from <img src="https://latex.codecogs.com/png.latex?l"> tokens, but I’ve suppressed that notation here for simplicity. These formulas are nearly identical to those in the previous post on the standard quadratic loss, except for the appearance of the <img src="https://latex.codecogs.com/png.latex?%5CSigma_%7Bvv%7D%5E%7B-1%7D"> terms.</p>
+<p>As in the previous post, learning the gates with exponentiated gradient descent in the online context leads to a system of two coupled ordinary differential equations <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Cfrac%7Bd%20%5C,%20%5Comega_f%7D%7Bd%20%5C,%20t%7D%20&amp;=%20%5Comega_f%20%5Cleft(%20s_J%20-%20%5Comega_i%20A_%7BJ,l%7D%20-%20A_%7BJ,J%7D%20%5Comega_f%20%5Cright)%0A%5C%5C%0A%5Cfrac%7Bd%20%5C,%20%5Comega_i%7D%7Bd%20%5C,%20t%7D%20&amp;=%20%5Comega_i%20%5Cleft(%20s_l%20-%20%5Comega_f%20A_%7BJ,l%7D%20-%20A_%7Bl,l%7D%20%5Comega_i%20%5Cright)%0A%5Cend%7Balign%7D%0A"> describing a Lotka-Volterra model with two species. Assuming that the interaction matrix is invertible, the unconstrained solution is <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Comega_f%5E*%20&amp;=%20%5Cfrac%7BA_%7Bl,l%7D%20%5C,%20s_J%20-%20A_%7BJ,l%7D%20%5C,%20s_l%7D%7BA_%7BJ,J%7D%20%5C,%20A_%7Bl,l%7D%20-%20A_%7BJ,l%7D%5E2%7D,%0A%5C%5C%0A%5Comega_i%5E*%20&amp;=%20%5Cfrac%7BA_%7BJ,J%7D%20%5C,%20s_l%20-%20A_%7BJ,l%7D%20%5C,%20s_J%7D%7BA_%7BJ,J%7D%20%5C,%20A_%7Bl,l%7D%20-%20A_%7BJ,l%7D%5E2%7D%5C,.%0A%5Cend%7Balign%7D%0A"> Taking into account the non-negativity constraints yields <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign%7D%0A%5Comega_f%20&amp;=%0A%5Cbegin%7Bcases%7D%0A%5Comega_f%5E*,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_i%5E*%20%3E%200,%20%5C%5C%5B2mm%5D%0A%5Cdisplaystyle%20%5Cfrac%7Bs_J%7D%7BA_%7BJ,J%7D%7D,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_i%5E*%20%5Cle%200,%0A%5Cend%7Bcases%7D%5C%5C%5B2mm%5D%0A%5Comega_i%20&amp;=%0A%5Cbegin%7Bcases%7D%0A%5Comega_i%5E*,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_f%5E*%20%3E%200,%5C%5C%5B2mm%5D%0A%5Cdisplaystyle%20%5Cfrac%7Bs_l%7D%7BA_%7Bl,l%7D%7D,%20&amp;%20%5Ctext%7Bif%20%7D%20%5Comega_f%5E*%20%5Cle%200,%0A%5Cend%7Bcases%7D%0A%5Cend%7Balign%7D%0A"> which is a closed-form solution for optimal gated linear attention. Alternatively, one could simplify the system even further by treating <img src="https://latex.codecogs.com/png.latex?%5Comega_f"> as a user specified hyperparameter, in which case <img src="https://latex.codecogs.com/png.latex?%0A%5Comega_i%20=%20%5Cmax%20%5CBig%5C%7B0,%20%5Cfrac%7Bs_l%20-%20%5Comega_f%20A_%7BJ,l%7D%7D%7BA_%7Bl,l%7D%7D%20%5CBig%5C%7D%20%5C,,%0A"> is the corresponding optimal input gate. The resulting algorithm is shown below.</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> greedy_invasion_update(J_prev, v, k, Sigma_vv, Sigma_qv, Sigma_qq):</span>
+<span id="cb1-2">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">"""Lotka-Volterra-inspired gated update </span></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    to memory matrix"""</span></span>
+<span id="cb1-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># invert value correlation matrix</span></span>
+<span id="cb1-5">    inv_Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.linalg.inv(Sigma_vv)</span>
+<span id="cb1-6"></span>
+<span id="cb1-7">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Compute ecological parameters</span></span>
+<span id="cb1-8">    s_J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.trace(inv_Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qv)</span>
+<span id="cb1-9">    s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> inv_Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v</span>
+<span id="cb1-10">    A_JJ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> torch.trace(inv_Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> J_prev.T)</span>
+<span id="cb1-11">    A_ll <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> inv_Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> v) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> k)</span>
+<span id="cb1-12">    A_Jl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> inv_Sigma_vv <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> Sigma_qq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">@</span> k</span>
+<span id="cb1-13"></span>
+<span id="cb1-14">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Compute unconstrained gates</span></span>
+<span id="cb1-15">    denom <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> A_JJ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> A_ll <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A_Jl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb1-16">    omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (A_ll <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A_Jl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_l) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> denom</span>
+<span id="cb1-17">    omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (A_JJ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> A_Jl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> s_J) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> denom</span>
+<span id="cb1-18"></span>
+<span id="cb1-19">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Apply non-negativity constraints</span></span>
+<span id="cb1-20">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb1-21">        omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> s_J <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> A_JJ</span>
+<span id="cb1-22">        omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span></span>
+<span id="cb1-23">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">elif</span> omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&lt;=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb1-24">        omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> s_l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> A_ll</span>
+<span id="cb1-25">        omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span></span>
+<span id="cb1-26"></span>
+<span id="cb1-27">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Gated memory update</span></span>
+<span id="cb1-28">    J_new <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> omega_f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> J_prev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> omega_i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> torch.outer(v, k)</span>
+<span id="cb1-29">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> J_new</span></code></pre></div>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0">
+<div id="ref-beck2025xlstm" class="csl-entry">
+Beck, Maximilian, Korbinian Pöppel, Markus Spanring, Andreas Auer, Oleksandra Prudnikova, Michael Kopp, Günter Klambauer, Johannes Brandstetter, and Sepp Hochreiter. 2025. <span>“Xlstm: Extended Long Short-Term Memory.”</span> <em>Advances in Neural Information Processing Systems</em> 37: 107547–603.
+</div>
+</div></section></div> ]]></description>
+  <category>research</category>
+  <category>machine-learning</category>
+  <category>ecology</category>
+  <category>attention</category>
+  <category>lotka-volterra</category>
+  <guid>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-mahalanobis/</guid>
+  <pubDate>Tue, 20 May 2025 07:00:00 GMT</pubDate>
+  <media:content url="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-mahalanobis/mahalanobis-thumbnail.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>Weighted Linear Attention with Other Loss Functions</title>
   <dc:creator>Charles Fisher</dc:creator>
