@@ -10,7 +10,33 @@
 <atom:link href="https://drckf.github.io/local-minimum/index.xml" rel="self" type="application/rss+xml"/>
 <description>Research-in-progress blog on ML, physics, and biology</description>
 <generator>quarto-1.6.42</generator>
-<lastBuildDate>Tue, 20 May 2025 07:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 29 May 2025 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Universal Dynamics of Weighted Linear Attention</title>
+  <dc:creator>Charles Fisher</dc:creator>
+  <link>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-universal/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="tldr" class="level2">
+
+
+
+</section>
+
+ ]]></description>
+  <category>research</category>
+  <category>machine-learning</category>
+  <category>ecology</category>
+  <category>attention</category>
+  <category>lotka-volterra</category>
+  <guid>https://drckf.github.io/local-minimum/posts/weighted-linear-attention-universal/</guid>
+  <pubDate>Thu, 29 May 2025 07:00:00 GMT</pubDate>
+  <media:content url="https://drckf.github.io/local-minimum/posts/weighted-linear-attention-universal/universal-thumbnail.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>Weighted Linear Attention with Mahalanobis Loss</title>
   <dc:creator>Charles Fisher</dc:creator>

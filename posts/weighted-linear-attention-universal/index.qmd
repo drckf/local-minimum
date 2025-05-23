@@ -1,0 +1,11 @@
+---
+title: "Universal Dynamics of Weighted Linear Attention"
+author: "Charles Fisher"
+date: "2025-05-29"
+categories: [research, machine-learning, ecology, attention, lotka-volterra]
+image: universal-thumbnail.png
+bibliography: weighted-linear-attention.bib
+draft: False
+---
+
+## TLDR
