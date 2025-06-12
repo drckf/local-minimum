@@ -1,7 +1,7 @@
 ---
 title: "Universal Dynamics of Weighted Linear Attention"
 author: "Charles Fisher"
-date: "2025-05-29"
+date: "2025-06-12"
 categories: [research, machine-learning, ecology, attention, lotka-volterra]
 image: universal-thumbnail.png
 bibliography: weighted-linear-attention.bib
@@ -9,3 +9,253 @@ draft: False
 ---
 
 ## TLDR
+
+This post generalizes the results in my previous posts about weighted linear attention to show that the 
+connections between weighted linear attention and ecological dynamics hold for any loss function satisfying 
+some mild conditions described below (see Assumption 1). The previous posts in this series are:
+
+- [What is Weighted Linear Attention?](/posts/weighted-linear-attention/index.qmd)
+- [Weighted Linear Attention is Lotka-Volterra Dynamics](/posts/weighted-linear-attention-is-lotka-volterra/index.qmd)
+- [Weighted Linear Attention with Other Loss Functions](/posts/weighted-linear-attention-general-loss/index.qmd)
+- [Weighted Linear Attention as Species Invasion](/posts/weighted-linear-attention-as-species-invasion/index.qmd)
+- [Weighted Linear Attention with Mahalanobis Distance](/posts/weighted-linear-attention-mahalanobis/index.qmd)
+
+As an aside, or perhaps as a warning, I've tried to write this post in the "theorem-proof" format that is typical
+of machine learning publications even though, as a physicist, I find it both unnatural and a bit unnecessary. But, 
+sometimes it is good to try new things. 
+
+## Main result
+
+Let $\vec{q}_l$, $\vec{k}_l$, and $\vec{v}_l$ for $l = 1, \ldots, L$ denote the query, key, and value vectors of dimension
+$d_k$, $d_k$, and $d_v$, respectively. And, let $Q$, $K$, and $V$ be the associated query, key, and value matrices
+of dimension $d_k \times L$, $d_k \times L$, and $d_v \times L$, respectively. Define the linear attention matrix as
+$$
+J( \vec{w} ) = \sum_{l=1}^L w_l \, \vec{v}_l \, \vec{k}_l^T,
+$$
+with linear recall as $\tilde{v}_l = J(\vec{w}) \, \vec{q}_l$. Our goal is to choose the weights $\vec{w} \geq 0$ in order
+to minimize some differentiable loss function, $\mathcal{L}$. While training a weighted linear attention module 
+$J( \vec{w} )$ to minimize a differentiable loss function $\mathcal{L}$ using unnormalized exponentiated gradient descent,
+the dynamics of the weights are described by a generalized Lotka-Volterra equation
+$$
+\frac{d w_l}{d t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,,
+$$
+where the intrinsic growth rate and interaction coefficients are
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \, \Sigma_{qv} \, \vec{v_l} \, ,
+\\
+A_{l,l'}(\vec{w}) &= \vec{k}_l^T \, \vec{q}_{l'} \, \left( \sum_{j}  \vec{v}_l^T \, \, F_{l',j}(\vec{w}) \, \vec{v}_j \right) \,,
+\end{align}
+$$
+with $L \times L$ matrix
+$$
+F^T(\vec w) = V^{\dagger} \bigl (L \, G + V \bigr)
+$$
+where $V^{\dagger}$ denotes the Moore–Penrose pseudoinverse of $V$ and $G$ is a $d_v \times L$ matrix
+with columns $\partial \mathcal{L} / \partial \tilde{v}_j$. 
+
+
+## Theory
+
+
+### Definition 1: Weighted Linear Attention
+
+Let $\vec{q}_l$, $\vec{k}_l$, and $\vec{v}_l$ for $l = 1, \ldots, L$ denote the query, key, and value vectors of dimension
+$d_k$, $d_k$, and $d_v$, respectively. And, let $Q$, $K$, and $V$ be the associated query, key, and value matrices
+of dimension $d_k \times L$, $d_k \times L$, and $d_v \times L$, respectively. Define the $d_v \times d_k$
+linear attention matrix as
+$$
+J( \vec{w} ) = \sum_{l=1}^L w_l \, \vec{v}_l \, \vec{k}_l^T,
+$$
+with linear recall via $\tilde{v}_l = J(\vec{w}) \, \vec{q}_l$. Typically, one aims to learn the weights by
+minimizing some differentiable loss function $\mathcal{L}(\{\tilde{v}_l, \vec{v}_l \}_{l=1}^L)$ that depends on
+the observed and recollected value vectors. 
+
+---
+
+### Lemma 1: Gradients of Weighted Linear Attention
+
+Let $\mathcal{L}$ be a differentiable loss function depending on the $\tilde{v}_i$ and define
+$$
+\vec{g}_i := \frac{\partial \mathcal{L}}{\partial \tilde{v}_i} \in \mathbb{R}^{d_v}.
+$$
+Then the derivative of $\mathcal{L}$ with respect to the weight $w_l$ is given by
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= \sum_{i=1}^L \left( \vec{k}_l^T \, \vec{q}_i \right) \left( \vec{g}_i^T \, \vec{v}_l \right).
+$$
+
+***Proof***
+
+The proof is simply an application of the chain rule of calculus. We begin with the definition of the predicted output,
+$\tilde{v}_i = \sum_{j=1}^L w_j \, \vec{v}_j (\vec{k}_j^T \, \vec{q}_i)$.
+Since $\mathcal{L}$ depends on $\vec{w}$ only through the $\tilde{v}_i$, the chain rule yields
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= \sum_{i=1}^L \left\langle \frac{\partial \mathcal{L}}{\partial \tilde{v}_i}, \frac{\partial \tilde{v}_i}{\partial w_l} \right\rangle.
+$$
+Note that differentiating $\tilde{v}_i$ with respect to $w_l$ gives 
+$\frac{\partial \tilde{v}_i}{\partial w_l} = \vec{v}_l (\vec{k}_l^T \, \vec{q}_i)$.
+Thus,
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= \sum_{i=1}^L \Bigl\langle \vec{g}_i \, \vec{v}_l (\vec{k}_l^T \, \vec{q}_i) \Bigr\rangle
+= \sum_{i=1}^L (\vec{k}_l^T \, \vec{q}_i) (\vec{g}_i^T \, \vec{v}_l).
+$$
+QED.
+
+---
+
+### Assumption 1: Gradient Decomposition  
+
+Let  
+$$
+V = \bigl[ \vec{v}_1 \, \dots \, \vec{v}_L \bigr] \in \mathbb R^{d_v \times L}, \qquad
+G = \bigl[ \vec{g}_1 \, \dots\ , \vec{g}_L \bigr] \in \mathbb R^{d_v \times L}.
+$$
+We assume that for every parameter vector $\vec{w}$ there exists a matrix $F(\vec{w}) \in \mathbb R^{L\times L}$ 
+such that  
+$$
+L \, G \;=\; -\, V \;+\; V \, F^T \, \tag{A1}
+$$
+or, equivalently,
+$$
+\vec{g}_i \;=\; -\frac{1}{L} \, \vec{v}_i \;+\; \frac{1}{L} \sum_{j=1}^{L} F_{ij}(\vec{w}) \, \vec{v}_j,
+\qquad i=1,\dots ,L.
+$$
+This holds iff each gradient $\vec{g}_i = \partial \mathcal{L}/ \partial \tilde{v}_i$ lies in the linear span of 
+the value vectors $\{ \vec{v}_j \}$, as is the case for quadratic and cross-entropy losses containing the term 
+$\sum_i \tilde{v}_i^{\!\top} \vec{v}_i$. If a left Moore–Penrose pseudoinverse $V^{\dagger}$ exists 
+(e.g.\ $\operatorname{rank} V = L$), the minimum-norm coefficient matrix is  
+$$
+F^T(\vec w) = V^{\dagger} \bigl( L \, G + V \bigr) \, . \tag{A2}
+$$
+When $V$ is rank-deficient, other solutions exist, but (A2) gives the canonical choice.
+
+---
+
+### Lemma 2: Continuous-time Unnormalized Exponentiated Gradient Descent
+
+Let $\mathcal{L}(\vec{w})$ be a differentiable loss function of non-negative weights $\vec{w} = (w_1, \dots, w_L)$. 
+Apply the unnormalized exponentiated-gradient update
+$$
+w_l^{\;'} = w_l \, e^{-\eta \, \frac{\partial \mathcal{L}}{\partial w_l}}, \qquad l = 1, \dots, L,
+$$
+with step size $\eta > 0$. In the limit $\eta \to 0$ (continuous-time), the weight trajectory $w_l(t)$ 
+satisfies the differential equation
+$$
+\frac{d w_l}{d t} = - w_l \, \frac{\partial \mathcal{L}}{\partial w_l}.
+$$
+
+***Proof***  
+Consider a single coordinate $w_l$ and apply the update rule:
+$$
+w_l(t + \eta) = w_l(t) \, e^{-\eta \, \partial_{w_l} \mathcal{L}(\vec{w}(t))}.
+$$
+Taking logarithms of both sides:
+$$
+\ln w_l(t + \eta) - \ln w_l(t) = -\eta \, \partial_{w_l} \mathcal{L}(\vec{w}(t)).
+$$
+Dividing both sides by $\eta$ and taking the limit $\eta \to 0$:
+$$
+\lim_{\eta \to 0} \frac{\ln w_l(t + \eta) - \ln w_l(t)}{\eta} = - \partial_{w_l} \mathcal{L}(\vec{w}(t)).
+$$
+The left-hand side is the time derivative of $\ln w_l(t)$, which gives:
+$$
+\frac{1}{w_l} \frac{d w_l}{d t} = - \frac{\partial \mathcal{L}}{\partial w_l}.
+$$
+Multiplying both sides by $w_l$ yields the result:
+$$
+\frac{d w_l}{d t} = - w_l \, \frac{\partial \mathcal{L}}{\partial w_l}.
+$$
+QED.
+
+---
+
+### Theorem 1: Linear Attention via Lotka-Volterra Dynamics
+
+Define the empirical query–value covariance matrix as
+$$
+\Sigma_{qv} = \frac{1}{L} \sum_{i=1}^L \vec{q}_i \, \vec{v}_i^T.
+$$
+Then, according to the Gradient Decomposition Assumption, there exists a function $F_{ij}(\vec{w})$ defined by
+$$
+F^T(\vec w) = V^{\dagger} \bigl( L \, G + V \bigr) \, . \tag{A2}
+$$
+such that the gradient of the loss function $\mathcal{L}$ with respect to weight $w_l$ can be expressed as
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= - \left( s_l - \frac{1}{L} \sum_{l'=1}^L A_{l,l'}(\vec{w}) \right)
+$$
+where
+$$
+\begin{align}
+s_l &= \vec{k}_l^T \, \Sigma_{qv} \, \vec{v_l} \, ,
+\\
+A_{l,l'}(\vec{w}) &= \vec{k}_l^T \, \vec{q}_{l'} \, \left( \sum_{j}  \vec{v}_l^T \, \, F_{l',j}(\vec{w}) \, \vec{v}_j \right) \,.
+\end{align}
+$$
+Moreover, the dynamics of the weights under unnormalized exponentiated gradient descent are described by the generalized 
+Lotka-Volterra equation
+$$
+\frac{d w_l}{d t}
+= w_l \left( s_l - \frac{1}{L} \sum_{l'} A_{l,l'}(\vec{w}) \right) \,.
+$$
+
+***Proof***
+
+Recall the expression for the gradient from Lemma 1:
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} = \sum_{i=1}^L \left( \vec{k}_l^T \, \vec{q}_i \right)\left( \vec{g}_i^T \, \vec{v}_l \right).
+$$
+We now aim to express this in the form
+$$
+\frac{\partial \mathcal{L}}{\partial w_l} 
+= - \vec{k}_l^T \, \Sigma_{qv} \, \vec{v}_l + \vec{k}_l^T \, M \, \vec{v}_l
+= - \vec{k}_l^T \, \left( \Sigma_{qv} - M \right) \, \vec{v}_l,
+$$
+where
+$$
+M = \frac{1}{L} \sum_{i=1}^L \sum_{j=1}^L \vec{q}_i \, F_{ij}(\vec{w})\, \vec{v}_j^T.
+$$
+From the Gradient Decomposition Assumption, we assume that
+$$
+\vec{g}_i = - \frac{1}{L} \vec{v}_i + \frac{1}{L} \sum_{j=1}^L F_{ij}(\vec{w}) \vec{v}_j.
+$$
+Notice that although the gradient formula from Lemma 1 involves a positive sum of dot products, the resulting 
+formula in the claimed theorem has an overall negative sign that results from the negative leading term in 
+the gradient decomposition assumption.  Multiplying both sides on the left by $\vec{q}_i$ and summing over $i$, 
+we find
+$$
+\begin{align}
+\sum_{i=1}^L \vec{q}_i \, \vec{g}_i^T
+&= -\frac{1}{L} \sum_{i=1}^L \vec{q}_i \, \vec{v}_i^T + \frac{1}{L} \sum_{i=1}^L \sum_{j=1}^L \vec{q}_i \, F_{ij}(\vec{w}) \, \vec{v}_j^T
+\\
+&= -\Sigma_{qv} + M.
+\end{align}
+$$
+Rearranging gives
+$$
+M = \Sigma_{qv} + \sum_{i=1}^L \vec{q}_i \, \vec{g}_i^T.
+$$
+Now substitute this into the expression for the gradient:
+$$
+\begin{align}
+\frac{\partial \mathcal{L}}{\partial w_l}
+&= - \vec{k}_l^T \, \left( \Sigma_{qv} - M \right) \, \vec{v}_l
+\\
+&= - \vec{k}_l^T \, \left( \Sigma_{qv} - \left[\Sigma_{qv} + \sum_{i=1}^L \vec{q}_i \, \vec{g}_i^T \right] \right) \, \vec{v}_l
+\\
+&= \vec{k}_l^T \, \left( \sum_{i=1}^L \vec{q}_i \, \vec{g}_i^T \right) \, \vec{v}_l
+\\
+&= \sum_{i=1}^L (\vec{k}_l^T \, \vec{q}_i)(\vec{g}_i^T \, \vec{v}_l),
+\end{align}
+$$
+which recovers the direct chain-rule result. Given equivalence of these two forms for the gradients 
+of the loss function, the fact that the dynamics under exponentiated gradient descent are described 
+by the claimed generalized Lotka-Volterra equations follows immediately from Lemma 2.
+
+QED.
+
+---
