@@ -1,0 +1,17 @@
+---
+title: "A Minimal Model of Skeletal Muscle Hypertrophy in Response to Resistance Training"
+author: "Charles Fisher"
+date: "2026-02-22"
+categories: [biophysics, theory, hypertrophy]
+image: hypertrophy-minimal-thumbnail.png
+bibliography: hypertrophy.bib
+---
+
+## TLDR
+
+Abstract
+
+
+## Theory 
+
+Math
