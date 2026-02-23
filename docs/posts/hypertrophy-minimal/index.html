@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Charles Fisher">
+<meta name="dcterms.date" content="2026-02-22">
 
-<title>Local Minimum</title>
+<title>A Minimal Model of Muscle Hypertrophy – Local Minimum</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-6bd9cfa162949bde0a231f530c97869d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,35 +68,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -128,17 +99,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Local Minimum" href="index.xml" data-external="1"></head>
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Local Minimum</span>
     </a>
   </div>
@@ -149,11 +120,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./license.html"> 
+    <a class="nav-link" href="../../license.html"> 
 <span class="menu-text">License</span></a>
   </li>  
   <li class="nav-item compact">
@@ -162,7 +133,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -176,354 +147,113 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Local Minimum</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">A Minimal Model of Muscle Hypertrophy</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">biophysics</div>
+                <div class="quarto-category">theory</div>
+                <div class="quarto-category">hypertrophy</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Charles Fisher </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 22, 2026</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="YXR0ZW50aW9u">attention <span class="quarto-category-count">(6)</span></div><div class="category" data-category="YmlvcGh5c2ljcw==">biophysics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZWNvbG9neQ==">ecology <span class="quarto-category-count">(5)</span></div><div class="category" data-category="aHlwZXJ0cm9waHk=">hypertrophy <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bG90a2Etdm9sdGVycmE=">lotka-volterra <span class="quarto-category-count">(5)</span></div><div class="category" data-category="bWFjaGluZS1sZWFybmluZw==">machine-learning <span class="quarto-category-count">(6)</span></div><div class="category" data-category="cmVzZWFyY2g=">research <span class="quarto-category-count">(5)</span></div><div class="category" data-category="cmV2aWV3">review <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dGhlb3J5">theory <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-<section id="welcome-to-the-local-minimum" class="level2">
-<h2 class="anchored" data-anchor-id="welcome-to-the-local-minimum">Welcome to the Local Minimum</h2>
-<p>This is a technical blog with long form posts about my research before it is ready for publication in traditional journal articles. Most of this research will be at the intersection of statistical physics, machine learning, and biology. Some posts will be reviews, but most will be involve novel research and will include both theoretical and experimental analyses, and sometimes just discussion of algorithms or code. For more information about this blog and its author, check out the <a href="./about.html">About</a> page.</p>
-<hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
-
+<section id="tldr" class="level2">
+<h2 class="anchored" data-anchor-id="tldr">TLDR</h2>
+<p>Abstract</p>
+</section>
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+</section>
+<section id="theory" class="level2">
+<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<section id="mechanical-stress" class="level3">
+<h3 class="anchored" data-anchor-id="mechanical-stress">Mechanical Stress</h3>
+<p>Muscle growth responds to mechanical stress, which is defined as the applied force per unit area. That is, <span class="math inline">\(\sigma = F / A_{\perp}\)</span> where <span class="math inline">\(A_{\perp}\)</span> is the cross-sectional area of the muscle perpendicular to the force. We want to express the stress in terms of the mass of the muscle fiber, <span class="math inline">\(m\)</span>. To do this, we note that if the force is applied in the direction of the muscle fiber, then <span class="math display">\[
+A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
+\]</span> where <span class="math inline">\(V\)</span> is the volume, <span class="math inline">\(L\)</span> is the length, <span class="math inline">\(m\)</span> is the mass, and <span class="math inline">\(\rho\)</span> is the density of the muscle fiber. Thus, if the external force at time <span class="math inline">\(t\)</span> is <span class="math inline">\(F(t)\)</span> then the associated stress is <span class="math display">\[
+\sigma(t) = \frac{F(t) \rho L}{m(t)} \, .
+\]</span> Note that one can come up with alternative scalings of <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(m\)</span> under different assumptions, but in one generally has <span class="math inline">\(\sigma \sim m^{-\alpha}\)</span> with <span class="math inline">\(\alpha \in [2/3, 1]\)</span> so the results are fairly robust. Likewise, one can account for the angle of the force relative to the muscle fibers in more complex cases, but we’ll stick with the simplest case here.</p>
+</section>
+<section id="growth-signaling" class="level3">
+<h3 class="anchored" data-anchor-id="growth-signaling">Growth Signaling</h3>
+<p>Growth signaling in skeletal muscle inolves the activation of the mTORC1 complex as well as other pathways. We abstract this concept into a single variable <span class="math inline">\(g\)</span> representing a scalar hypertrophy signal. The dynamics of the growth signal are governed by the ordinary differential equation <span class="math display">\[
+\tau_g \frac{d g}{d t} = \Gamma \, \phi_n(\sigma) - g
+\]</span> where <span class="math display">\[
+\phi_n(\sigma) = \frac{\sigma^n}{K_{\sigma}^n + \sigma^n}
+\]</span> is a Hill function that captures the response of the growth signal to applied mechanical stress and <span class="math inline">\(\tau_g\)</span> controls the timescale of the dynamics. Thus, <span class="math inline">\(K_{\sigma}\)</span> represents a mechanical stress threshold, with <span class="math inline">\(n\)</span> controlling the steepness of the response curve. The dimensionless quantity <span class="math inline">\(\Gamma \in [0,1]\)</span> represents the availability of amino acids and energy for muscle growth. For example, if the quantity of amino acids is <span class="math inline">\(A\)</span> and the available energy is <span class="math inline">\(E\)</span> then one could have <span class="math display">\[
+\Gamma_{n,n'}(A, E) = \frac{A^n}{K_A^n + A^n} \frac{E^{n'}}{K_E^{n'} + E^{n'}}
+\]</span> but, for simplicity, we will simply assume that <span class="math inline">\(\Gamma\)</span> is a constant.</p>
+</section>
+<section id="muscle-damage" class="level3">
+<h3 class="anchored" data-anchor-id="muscle-damage">Muscle Damage</h3>
+<p>Mechanical stress can cause damage to sarcomeres, preventing them from translating mechanical stress into downstream growth signals. If <span class="math inline">\(a \in [0,1]\)</span> represents the fraction of active (i.e., non-damaged) sarcomeres in a muscle fiber, then we describe the dynamics of <span class="math inline">\(a\)</span> as <span class="math display">\[
+\frac{d a}{d t} = -\eta \sigma a + \mu (1-a)
+\]</span> where <span class="math inline">\(\eta\)</span> describes the coupling between mechanical stress and muscle damage and <span class="math inline">\(\mu\)</span> is the rate of damage repair.</p>
+</section>
+<section id="muscle-hypertrophy" class="level3">
+<h3 class="anchored" data-anchor-id="muscle-hypertrophy">Muscle Hypertrophy</h3>
+<p>Muscle mass grows in response to mechanical stress according to the differential equation <span class="math display">\[
+\frac{d m}{d t} = \lambda \, a \, \psi_{n''}(g) - \delta m
+\]</span> where <span class="math display">\[
+\psi_{n''}(g) = \frac{g^{n''}}{K_g^{n''} + g^{n''}}
+\]</span> is another Hill type function. For the sake of simplicity, we will set all of the Hill coefficients to <span class="math inline">\(1\)</span>, but leave them in the definitions for completeness.</p>
+</section>
+<section id="complete-model" class="level3">
+<h3 class="anchored" data-anchor-id="complete-model">Complete Model</h3>
+<p>The complete model is defined by the following set of four equations <span class="math display">\[
+\begin{align}
+\sigma(t) &amp;= \frac{F(t) \rho L}{m(t)} \, , \\
+\tau_g \frac{d g}{d t} &amp;= \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} - g \, , \\
+\frac{d a}{d t} &amp;= -\eta \sigma a + \mu (1-a) \, , \\
+\frac{d m}{d t} &amp;= \lambda \, a \, \frac{g}{K_g + g} - \delta m \, .
+\end{align}
+\]</span> Note that the dynamics of the growth signal (determined by <span class="math inline">\(\tau_g\)</span>) are much faster than those of muscle damage/repair or growth. As a result, we can set <span class="math inline">\(\tau_g \frac{d g}{d t} = 0\)</span> and assume that the growth signal is well captured by the equilbrium value <span class="math display">\[
+g^* = \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} \, .
+\]</span></p>
+</section>
+<section id="dimensions" class="level3">
+<h3 class="anchored" data-anchor-id="dimensions">Dimensions</h3>
+</section>
+<section id="dimensionless-form" class="level3">
+<h3 class="anchored" data-anchor-id="dimensionless-form">Dimensionless Form</h3>
 
 
 </section>
+</section>
 
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="YmlvcGh5c2ljcyUyQ3RoZW9yeSUyQ2h5cGVydHJvcGh5" data-listing-date-sort="1771747200000" data-listing-file-modified-sort="1771806448465" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="583">
-<div class="thumbnail">
-<p><a href="./posts/hypertrophy-minimal/index.html" class="no-external"></a></p><a href="./posts/hypertrophy-minimal/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/hypertrophy-minimal/hypertrophy-minimal-thumbnail.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/hypertrophy-minimal/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/hypertrophy-minimal/index.html" class="no-external">A Minimal Model of Muscle Hypertrophy</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/hypertrophy-minimal/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('YmlvcGh5c2ljcw=='); return false;">
-biophysics
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('dGhlb3J5'); return false;">
-theory
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('aHlwZXJ0cm9waHk='); return false;">
-hypertrophy
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/hypertrophy-minimal/index.html" class="no-external">Abstract</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/hypertrophy-minimal/index.html" class="no-external">
-<div class="listing-date">
-Feb 22, 2026
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1749711600000" data-listing-file-modified-sort="1752261655505" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1270">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-universal/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-universal/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-universal/universal-thumbnail.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-universal/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-universal/index.html" class="no-external">Universal Dynamics of Weighted Linear Attention</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-universal/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-universal/index.html" class="no-external">This post generalizes the results in my previous posts about weighted linear attention to show that the connections between weighted linear attention and ecological dynamics…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-universal/index.html" class="no-external">
-<div class="listing-date">
-Jun 12, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1747724400000" data-listing-file-modified-sort="1748025038267" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1363">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-mahalanobis/mahalanobis-thumbnail.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external">Weighted Linear Attention with Mahalanobis Loss</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external">Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. In previous…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-mahalanobis/index.html" class="no-external">
-<div class="listing-date">
-May 20, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744614000000" data-listing-file-modified-sort="1744415271728" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1136">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-general-loss/qkv-matching.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">Weighted Linear Attention with Other Loss Functions</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">In this post, I extend the ecological interpretation of weighted linear attention by analyzing how different loss functions — including categorical cross-entropy and…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-general-loss/index.html" class="no-external">
-<div class="listing-date">
-Apr 14, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744095600000" data-listing-file-modified-sort="1744302086661" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2478">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-as-species-invasion/species-invasion-thumbnail.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">Weighted Linear Attention as Species Invasion</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. In previous…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-as-species-invasion/index.html" class="no-external">
-<div class="listing-date">
-Apr 8, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="cmVzZWFyY2glMkNtYWNoaW5lLWxlYXJuaW5nJTJDZWNvbG9neSUyQ2F0dGVudGlvbiUyQ2xvdGthLXZvbHRlcnJh" data-listing-date-sort="1744009200000" data-listing-file-modified-sort="1744302086662" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1994">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention-is-lotka-volterra/The_Ecology_of_Attention_Figure_1.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">Weighted Linear Attention is Lotka-Volterra Dynamics</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmVzZWFyY2g='); return false;">
-research
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('ZWNvbG9neQ=='); return false;">
-ecology
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bG90a2Etdm9sdGVycmE='); return false;">
-lotka-volterra
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">Weighted linear attention modules are key-value associative memories with potential uses in neural sequence models used for tasks such as language modeling. Here, I show…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention-is-lotka-volterra/index.html" class="no-external">
-<div class="listing-date">
-Apr 7, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-categories="cmV2aWV3JTJDbWFjaGluZS1sZWFybmluZyUyQ2F0dGVudGlvbg==" data-listing-date-sort="1743922800000" data-listing-file-modified-sort="1744302086662" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1010">
-<div class="thumbnail">
-<p><a href="./posts/weighted-linear-attention/index.html" class="no-external"></a></p><a href="./posts/weighted-linear-attention/index.html" class="no-external">
-<p><img loading="lazy" src="./posts/weighted-linear-attention/thumbnail.jpg" class="thumbnail-image"></p>
-</a><p><a href="./posts/weighted-linear-attention/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external">What is Weighted Linear Attention?</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('cmV2aWV3'); return false;">
-review
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('bWFjaGluZS1sZWFybmluZw=='); return false;">
-machine-learning
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('YXR0ZW50aW9u'); return false;">
-attention
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external">Weighted linear attention is a type of key-value associative memory defined by the matrix <span class="math display">\[
-\begin{equation}
-J = \sum_{l'} w_{l'} \, \vec{v}_{l'} \…</span><span class="math inline"></span></a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weighted-linear-attention/index.html" class="no-external">
-<div class="listing-date">
-Apr 6, 2025
-</div>
-<div class="listing-author">
-Charles Fisher
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
 
 <h2>Subscribe to Updates</h2>
@@ -571,7 +301,7 @@ No matching items
   </script>
 
 <div class="license-footer" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee; font-size: 0.8em; color: #666;">
-  © 2025 Charles Fisher. This work is licensed under a <a href="./license.html">Creative Commons Attribution 4.0 International License</a>.
+  © 2025 Charles Fisher. This work is licensed under a <a href="../../license.html">Creative Commons Attribution 4.0 International License</a>.
 </div>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -990,6 +720,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<script src="https://giscus.app/client.js" data-repo="drckf/local-minimum" data-repo-id="R_kgDOOVGEfA" data-category="Announcements" data-category-id="DIC_kwDOOVGEfM4Co189" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" data-loading="lazy" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="light">
 </div> <!-- /content -->
 
 

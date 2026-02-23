@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/hypertrophy-minimal/index.html",
       "/posts/weighted-linear-attention-universal/index.html",
       "/posts/weighted-linear-attention-mahalanobis/index.html",
       "/posts/weighted-linear-attention-general-loss/index.html",

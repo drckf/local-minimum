@@ -1,5 +1,5 @@
 ---
-title: "A Minimal Model of Skeletal Muscle Hypertrophy in Response to Resistance Training"
+title: "A Minimal Model of Muscle Hypertrophy"
 author: "Charles Fisher"
 date: "2026-02-22"
 categories: [biophysics, theory, hypertrophy]
@@ -12,6 +12,102 @@ bibliography: hypertrophy.bib
 Abstract
 
 
+## Background
+
+
 ## Theory 
 
-Math
+
+### Mechanical Stress
+
+Muscle growth responds to mechanical stress, which is defined as the applied force per unit area. That is, 
+$\sigma = F / A_{\perp}$ where $A_{\perp}$ is the cross-sectional area of the muscle perpendicular to the force. 
+We want to express the stress in terms of the mass of the muscle fiber, $m$. To do this, we note that 
+if the force is applied in the direction of the muscle fiber, then
+$$
+A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
+$$
+where $V$ is the volume, $L$ is the length, $m$ is the mass, and $\rho$ is the density of the muscle fiber. 
+Thus, if the external force at time $t$ is $F(t)$ then the associated stress is
+$$
+\sigma(t) = \frac{F(t) \rho L}{m(t)} \, .
+$$
+Note that one can come up with alternative scalings of $\sigma$ with $m$ under different assumptions, but 
+in one generally has $\sigma \sim m^{-\alpha}$ with $\alpha \in [2/3, 1]$ so the results are fairly robust. 
+Likewise, one can account for the  angle of the force relative to the muscle fibers in more complex cases, 
+but we'll stick with the simplest case here.  
+
+
+### Growth Signaling
+
+Growth signaling in skeletal muscle inolves the activation of the mTORC1 complex as well as other 
+pathways. We abstract this concept into a single variable $g$ representing a scalar hypertrophy signal. 
+The dynamics of the growth signal are governed by the ordinary differential equation
+$$
+\tau_g \frac{d g}{d t} = \Gamma \, \phi_n(\sigma) - g
+$$
+where
+$$
+\phi_n(\sigma) = \frac{\sigma^n}{K_{\sigma}^n + \sigma^n}
+$$
+is a Hill function that captures the response of the growth signal to applied mechanical stress and $\tau_g$
+controls the timescale of the dynamics. Thus, $K_{\sigma}$ represents a mechanical stress threshold, with $n$ 
+controlling the steepness of the response curve. The dimensionless quantity $\Gamma \in [0,1]$ represents the 
+availability of amino acids and energy for muscle growth. For example, if the quantity of amino acids is $A$
+and the available energy is $E$ then one could have
+$$
+\Gamma_{n,n'}(A, E) = \frac{A^n}{K_A^n + A^n} \frac{E^{n'}}{K_E^{n'} + E^{n'}}
+$$
+but, for simplicity, we will simply assume that $\Gamma$ is a constant. 
+
+
+### Muscle Damage
+
+Mechanical stress can cause damage to sarcomeres, preventing them from translating mechanical stress
+into downstream growth signals. If $a \in [0,1]$ represents the fraction of active (i.e., non-damaged)
+sarcomeres in a muscle fiber, then we describe the dynamics of $a$ as
+$$
+\frac{d a}{d t} = -\eta \sigma a + \mu (1-a)
+$$
+where $\eta$ describes the coupling between mechanical stress and muscle damage and $\mu$ is the rate 
+of damage repair. 
+
+### Muscle Hypertrophy
+
+Muscle mass grows in response to mechanical stress according to the differential equation
+$$
+\frac{d m}{d t} = \lambda \, a \, \psi_{n''}(g) - \delta m
+$$
+where
+$$
+\psi_{n''}(g) = \frac{g^{n''}}{K_g^{n''} + g^{n''}} 
+$$ 
+is another Hill type function. For the sake of simplicity, we will set all of the Hill coefficients to $1$, 
+but leave them in the definitions for completeness.  
+
+### Complete Model
+
+The complete model is defined by the following set of four equations
+$$
+\begin{align}
+\sigma(t) &= \frac{F(t) \rho L}{m(t)} \, , \\
+\tau_g \frac{d g}{d t} &= \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} - g \, , \\
+\frac{d a}{d t} &= -\eta \sigma a + \mu (1-a) \, , \\
+\frac{d m}{d t} &= \lambda \, a \, \frac{g}{K_g + g} - \delta m \, .
+\end{align}
+$$
+Note that the dynamics of the growth signal (determined by $\tau_g$) are much faster than those of 
+muscle damage/repair or growth. As a result, we can set $\tau_g \frac{d g}{d t} = 0$ and assume that
+the growth signal is well captured by the equilbrium value
+$$
+g^* = \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} \, .
+$$
+
+
+### Dimensions
+
+
+### Dimensionless Form
+
+
+
