@@ -89,7 +89,8 @@ if the force is applied in the direction of the muscle fiber, then
 $$
 A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
 $$
-where $V$ is the volume, $L$ is the length, $m$ is the mass, and $\rho$ is the density of the muscle fiber. 
+where $V$ is the volume, $L$ is the length, $m$ is the mass, and $\rho$ is the density of the muscle fiber
+\cite{alexander1975dimensions, sacks1982architecture}. 
 Thus, if the external force at time $t$ is $F(t)$ then the associated stress is
 $$
 \sigma(t) = \frac{F(t) \rho L}{m(t)} \, .
