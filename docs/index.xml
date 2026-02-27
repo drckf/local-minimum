@@ -29,6 +29,12 @@
 <h2 class="anchored" data-anchor-id="background">Background</h2>
 <section id="organization-of-muscle-fibers" class="level3">
 <h3 class="anchored" data-anchor-id="organization-of-muscle-fibers">Organization of Muscle Fibers</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://drckf.github.io/local-minimum/posts/hypertrophy-minimal/Figure-1-Muscle-Schematic.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
+</figure>
+</div>
+<p><em>Figure 1. Schematic of muscle structure, from whole muscle fiber down to individual sarcomeres. Muscle hypertrophy involves an increase in the number and size of myofibrils within each muscle fiber, primarily through net protein accretion and addition of new myofibrils as fibers grow.</em></p>
 <p>Skeletal muscle is organized hierarchically, and the naming conventions can be confusing, so it’s worth being careful. The largest structural unit is the <strong>muscle fiber</strong> — a single, very large multinucleate cell that runs the length of the muscle. Despite the name, a muscle fiber is not a protein filament but a whole cell, typically hundreds of micrometers in diameter and centimeters long.</p>
 <p>Inside each muscle fiber are many <strong>myofibrils</strong> — cylindrical structures, roughly 1–2 μm in diameter, that run the length of the fiber and do the actual mechanical work. Myofibrils are built from repeating units called <strong>sarcomeres</strong>, each about 2–3 μm long at rest. A sarcomere consists of overlapping thick filaments (made of myosin) and thin filaments (made of actin), along with the elastic protein titin, which acts as a molecular spring anchoring the thick filaments and providing passive restoring force. Contraction occurs through cross-bridge cycling: myosin heads bind to actin, pull the thin filaments inward, and release, causing the filaments to slide past one another and the sarcomere to shorten. This is the sliding filament mechanism. Because sarcomeres are in register across neighboring myofibrils, skeletal muscle has a characteristic striated appearance under a microscope.</p>
 <p>Muscle fibers are generally oriented parallel to the axis of force generation, though in pennate muscles they attach to the tendon at an angle — the pennation angle — trading shortening velocity for a larger physiological cross-sectional area and therefore greater force production.</p>

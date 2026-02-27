@@ -17,6 +17,12 @@ Abstract
 
 ### Organization of Muscle Fibers
 
+![](Figure-1-Muscle-Schematic.jpg){fig-align="center" width="600"}
+
+_Figure 1. Schematic of muscle structure, from whole muscle fiber down to individual sarcomeres. 
+Muscle hypertrophy involves an increase in the number and size of myofibrils within each muscle fiber, 
+primarily through net protein accretion and addition of new myofibrils as fibers grow._
+
 
 Skeletal muscle is organized hierarchically, and the naming conventions can be confusing, 
 so it's worth being careful. The largest structural unit is the **muscle fiber** — a single, 
