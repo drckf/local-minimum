@@ -67,6 +67,14 @@ require the incorporation of new nuclei, donated by **satellite cells** — resi
 that proliferate and fuse with the fiber in response to mechanical loading and local damage.
 
 
+### Regulation of Muscle Hypertrophy and Atrophy
+
+![](Figure-2-Hypertrophy-Regulatory-Circuits.png){fig-align="center" width="600"}
+
+_Figure 2. Caption ...
+
+
+
 ### Existing Models of Hypertrophy
 
 
