@@ -56,6 +56,12 @@
 </section>
 <section id="theory" class="level2">
 <h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://drckf.github.io/local-minimum/posts/hypertrophy-minimal/Figure-3-Model-Schematics.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
+</figure>
+</div>
+<p>_Figure 3. Caption …</p>
 <section id="hill-functions" class="level3">
 <h3 class="anchored" data-anchor-id="hill-functions">Hill Functions</h3>
 <p>We will be using the Hill function, so it is helpful to define some notation up front. The Hill function <img src="https://latex.codecogs.com/png.latex?%0A%5Cphi_n(x;%20K)%20=%20%5Cfrac%7Bx%5En%7D%7BK%5En%20+%20x%5En%7D%0A"> is an example of a saturating function, where <img src="https://latex.codecogs.com/png.latex?K"> sets the scale at which <img src="https://latex.codecogs.com/png.latex?x"> starts to saturate and <img src="https://latex.codecogs.com/png.latex?n"> sets the steepness with which <img src="https://latex.codecogs.com/png.latex?%5Cphi"> switches from near <img src="https://latex.codecogs.com/png.latex?0"> to near <img src="https://latex.codecogs.com/png.latex?1"> as <img src="https://latex.codecogs.com/png.latex?x"> crosses <img src="https://latex.codecogs.com/png.latex?K">. For the sake of simplicity, we will take <img src="https://latex.codecogs.com/png.latex?n=1"> for all of the Hill functions in the model presented below but the results are easily generalizable.</p>

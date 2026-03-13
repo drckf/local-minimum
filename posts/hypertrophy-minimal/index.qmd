@@ -80,6 +80,10 @@ _Figure 2. Caption ...
 
 ## Theory 
 
+![](Figure-3-Model-Schematics.png){fig-align="center" width="600"}
+
+_Figure 3. Caption ...
+
 ### Hill Functions
 
 
