@@ -39,7 +39,10 @@ it can be readily generalized to other fiber orientations (e.g., by including a 
 
 _Figure 1. Schematic of muscle structure, from muscle tissue (A) to muscle fibers (B) down to individual sarcomeres (C). 
 Muscle hypertrophy generally involves an increase in the number and size of myofibrils within each muscle fiber, 
-primarily through net protein accretion and addition of new myofibrils as fibers grow._
+primarily through net protein accretion and addition of new myofibrils as fibers grow. Embedded figures are from 
+Wikipedia ([Rectus femoris](https://en.wikipedia.org/wiki/File:Rectus_femoris.png), 
+[Organization of Muscle Fiber](https://en.wikipedia.org/wiki/File:1002_Organization_of_Muscle_Fiber.jpg), 
+[Sarcomere](https://en.wikipedia.org/wiki/File:Sarcomere.svg))._
 
 ---
 
@@ -51,8 +54,8 @@ contractile units (Figure 1C).
 
 Each sarcomere -- typically 2–3 μm long at rest -- consists of overlapping thick filaments (made of myosin)
 and thin filaments (made of actin), along with the elastic protein titin that acts as a molecular spring. Titin 
-also connects the think filaments to the structural boundary of the sarcomere, a protein complex called the Z-disk 
-primarily composed of crosslinked anti-parallel actin filaments held together by layers of α-actinin. During contraction, 
+also connects the thick filaments to the structural boundary of the sarcomere, a protein lattice called the Z-disk 
+primarily composed of α-actinin that transmits force to neighboring sarcomeres. During contraction, 
 myosin heads repeatedly bind to actin, pull the thin filaments inward, and release, shortening the sarcomere as 
 the filaments slide past one another (this myosin ``powerstroke'' is driven by ATP binding and hydrolysis).
 
