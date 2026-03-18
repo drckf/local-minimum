@@ -1,26 +1,26 @@
 ---
 title: "A Minimal Model of Muscle Hypertrophy"
 author: "Charles Fisher"
-date: "2026-02-22"
+date: "2026-03-18"
 categories: [biophysics, theory, hypertrophy]
 image: hypertrophy-minimal-thumbnail.png
 bibliography: hypertrophy.bib
 ---
 
 
-## Introduction
+# Introduction
 
 Skeletal muscle is the contractile tissue responsible for generating the forces that produce movement. 
 Skeletal muscle also adapts to increasing demands for force production by building new contractile units
 within muscle cells, causing the cells to grow larger via a process known as hypertrophy. However, muscle
-tissue also adapts to this stimulus such that repeated application of the same stimulus does not drive additional
+tissue also adapts to this stimulus, and repeated application of the same stimulus does not drive additional
 growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected
 to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue 
 to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights 
 connections to robust adaptation in other biological systems.  
 
 
-### Organization of Muscle Fibers
+## Organization of Muscle Tissue
 
 Skeletal muscle is a post-mitotic tissue consisting of long, cylindrical cells called muscle fibers or myofibers. 
 Each muscle fiber is a multinucleate cell that spans the length of the muscle, connecting via tendons to bones on
@@ -72,15 +72,37 @@ may adapt to repeated training, for example by increasing firing rates or synchr
 Third, muscle cells may grow larger (i.e., hypertrophy) by producing additional contractile proteins. 
 
 
-### Hypertrophy 
+## Hypertrophy 
+
+Because muscle tissue is post-mitotic, hyperplasia -- the growth of new muscle fibers -- does not 
+happen under normal conditions. Instead, muscle growth involves growth in size -- particularly growth 
+in the cross-sectional area -- of existing muscle fibers. Hypertrophy can occur due to an increase in 
+the fluid inside muscle cells (sarcoplasmic hypertrophy) or due to the creation of new contractile units 
+(myofibrillar hypertrophy). Sarcoplasmic hypertrophy may lead to improved endurance, 
+whereas myofibrillar hypertrophy leads to increased capacity for force production. From now on, 
+whenever I use the term hypertrophy I am specfically referring to myofibrillar hypertrophy. 
 
 
-Inside each muscle fiber are many **myofibrils** — cylindrical structures, roughly 1–2 μm in 
-diameter, that run the length of the fiber and do the actual mechanical work. 
+Hypertrophy is driven by a net increase in myofibrillar protein, indicating that muscle protein
+synthesis must exceed muscle protein degradation. There are a number of inputs that affect the 
+rates of muscle protein synthesis and degradation both directly and indirectly including the 
+availability of amino acids and energy, response to mechanical stress, and hormones such as IGF-1,
+androgens, and myostatin. Like most things in systems biology, these inputs affect their responses though 
+a complex web of biochemical interactions, partially illustrated in Figure 2. 
 
-**Hypertrophy** — the increase in muscle size with training — occurs primarily through growth 
-of existing fibers rather than an increase in fiber number. The cellular mechanism is net 
-accumulation of myofibrillar protein: synthesis must exceed degradation over time. Mechanically 
+---
+
+![](Figure-2-Hypertrophy-Regulatory-Circuits.png){fig-align="center" width="600"}
+
+_Figure 2. A schematic view of the biochemical signaling cascades involved in hypertrophy. 
+Ovals represent input nodes, rectangles output nodes, and rounded rectangles intermediate nodes.
+Blue lines with solid arrowheads represent activation, whereas red lines with hollow arrowheads
+represent inhibition. Secondary or indirect interactions are shown as dashed lines.
+See [@bond2016regulation].
+
+---
+
+Mechanically 
 loaded muscle activates a signaling cascade centered on the kinase mTORC1, which upregulates 
 ribosomal activity and drives protein synthesis. As myofibrils accumulate protein they grow 
 radially, and once they reach a sufficient size they split longitudinally, producing new myofibrils. 
@@ -92,23 +114,18 @@ require the incorporation of new nuclei, donated by **satellite cells** — resi
 that proliferate and fuse with the fiber in response to mechanical loading and local damage.
 
 
-![](Figure-2-Hypertrophy-Regulatory-Circuits.png){fig-align="center" width="600"}
 
-_Figure 2. Caption ...
-
+## Existing Models of Hypertrophy
 
 
-### Existing Models of Hypertrophy
-
-
-## Theory 
+# Theory 
 
 ![](Figure-3-Model-Schematics.png){fig-align="center" width="600"}
 
 _Figure 3. Caption ...
 
 
-### Hill Functions
+## Hill Functions
 
 
 
@@ -122,7 +139,7 @@ of simplicity, we will take $n=1$ for all of the Hill functions in the model pre
 are easily generalizable. 
 
 
-### Mechanical Stress
+## Mechanical Stress
 
 Muscle growth responds to mechanical stress, which is defined as the applied force per unit area. That is, 
 $\sigma = F / A_{\perp}$ where $A_{\perp}$ is the cross-sectional area of the muscle perpendicular to the force. 
@@ -143,7 +160,7 @@ Likewise, one can account for the  angle of the force relative to the muscle fib
 but we'll stick with the simplest case here.  
 
 
-### Growth Signaling
+## Growth Signaling
 
 Growth signaling in skeletal muscle inolves the activation of the mTORC1 complex as well as other 
 pathways. We abstract this concept into a single variable $g$ representing a scalar hypertrophy signal. 
@@ -166,8 +183,7 @@ $$
 but, for simplicity, we will simply assume that $\Gamma$ is a constant. 
 
 
-### Muscle Damage
-
+##
 Mechanical stress can cause damage to sarcomeres, preventing them from translating mechanical stress
 into downstream growth signals. If $a \in [0,1]$ represents the fraction of active (i.e., non-damaged)
 sarcomeres in a muscle fiber, then we describe the dynamics of $a$ as
@@ -177,7 +193,7 @@ $$
 where $\eta$ describes the coupling between mechanical stress and muscle damage and $\mu$ is the rate 
 of damage repair. 
 
-### Muscle Hypertrophy
+## Muscle Hypertrophy
 
 Muscle mass grows in response to mechanical stress according to the differential equation
 $$
@@ -190,7 +206,7 @@ $$
 is another Hill type function. For the sake of simplicity, we will set all of the Hill coefficients to $1$, 
 but leave them in the definitions for completeness.  
 
-### Complete Model
+## Complete Model
 
 The complete model is defined by the following set of three ordinary differntial equations
 $$
@@ -207,10 +223,10 @@ $$
 is the applied mechanical stress. 
 
 
-### Dimensions and Parameter Values
+## Dimensions and Parameter Values
 
 
-### Separation of Timescales
+## Separation of Timescales
 
 Note that the dynamics of the growth signal (determined by $\tau_g$) are much faster than those of 
 muscle damage/repair or growth. As a result, we can set $\tau_g \frac{d g}{d t} = 0$ and assume that
@@ -229,7 +245,12 @@ $$
 \end{align}
 $$
 
-### Dimensionless Form
+## Dimensionless Form
+
+Foo ...
+
+
+
 
 
 
