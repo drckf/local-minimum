@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Charles Fisher">
-<meta name="dcterms.date" content="2026-02-22">
+<meta name="dcterms.date" content="2026-03-19">
 
 <title>A Minimal Model of Muscle Hypertrophy – Local Minimum</title>
 <style>
@@ -22,7 +22,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -170,7 +190,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">February 22, 2026</p>
+        <p class="date">March 19, 2026</p>
       </div>
     </div>
     
@@ -189,11 +209,11 @@ window.Quarto = {
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>Skeletal muscle is the contractile tissue responsible for generating the forces that produce movement. Skeletal muscle also adapts to increasing demands for force production by building new contractile units within muscle cells, causing the cells to grow larger via a process known as hypertrophy. However, muscle tissue also adapts to this stimulus such that repeated application of the same stimulus does not drive additional growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights connections to robust adaptation in other biological systems.</p>
-<section id="organization-of-muscle-fibers" class="level3">
-<h3 class="anchored" data-anchor-id="organization-of-muscle-fibers">Organization of Muscle Fibers</h3>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Skeletal muscle is the contractile tissue responsible for generating the forces that produce movement. Skeletal muscle also adapts to increasing demands for force production by building new contractile units within muscle cells, causing the cells to grow larger via a process known as hypertrophy. However, muscle tissue also adapts to this stimulus, and repeated application of the same stimulus does not drive additional growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights connections to robust adaptation in other biological systems.</p>
+<section id="organization-of-muscle-tissue" class="level2">
+<h2 class="anchored" data-anchor-id="organization-of-muscle-tissue">Organization of Muscle Tissue</h2>
 <p>Skeletal muscle is a post-mitotic tissue consisting of long, cylindrical cells called muscle fibers or myofibers. Each muscle fiber is a multinucleate cell that spans the length of the muscle, connecting via tendons to bones on each end (Figure 1A). Note that a myofiber is not a protein filament, but rather a whole cell that is typically micrometers in diameter and centimeters in length, in contrast to a myofibril, which is a component within muscle cells. Muscle fibers are typically aligned nearly parallel to the axis of force generation; however, in general the angle between the muscle fiber and the axis of force generation is called the pennation angle. Some muscles – such as the rectus femoris highlighted in Figure 1A – consist of fibers with different pennation angles (called bipennate or multipennate tissues) whereas others are unipennate and have fibers that run parallel to each other. For simplicity, I will develop the theory for unipennate, parallel muscle fibers with the understanding that it can be readily generalized to other fiber orientations (e.g., by including a <span class="math inline">\(\cos(\theta)\)</span> term where necessary).</p>
 <hr>
 <div class="quarto-figure quarto-figure-center">
@@ -201,51 +221,57 @@ window.Quarto = {
 <p><img src="Figure-1-Muscle-Schematic.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
 </figure>
 </div>
-<p><em>Figure 1. Schematic of muscle structure, from muscle tissue (A) to muscle fibers (B) down to individual sarcomeres (C). Muscle hypertrophy generally involves an increase in the number and size of myofibrils within each muscle fiber, primarily through net protein accretion and addition of new myofibrils as fibers grow.</em></p>
+<p><em>Figure 1. Schematic of muscle structure, from (A) muscle tissue to (B) muscle fibers down to (C) individual sarcomeres. Muscle hypertrophy generally involves an increase in the number and size of myofibrils within each muscle fiber, primarily through net protein accretion and addition of new myofibrils as fibers grow. Embedded figures are from Wikipedia (<a href="https://en.wikipedia.org/wiki/File:Rectus_femoris.png">Rectus femoris</a>, <a href="https://en.wikipedia.org/wiki/File:1002_Organization_of_Muscle_Fiber.jpg">Organization of Muscle Fiber</a>, <a href="https://en.wikipedia.org/wiki/File:Sarcomere.svg">Sarcomere</a>).</em></p>
 <hr>
-<p>Muscle tissue is organized hierarchically. Muscle fibers (which are themselves grouped into fascicles) span the length of the tissue. Myofibrils are cylindrical structures within muscle fibers that span the length of the cell and are responsible for doing the actual mechanical work (Figure 1B).</p>
-<p>Inside each muscle fiber are many <strong>myofibrils</strong> — cylindrical structures, roughly 1–2 μm in diameter, that run the length of the fiber and do the actual mechanical work. Myofibrils are built from repeating units called <strong>sarcomeres</strong>, each about 2–3 μm long at rest. A sarcomere consists of overlapping thick filaments (made of myosin) and thin filaments (made of actin), along with the elastic protein titin, which acts as a molecular spring anchoring the thick filaments and providing passive restoring force. Contraction occurs through cross-bridge cycling: myosin heads bind to actin, pull the thin filaments inward, and release, causing the filaments to slide past one another and the sarcomere to shorten. This is the sliding filament mechanism. Because sarcomeres are in register across neighboring myofibrils, skeletal muscle has a characteristic striated appearance under a microscope.</p>
-<p>Muscle fibers are generally oriented parallel to the axis of force generation, though in pennate muscles they attach to the tendon at an angle — the pennation angle — trading shortening velocity for a larger physiological cross-sectional area and therefore greater force production.</p>
-<p>Fibers are innervated in groups called <strong>motor units</strong>, each consisting of a single motor neuron and all the fibers it controls. Force output is graded in two ways: by recruiting additional motor units, and by increasing the firing rate of already-active motor neurons. Crucially, motor units are recruited in a consistent order from smallest to largest — slow-twitch, fatigue-resistant units first, with fast-twitch, high-force units brought in as demand increases. This is Henneman’s size principle, and it has important implications for which fibers are actually stressed during a given bout of exercise.</p>
-<p><strong>Hypertrophy</strong> — the increase in muscle size with training — occurs primarily through growth of existing fibers rather than an increase in fiber number. The cellular mechanism is net accumulation of myofibrillar protein: synthesis must exceed degradation over time. Mechanically loaded muscle activates a signaling cascade centered on the kinase mTORC1, which upregulates ribosomal activity and drives protein synthesis. As myofibrils accumulate protein they grow radially, and once they reach a sufficient size they split longitudinally, producing new myofibrils. So fiber growth is essentially an increase in the number of myofibrils packed into the fiber cross-section. Sarcomeres can also be added in series at the tips of myofibrils, increasing fiber length, though this is less dominant in the context of resistance training. Finally, because a myonucleus can only support a limited cytoplasmic volume, sustained hypertrophy is thought to require the incorporation of new nuclei, donated by <strong>satellite cells</strong> — resident stem cells that proliferate and fuse with the fiber in response to mechanical loading and local damage.</p>
+<p>Muscle tissue is organized hierarchically. Muscle fibers (which are themselves grouped into fascicles) span the length of the tissue. Myofibrils are cylindrical structures within muscle fibers that span the length of the cell and are responsible for doing the actual mechanical work (Figure 1B). Myofibrils are subsequently made up of repeating units called sarcomeres, which correspond to the individual contractile units (Figure 1C).</p>
+<p>Each sarcomere – typically 2–3 μm long at rest – consists of overlapping thick filaments (made of myosin) and thin filaments (made of actin), along with the elastic protein titin that acts as a molecular spring. Titin also connects the thick filaments to the structural boundary of the sarcomere, a protein lattice called the Z-disk primarily composed of α-actinin that transmits force to neighboring sarcomeres. During contraction, myosin heads repeatedly bind to actin, pull the thin filaments inward, and release, shortening the sarcomere as the filaments slide past one another (this myosin powerstroke is driven by ATP binding and hydrolysis).</p>
+<p>Muscle fibers are innervated in groups called motor units, with each motor unit consisting of a single motor neuron controlling multiple fibers. The fibers within a motor unit contract completely, or not at all, when stimulated. Thus, an individual motor unit only contracts if the stimulus exceeds a given threshold. Force output is graded by recruiting additional motor units, or by increasing the firing rate of already-active motor neurons. In addition, motor units are recruited sequentially, starting with fatigue-resistant slow twitch fibers first, with high-force producing fast-twitch fibers brought in as the demand for additional force production increases.</p>
+<p>Muscle tissue generally adapts to exercise or other stimuli in three ways. First, the cells may produce metabolic adaptations, such as additional mitochondria, in response to increased energy demands. Second, the motor neurons may adapt to repeated training, for example by increasing firing rates or synchronizing activity across motor units. Third, muscle cells may grow larger (i.e., hypertrophy) by producing additional contractile proteins.</p>
 </section>
-<section id="regulation-of-muscle-hypertrophy-and-atrophy" class="level3">
-<h3 class="anchored" data-anchor-id="regulation-of-muscle-hypertrophy-and-atrophy">Regulation of Muscle Hypertrophy and Atrophy</h3>
+<section id="hypertrophy" class="level2">
+<h2 class="anchored" data-anchor-id="hypertrophy">Hypertrophy</h2>
+<p>Because muscle tissue is post-mitotic, hyperplasia – the growth of new muscle fibers – does not generally happen under normal conditions. Instead, muscle growth involves growth in size of existing muscle fibers – particularly growth in the cross-sectional area, though growth in length can occur as well. Hypertrophy can occur due to an increase in the fluid inside muscle cells (sarcoplasmic hypertrophy) or due to the creation of new contractile units (myofibrillar hypertrophy). Sarcoplasmic hypertrophy may lead to improved endurance, whereas myofibrillar hypertrophy leads to increased capacity for force production. From now on, whenever I use the term hypertrophy I am specfically referring to myofibrillar hypertrophy.</p>
+<p>Hypertrophy is driven by a net increase in myofibrillar protein, indicating that muscle protein synthesis must exceed muscle protein degradation. There are a number of inputs that affect the rates of muscle protein synthesis and degradation both directly and indirectly including the availability of amino acids and energy, response to mechanical stress, and hormones such as IGF-1, androgens, and myostatin. Like most things in systems biology, these inputs affect their responses though a complex web of biochemical interactions, partially illustrated in Figure 2.</p>
+<hr>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="Figure-2-Hypertrophy-Regulatory-Circuits.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
 </figure>
 </div>
-<p>_Figure 2. Caption …</p>
+<p><em>Figure 2. A schematic view of the biochemical signaling cascades involved in hypertrophy. Ovals represent input nodes, rectangles output nodes, and rounded rectangles intermediate nodes. Blue lines with solid arrowheads represent activation, whereas red lines with hollow arrowheads represent inhibition. Secondary or indirect interactions are shown as dashed lines. See <span class="citation" data-cites="bond2016regulation">(<a href="#ref-bond2016regulation" role="doc-biblioref">Bond 2016</a>)</span>.</em></p>
+<hr>
+<p>The hypertrophic response to mechanical stress is primarily controlled by the activation of the mTORC1 complex, which goes on to activate muscle protein synthesis. This response is mediated by three different pathways. First, eccentric contractions lead to the hyperphosphorylation of TSC2 and subsequent translocation of TSC2 away from the lysosome, preventing TSC2 from inhibiting mTORC1 <span class="citation" data-cites="jacobs2013eccentric">(<a href="#ref-jacobs2013eccentric" role="doc-biblioref">Jacobs et al. 2013</a>)</span>. Second, mechanical stimuli increase concentrations of phosphatidic acid (PA) — though, the precise cause of this is poorly understood <span class="citation" data-cites="bond2016regulation">(<a href="#ref-bond2016regulation" role="doc-biblioref">Bond 2016</a>)</span> — which directly activates mTORC1 <span class="citation" data-cites="yoon2011phosphatidic">(<a href="#ref-yoon2011phosphatidic" role="doc-biblioref">Yoon et al. 2011</a>)</span>. A third mechanism involves exercise induced increase of IGF-1, leading to activation of mTORC1 through the AKT pathway. The IGF-1 induced mechanism was once considered to be the dominant pathway regulating mechanical stress induced hypertrophy, but subsequent research has shown that the IGF-1/AKT pathway is not necessary <span class="citation" data-cites="spangenburg2008functional hornberger2011mechanotransduction miyazaki2011early">(<a href="#ref-spangenburg2008functional" role="doc-biblioref">Spangenburg et al. 2008</a>; <a href="#ref-hornberger2011mechanotransduction" role="doc-biblioref">Hornberger 2011</a>; <a href="#ref-miyazaki2011early" role="doc-biblioref">Miyazaki et al. 2011</a>)</span> even though mTORC1 activation is necessary <span class="citation" data-cites="you2018role">(<a href="#ref-you2018role" role="doc-biblioref">You et al. 2018</a>)</span>. Thus, current evidence suggests that the IGF-1/AKT pathway is only of secondary importance for the hypertrophic response to mechanical stimuli relative to the former pathways.</p>
+<p>Whatever the upstream mechanism, the activation of mTORC1 upregulates ribosomal activity and drives protein synthesis. As myofibrils accumulate protein they grow radially, and once they reach a sufficient size they split longitudinally, producing new myofibrils. So fiber growth is essentially an increase in the number of myofibrils packed into the fiber cross-section. Sarcomeres can also be added in series at the tips of myofibrils, increasing fiber length, though this is less dominant in the context of resistance training. Finally, muscle fibers are multinucleate cells because a myonucleus can only support a limited cytoplasmic volume, thus sustained hypertrophy is thought to require the incorporation of new nuclei, donated by satellite cells — resident stem cells that proliferate and fuse with the fiber in response to mechanical loading and local damage. However, the remaining of this post will focus only on the increase in muscle protein synthesis driven by mechanical stimuli.</p>
 </section>
-<section id="existing-models-of-hypertrophy" class="level3">
-<h3 class="anchored" data-anchor-id="existing-models-of-hypertrophy">Existing Models of Hypertrophy</h3>
+<section id="existing-models-of-hypertrophy" class="level2">
+<h2 class="anchored" data-anchor-id="existing-models-of-hypertrophy">Existing Models of Hypertrophy</h2>
 </section>
 </section>
-<section id="theory" class="level2">
-<h2 class="anchored" data-anchor-id="theory">Theory</h2>
+<section id="theory" class="level1">
+<h1>Theory</h1>
+<p>Even though the details of the signaling networks leading to the hypertrophic response to mechanical stimulus are not entirely understood, it seems clear that mTORC1 activation – via whatever upstream mechanism – is the predominant signal for muscle growth.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="Figure-3-Model-Schematics.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
 </figure>
 </div>
 <p>_Figure 3. Caption …</p>
-<section id="hill-functions" class="level3">
-<h3 class="anchored" data-anchor-id="hill-functions">Hill Functions</h3>
+<section id="hill-functions" class="level2">
+<h2 class="anchored" data-anchor-id="hill-functions">Hill Functions</h2>
 <p>We will be using the Hill function, so it is helpful to define some notation up front. The Hill function <span class="math display">\[
 \phi_n(x; K) = \frac{x^n}{K^n + x^n}
 \]</span> is an example of a saturating function, where <span class="math inline">\(K\)</span> sets the scale at which <span class="math inline">\(x\)</span> starts to saturate and <span class="math inline">\(n\)</span> sets the steepness with which <span class="math inline">\(\phi\)</span> switches from near <span class="math inline">\(0\)</span> to near <span class="math inline">\(1\)</span> as <span class="math inline">\(x\)</span> crosses <span class="math inline">\(K\)</span>. For the sake of simplicity, we will take <span class="math inline">\(n=1\)</span> for all of the Hill functions in the model presented below but the results are easily generalizable.</p>
 </section>
-<section id="mechanical-stress" class="level3">
-<h3 class="anchored" data-anchor-id="mechanical-stress">Mechanical Stress</h3>
+<section id="mechanical-stress" class="level2">
+<h2 class="anchored" data-anchor-id="mechanical-stress">Mechanical Stress</h2>
 <p>Muscle growth responds to mechanical stress, which is defined as the applied force per unit area. That is, <span class="math inline">\(\sigma = F / A_{\perp}\)</span> where <span class="math inline">\(A_{\perp}\)</span> is the cross-sectional area of the muscle perpendicular to the force. We want to express the stress in terms of the mass of the muscle fiber, <span class="math inline">\(m\)</span>. To do this, we note that if the force is applied in the direction of the muscle fiber, then <span class="math display">\[
 A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
 \]</span> where <span class="math inline">\(V\)</span> is the volume, <span class="math inline">\(L\)</span> is the length, <span class="math inline">\(m\)</span> is the mass, and <span class="math inline">\(\rho\)</span> is the density of the muscle fiber . Thus, if the external force at time <span class="math inline">\(t\)</span> is <span class="math inline">\(F(t)\)</span> then the associated stress is <span class="math display">\[
 \sigma(t) = \frac{F(t) \rho L}{m(t)} \, .
 \]</span> Note that one can come up with alternative scalings of <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(m\)</span> under different assumptions, but in one generally has <span class="math inline">\(\sigma \sim m^{-\alpha}\)</span> with <span class="math inline">\(\alpha \in [2/3, 1]\)</span> so the results are fairly robust. Likewise, one can account for the angle of the force relative to the muscle fibers in more complex cases, but we’ll stick with the simplest case here.</p>
 </section>
-<section id="growth-signaling" class="level3">
-<h3 class="anchored" data-anchor-id="growth-signaling">Growth Signaling</h3>
+<section id="growth-signaling" class="level2">
+<h2 class="anchored" data-anchor-id="growth-signaling">Growth Signaling</h2>
 <p>Growth signaling in skeletal muscle inolves the activation of the mTORC1 complex as well as other pathways. We abstract this concept into a single variable <span class="math inline">\(g\)</span> representing a scalar hypertrophy signal. The dynamics of the growth signal are governed by the ordinary differential equation <span class="math display">\[
 \tau_g \frac{d g}{d t} = \Gamma \, \phi_n(\sigma) - g
 \]</span> where <span class="math display">\[
@@ -254,22 +280,22 @@ A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
 \Gamma_{n,n'}(A, E) = \frac{A^n}{K_A^n + A^n} \frac{E^{n'}}{K_E^{n'} + E^{n'}}
 \]</span> but, for simplicity, we will simply assume that <span class="math inline">\(\Gamma\)</span> is a constant.</p>
 </section>
-<section id="muscle-damage" class="level3">
-<h3 class="anchored" data-anchor-id="muscle-damage">Muscle Damage</h3>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section"></h2>
 <p>Mechanical stress can cause damage to sarcomeres, preventing them from translating mechanical stress into downstream growth signals. If <span class="math inline">\(a \in [0,1]\)</span> represents the fraction of active (i.e., non-damaged) sarcomeres in a muscle fiber, then we describe the dynamics of <span class="math inline">\(a\)</span> as <span class="math display">\[
 \frac{d a}{d t} = -\eta \sigma a + \mu (1-a)
 \]</span> where <span class="math inline">\(\eta\)</span> describes the coupling between mechanical stress and muscle damage and <span class="math inline">\(\mu\)</span> is the rate of damage repair.</p>
 </section>
-<section id="muscle-hypertrophy" class="level3">
-<h3 class="anchored" data-anchor-id="muscle-hypertrophy">Muscle Hypertrophy</h3>
+<section id="muscle-hypertrophy" class="level2">
+<h2 class="anchored" data-anchor-id="muscle-hypertrophy">Muscle Hypertrophy</h2>
 <p>Muscle mass grows in response to mechanical stress according to the differential equation <span class="math display">\[
 \frac{d m}{d t} = \lambda \, a \, \psi_{n''}(g) - \delta m
 \]</span> where <span class="math display">\[
 \psi_{n''}(g) = \frac{g^{n''}}{K_g^{n''} + g^{n''}}
 \]</span> is another Hill type function. For the sake of simplicity, we will set all of the Hill coefficients to <span class="math inline">\(1\)</span>, but leave them in the definitions for completeness.</p>
 </section>
-<section id="complete-model" class="level3">
-<h3 class="anchored" data-anchor-id="complete-model">Complete Model</h3>
+<section id="complete-model" class="level2">
+<h2 class="anchored" data-anchor-id="complete-model">Complete Model</h2>
 <p>The complete model is defined by the following set of three ordinary differntial equations <span class="math display">\[
 \begin{align}
 \tau_g \frac{d g}{d t} &amp;= \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} - g \, , \\
@@ -280,11 +306,11 @@ A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
 \sigma(t) = \frac{F(t) \rho L}{m(t)} \, ,
 \]</span> is the applied mechanical stress.</p>
 </section>
-<section id="dimensions-and-parameter-values" class="level3">
-<h3 class="anchored" data-anchor-id="dimensions-and-parameter-values">Dimensions and Parameter Values</h3>
+<section id="dimensions-and-parameter-values" class="level2">
+<h2 class="anchored" data-anchor-id="dimensions-and-parameter-values">Dimensions and Parameter Values</h2>
 </section>
-<section id="separation-of-timescales" class="level3">
-<h3 class="anchored" data-anchor-id="separation-of-timescales">Separation of Timescales</h3>
+<section id="separation-of-timescales" class="level2">
+<h2 class="anchored" data-anchor-id="separation-of-timescales">Separation of Timescales</h2>
 <p>Note that the dynamics of the growth signal (determined by <span class="math inline">\(\tau_g\)</span>) are much faster than those of muscle damage/repair or growth. As a result, we can set <span class="math inline">\(\tau_g \frac{d g}{d t} = 0\)</span> and assume that the growth signal is well captured by the equilbrium value <span class="math display">\[
 g^*
 = \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma}
@@ -296,14 +322,38 @@ g^*
 \end{align}
 \]</span></p>
 </section>
-<section id="dimensionless-form" class="level3">
-<h3 class="anchored" data-anchor-id="dimensionless-form">Dimensionless Form</h3>
+<section id="dimensionless-form" class="level2">
+<h2 class="anchored" data-anchor-id="dimensionless-form">Dimensionless Form</h2>
+<p>Foo …</p>
+
 
 
 </section>
 </section>
 
-</main> <!-- /main -->
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-bond2016regulation" class="csl-entry" role="listitem">
+Bond, Peter. 2016. <span>“Regulation of mTORC1 by Growth Factors, Energy Status, Amino Acids and Mechanical Stimuli at a Glance.”</span> <em>Journal of the International Society of Sports Nutrition</em> 13 (1): 8.
+</div>
+<div id="ref-hornberger2011mechanotransduction" class="csl-entry" role="listitem">
+Hornberger, Troy A. 2011. <span>“Mechanotransduction and the Regulation of mTORC1 Signaling in Skeletal Muscle.”</span> <em>The International Journal of Biochemistry &amp; Cell Biology</em> 43 (9): 1267–76.
+</div>
+<div id="ref-jacobs2013eccentric" class="csl-entry" role="listitem">
+Jacobs, Brittany L, Jae-Sung You, John W Frey, Craig A Goodman, David M Gundermann, and Troy A Hornberger. 2013. <span>“Eccentric Contractions Increase the Phosphorylation of Tuberous Sclerosis Complex-2 (TSC2) and Alter the Targeting of TSC2 and the Mechanistic Target of Rapamycin to the Lysosome.”</span> <em>The Journal of Physiology</em> 591 (18): 4611–20.
+</div>
+<div id="ref-miyazaki2011early" class="csl-entry" role="listitem">
+Miyazaki, Mitsunori, John J McCarthy, Mark J Fedele, and Karyn A Esser. 2011. <span>“Early Activation of mTORC1 Signalling in Response to Mechanical Overload Is Independent of Phosphoinositide 3-Kinase/Akt Signalling.”</span> <em>The Journal of Physiology</em> 589 (7): 1831–46.
+</div>
+<div id="ref-spangenburg2008functional" class="csl-entry" role="listitem">
+Spangenburg, Espen E, Derek Le Roith, Chris W Ward, and Sue C Bodine. 2008. <span>“A Functional Insulin-Like Growth Factor Receptor Is Not Necessary for Load-Induced Skeletal Muscle Hypertrophy.”</span> <em>The Journal of Physiology</em> 586 (1): 283–91.
+</div>
+<div id="ref-yoon2011phosphatidic" class="csl-entry" role="listitem">
+Yoon, Mee-Sup, Yuting Sun, Edwin Arauz, Yu Jiang, and Jie Chen. 2011. <span>“Phosphatidic Acid Activates Mammalian Target of Rapamycin Complex 1 (mTORC1) Kinase by Displacing FK506 Binding Protein 38 (FKBP38) and Exerting an Allosteric Effect.”</span> <em>Journal of Biological Chemistry</em> 286 (34): 29568–74.
+</div>
+<div id="ref-you2018role" class="csl-entry" role="listitem">
+You, Jae-Sung, Rachel M McNally, Brittany L Jacobs, Rachel E Privett, David M Gundermann, Kuan-Hung Lin, Nate D Steinert, Craig A Goodman, and Troy A Hornberger. 2018. <span>“The Role of Raptor in the Mechanical Load-Induced Regulation of mTOR Signaling, Protein Synthesis, and Skeletal Muscle Hypertrophy.”</span> <em>The FASEB Journal</em> 33 (3): 4021.
+</div>
+</div></section></div></main> <!-- /main -->
 <hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
 
 <h2>Subscribe to Updates</h2>
