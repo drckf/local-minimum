@@ -26,7 +26,7 @@
 <p>Skeletal muscle is the contractile tissue responsible for generating the forces that produce movement. Skeletal muscle also adapts to increasing demands for force production by building new contractile units within muscle cells, causing the cells to grow larger via a process known as hypertrophy. However, muscle tissue also adapts to this stimulus, and repeated application of the same stimulus does not drive additional growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights connections to robust adaptation in other biological systems.</p>
 <section id="organization-of-muscle-tissue" class="level2">
 <h2 class="anchored" data-anchor-id="organization-of-muscle-tissue">Organization of Muscle Tissue</h2>
-<p>Skeletal muscle is a post-mitotic tissue consisting of long, cylindrical cells called muscle fibers or myofibers. Each muscle fiber is a multinucleate cell that spans the length of the muscle, connecting via tendons to bones on each end (Figure 1A). Note that a myofiber is not a protein filament, but rather a whole cell that is typically micrometers in diameter and centimeters in length, in contrast to a myofibril, which is a component within muscle cells. Muscle fibers are typically aligned nearly parallel to the axis of force generation; however, in general the angle between the muscle fiber and the axis of force generation is called the pennation angle. Some muscles – such as the rectus femoris highlighted in Figure 1A – consist of fibers with different pennation angles (called bipennate or multipennate tissues) whereas others are unipennate and have fibers that run parallel to each other. For simplicity, I will develop the theory for unipennate, parallel muscle fibers with the understanding that it can be readily generalized to other fiber orientations (e.g., by including a <img src="https://latex.codecogs.com/png.latex?%5Ccos(%5Ctheta)"> term where necessary).</p>
+<p>Skeletal muscle is a post-mitotic tissue consisting of long, cylindrical cells called muscle fibers or myofibers. See <span class="citation" data-cites="frontera2015skeletal mukund2020skeletal">(Frontera and Ochala 2015; Mukund and Subramaniam 2020)</span> for relevant reviews. Each muscle fiber is a multinucleate cell that spans the length of the muscle, connecting via tendons to bones on each end (Figure 1A). Note that a myofiber is not a protein filament, but rather a whole cell that is typically micrometers in diameter and centimeters in length, in contrast to a myofibril, which is a component within muscle cells. Muscle fibers are typically aligned nearly parallel to the axis of force generation; however, in general the angle between the muscle fiber and the axis of force generation is called the pennation angle. Some muscles – such as the rectus femoris highlighted in Figure 1A – consist of fibers with different pennation angles (called bipennate or multipennate tissues) whereas others are unipennate and have fibers that run parallel to each other. For simplicity, I will develop the theory for unipennate, parallel muscle fibers with the understanding that it can be readily generalized to other fiber orientations (e.g., by including a <img src="https://latex.codecogs.com/png.latex?%5Ccos(%5Ctheta)"> term where necessary).</p>
 <hr>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -112,6 +112,9 @@
 <div id="ref-bond2016regulation" class="csl-entry">
 Bond, Peter. 2016. <span>“Regulation of mTORC1 by Growth Factors, Energy Status, Amino Acids and Mechanical Stimuli at a Glance.”</span> <em>Journal of the International Society of Sports Nutrition</em> 13 (1): 8.
 </div>
+<div id="ref-frontera2015skeletal" class="csl-entry">
+Frontera, Walter R, and Julien Ochala. 2015. <span>“Skeletal Muscle: A Brief Review of Structure and Function.”</span> <em>Calcified Tissue International</em> 96 (3): 183–95.
+</div>
 <div id="ref-hornberger2011mechanotransduction" class="csl-entry">
 Hornberger, Troy A. 2011. <span>“Mechanotransduction and the Regulation of mTORC1 Signaling in Skeletal Muscle.”</span> <em>The International Journal of Biochemistry &amp; Cell Biology</em> 43 (9): 1267–76.
 </div>
@@ -120,6 +123,9 @@ Jacobs, Brittany L, Jae-Sung You, John W Frey, Craig A Goodman, David M Gunderma
 </div>
 <div id="ref-miyazaki2011early" class="csl-entry">
 Miyazaki, Mitsunori, John J McCarthy, Mark J Fedele, and Karyn A Esser. 2011. <span>“Early Activation of mTORC1 Signalling in Response to Mechanical Overload Is Independent of Phosphoinositide 3-Kinase/Akt Signalling.”</span> <em>The Journal of Physiology</em> 589 (7): 1831–46.
+</div>
+<div id="ref-mukund2020skeletal" class="csl-entry">
+Mukund, Kavitha, and Shankar Subramaniam. 2020. <span>“Skeletal Muscle: A Review of Molecular Structure and Function, in Health and Disease.”</span> <em>Wiley Interdisciplinary Reviews: Systems Biology and Medicine</em> 12 (1): e1462.
 </div>
 <div id="ref-spangenburg2008functional" class="csl-entry">
 Spangenburg, Espen E, Derek Le Roith, Chris W Ward, and Sue C Bodine. 2008. <span>“A Functional Insulin-Like Growth Factor Receptor Is Not Necessary for Load-Induced Skeletal Muscle Hypertrophy.”</span> <em>The Journal of Physiology</em> 586 (1): 283–91.
@@ -136,7 +142,7 @@ You, Jae-Sung, Rachel M McNally, Brittany L Jacobs, Rachel E Privett, David M Gu
   <category>hypertrophy</category>
   <guid>https://drckf.github.io/local-minimum/posts/hypertrophy-minimal/</guid>
   <pubDate>Thu, 19 Mar 2026 07:00:00 GMT</pubDate>
-  <media:content url="https://drckf.github.io/local-minimum/posts/hypertrophy-minimal/hypertrophy-minimal-thumbnail.png" medium="image" type="image/png" height="110" width="144"/>
+  <media:content url="https://drckf.github.io/local-minimum/posts/hypertrophy-minimal/hypertrophy-minimal-thumbnail.png" medium="image" type="image/png" height="108" width="144"/>
 </item>
 <item>
   <title>Universal Dynamics of Weighted Linear Attention</title>
