@@ -139,7 +139,10 @@ predominant signal for muscle growth.
 
 ![](Figure-3-Model-Schematics.png){fig-align="center" width="600"}
 
-_Figure 3. Caption ...
+_Figure 3. Illustrations of two minimal models of mechanical stress induced hypertrophy. In (A), force 
+causes mechanical stress that induces a growth signal (i.e., mTORC1 activation) amd drives muscle protein 
+synthesis, which leads to a decrease in stress at the same force output. The model in (B) is similar, but 
+also accounts for a stress induced decrease in the fraction of active muscle fibers due to accumulated damage._
 
 
 ## Hill Functions
