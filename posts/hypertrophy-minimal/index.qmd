@@ -23,7 +23,7 @@ connections to robust adaptation in other biological systems.
 ## Organization of Muscle Tissue
 
 Skeletal muscle is a post-mitotic tissue consisting of long, cylindrical cells called muscle fibers or myofibers. 
-See [@frontera2015skeletal; @mukund2020skeletal] for relevant reviews. 
+The following is a short overview of muscle physiology; see reviews [@frontera2015skeletal; @mukund2020skeletal] for more details. 
 Each muscle fiber is a multinucleate cell that spans the length of the muscle, connecting via tendons to bones on
 each end (Figure 1A). Note that a myofiber is not a protein filament, but rather a whole cell that is typically 
 micrometers in diameter and centimeters in length, in contrast to a myofibril, which is a component within muscle 
