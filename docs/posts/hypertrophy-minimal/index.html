@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Charles Fisher">
-<meta name="dcterms.date" content="2026-03-19">
+<meta name="dcterms.date" content="2026-03-18">
 
 <title>A Minimal Model of Muscle Hypertrophy – Local Minimum</title>
 <style>
@@ -190,7 +190,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">March 19, 2026</p>
+        <p class="date">March 18, 2026</p>
       </div>
     </div>
     
@@ -221,7 +221,7 @@ window.Quarto = {
 <p><img src="Figure-1-Muscle-Schematic.jpg" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
 </figure>
 </div>
-<p><em>Figure 1. Schematic of muscle structure, from (A) muscle tissue to (B) muscle fibers down to (C) individual sarcomeres. Muscle hypertrophy generally involves an increase in the number and size of myofibrils within each muscle fiber, primarily through net protein accretion and addition of new myofibrils as fibers grow. Embedded figures are from Wikipedia (<a href="https://en.wikipedia.org/wiki/File:Rectus_femoris.png">Rectus femoris</a>, <a href="https://en.wikipedia.org/wiki/File:1002_Organization_of_Muscle_Fiber.jpg">Organization of Muscle Fiber</a>, <a href="https://en.wikipedia.org/wiki/File:Sarcomere.svg">Sarcomere</a>).</em></p>
+<p><em>Figure 1. Schematic of muscle structure, from muscle tissue (A) to muscle fibers (B) down to individual sarcomeres (C). Muscle hypertrophy generally involves an increase in the number and size of myofibrils within each muscle fiber, primarily through net protein accretion and addition of new myofibrils as fibers grow. Embedded figures are from Wikipedia (<a href="https://en.wikipedia.org/wiki/File:Rectus_femoris.png">Rectus femoris</a>, <a href="https://en.wikipedia.org/wiki/File:1002_Organization_of_Muscle_Fiber.jpg">Organization of Muscle Fiber</a>, <a href="https://en.wikipedia.org/wiki/File:Sarcomere.svg">Sarcomere</a>).</em></p>
 <hr>
 <p>Muscle tissue is organized hierarchically. Muscle fibers (which are themselves grouped into fascicles) span the length of the tissue. Myofibrils are cylindrical structures within muscle fibers that span the length of the cell and are responsible for doing the actual mechanical work (Figure 1B). Myofibrils are subsequently made up of repeating units called sarcomeres, which correspond to the individual contractile units (Figure 1C).</p>
 <p>Each sarcomere – typically 2–3 μm long at rest – consists of overlapping thick filaments (made of myosin) and thin filaments (made of actin), along with the elastic protein titin that acts as a molecular spring. Titin also connects the thick filaments to the structural boundary of the sarcomere, a protein lattice called the Z-disk primarily composed of α-actinin that transmits force to neighboring sarcomeres. During contraction, myosin heads repeatedly bind to actin, pull the thin filaments inward, and release, shortening the sarcomere as the filaments slide past one another (this myosin powerstroke is driven by ATP binding and hydrolysis).</p>
@@ -230,7 +230,7 @@ window.Quarto = {
 </section>
 <section id="hypertrophy" class="level2">
 <h2 class="anchored" data-anchor-id="hypertrophy">Hypertrophy</h2>
-<p>Because muscle tissue is post-mitotic, hyperplasia – the growth of new muscle fibers – does not generally happen under normal conditions. Instead, muscle growth involves growth in size of existing muscle fibers – particularly growth in the cross-sectional area, though growth in length can occur as well. Hypertrophy can occur due to an increase in the fluid inside muscle cells (sarcoplasmic hypertrophy) or due to the creation of new contractile units (myofibrillar hypertrophy). Sarcoplasmic hypertrophy may lead to improved endurance, whereas myofibrillar hypertrophy leads to increased capacity for force production. From now on, whenever I use the term hypertrophy I am specfically referring to myofibrillar hypertrophy.</p>
+<p>Because muscle tissue is post-mitotic, hyperplasia – the growth of new muscle fibers – does not happen under normal conditions. Instead, muscle growth involves growth in size – particularly growth in the cross-sectional area – of existing muscle fibers. Hypertrophy can occur due to an increase in the fluid inside muscle cells (sarcoplasmic hypertrophy) or due to the creation of new contractile units (myofibrillar hypertrophy). Sarcoplasmic hypertrophy may lead to improved endurance, whereas myofibrillar hypertrophy leads to increased capacity for force production. From now on, whenever I use the term hypertrophy I am specfically referring to myofibrillar hypertrophy.</p>
 <p>Hypertrophy is driven by a net increase in myofibrillar protein, indicating that muscle protein synthesis must exceed muscle protein degradation. There are a number of inputs that affect the rates of muscle protein synthesis and degradation both directly and indirectly including the availability of amino acids and energy, response to mechanical stress, and hormones such as IGF-1, androgens, and myostatin. Like most things in systems biology, these inputs affect their responses though a complex web of biochemical interactions, partially illustrated in Figure 2.</p>
 <hr>
 <div class="quarto-figure quarto-figure-center">
@@ -238,10 +238,9 @@ window.Quarto = {
 <p><img src="Figure-2-Hypertrophy-Regulatory-Circuits.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
 </figure>
 </div>
-<p><em>Figure 2. A schematic view of the biochemical signaling cascades involved in hypertrophy. Ovals represent input nodes, rectangles output nodes, and rounded rectangles intermediate nodes. Blue lines with solid arrowheads represent activation, whereas red lines with hollow arrowheads represent inhibition. Secondary or indirect interactions are shown as dashed lines. See <span class="citation" data-cites="bond2016regulation">(<a href="#ref-bond2016regulation" role="doc-biblioref">Bond 2016</a>)</span>.</em></p>
+<p>_Figure 2. A schematic view of the biochemical signaling cascades involved in hypertrophy. Ovals represent input nodes, rectangles output nodes, and rounded rectangles intermediate nodes. Blue lines with solid arrowheads represent activation, whereas red lines with hollow arrowheads represent inhibition. Secondary or indirect interactions are shown as dashed lines. See <span class="citation" data-cites="bond2016regulation">(<a href="#ref-bond2016regulation" role="doc-biblioref">Bond 2016</a>)</span>.</p>
 <hr>
-<p>The hypertrophic response to mechanical stress is primarily controlled by the activation of the mTORC1 complex, which goes on to activate muscle protein synthesis. This response is mediated by three different pathways. First, eccentric contractions lead to the hyperphosphorylation of TSC2 and subsequent translocation of TSC2 away from the lysosome, preventing TSC2 from inhibiting mTORC1 <span class="citation" data-cites="jacobs2013eccentric">(<a href="#ref-jacobs2013eccentric" role="doc-biblioref">Jacobs et al. 2013</a>)</span>. Second, mechanical stimuli increase concentrations of phosphatidic acid (PA) — though, the precise cause of this is poorly understood <span class="citation" data-cites="bond2016regulation">(<a href="#ref-bond2016regulation" role="doc-biblioref">Bond 2016</a>)</span> — which directly activates mTORC1 <span class="citation" data-cites="yoon2011phosphatidic">(<a href="#ref-yoon2011phosphatidic" role="doc-biblioref">Yoon et al. 2011</a>)</span>. A third mechanism involves exercise induced increase of IGF-1, leading to activation of mTORC1 through the AKT pathway. The IGF-1 induced mechanism was once considered to be the dominant pathway regulating mechanical stress induced hypertrophy, but subsequent research has shown that the IGF-1/AKT pathway is not necessary <span class="citation" data-cites="spangenburg2008functional hornberger2011mechanotransduction miyazaki2011early">(<a href="#ref-spangenburg2008functional" role="doc-biblioref">Spangenburg et al. 2008</a>; <a href="#ref-hornberger2011mechanotransduction" role="doc-biblioref">Hornberger 2011</a>; <a href="#ref-miyazaki2011early" role="doc-biblioref">Miyazaki et al. 2011</a>)</span> even though mTORC1 activation is necessary <span class="citation" data-cites="you2018role">(<a href="#ref-you2018role" role="doc-biblioref">You et al. 2018</a>)</span>. Thus, current evidence suggests that the IGF-1/AKT pathway is only of secondary importance for the hypertrophic response to mechanical stimuli relative to the former pathways.</p>
-<p>Whatever the upstream mechanism, the activation of mTORC1 upregulates ribosomal activity and drives protein synthesis. As myofibrils accumulate protein they grow radially, and once they reach a sufficient size they split longitudinally, producing new myofibrils. So fiber growth is essentially an increase in the number of myofibrils packed into the fiber cross-section. Sarcomeres can also be added in series at the tips of myofibrils, increasing fiber length, though this is less dominant in the context of resistance training. Finally, muscle fibers are multinucleate cells because a myonucleus can only support a limited cytoplasmic volume, thus sustained hypertrophy is thought to require the incorporation of new nuclei, donated by satellite cells — resident stem cells that proliferate and fuse with the fiber in response to mechanical loading and local damage. However, the remaining of this post will focus only on the increase in muscle protein synthesis driven by mechanical stimuli.</p>
+<p>Mechanically loaded muscle activates a signaling cascade centered on the kinase mTORC1, which upregulates ribosomal activity and drives protein synthesis. As myofibrils accumulate protein they grow radially, and once they reach a sufficient size they split longitudinally, producing new myofibrils. So fiber growth is essentially an increase in the number of myofibrils packed into the fiber cross-section. Sarcomeres can also be added in series at the tips of myofibrils, increasing fiber length, though this is less dominant in the context of resistance training. Finally, because a myonucleus can only support a limited cytoplasmic volume, sustained hypertrophy is thought to require the incorporation of new nuclei, donated by <strong>satellite cells</strong> — resident stem cells that proliferate and fuse with the fiber in response to mechanical loading and local damage.</p>
 </section>
 <section id="existing-models-of-hypertrophy" class="level2">
 <h2 class="anchored" data-anchor-id="existing-models-of-hypertrophy">Existing Models of Hypertrophy</h2>
@@ -249,7 +248,6 @@ window.Quarto = {
 </section>
 <section id="theory" class="level1">
 <h1>Theory</h1>
-<p>Even though the details of the signaling networks leading to the hypertrophic response to mechanical stimulus are not entirely understood, it seems clear that mTORC1 activation – via whatever upstream mechanism – is the predominant signal for muscle growth.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="Figure-3-Model-Schematics.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="600"></p>
@@ -334,24 +332,6 @@ g^*
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-bond2016regulation" class="csl-entry" role="listitem">
 Bond, Peter. 2016. <span>“Regulation of mTORC1 by Growth Factors, Energy Status, Amino Acids and Mechanical Stimuli at a Glance.”</span> <em>Journal of the International Society of Sports Nutrition</em> 13 (1): 8.
-</div>
-<div id="ref-hornberger2011mechanotransduction" class="csl-entry" role="listitem">
-Hornberger, Troy A. 2011. <span>“Mechanotransduction and the Regulation of mTORC1 Signaling in Skeletal Muscle.”</span> <em>The International Journal of Biochemistry &amp; Cell Biology</em> 43 (9): 1267–76.
-</div>
-<div id="ref-jacobs2013eccentric" class="csl-entry" role="listitem">
-Jacobs, Brittany L, Jae-Sung You, John W Frey, Craig A Goodman, David M Gundermann, and Troy A Hornberger. 2013. <span>“Eccentric Contractions Increase the Phosphorylation of Tuberous Sclerosis Complex-2 (TSC2) and Alter the Targeting of TSC2 and the Mechanistic Target of Rapamycin to the Lysosome.”</span> <em>The Journal of Physiology</em> 591 (18): 4611–20.
-</div>
-<div id="ref-miyazaki2011early" class="csl-entry" role="listitem">
-Miyazaki, Mitsunori, John J McCarthy, Mark J Fedele, and Karyn A Esser. 2011. <span>“Early Activation of mTORC1 Signalling in Response to Mechanical Overload Is Independent of Phosphoinositide 3-Kinase/Akt Signalling.”</span> <em>The Journal of Physiology</em> 589 (7): 1831–46.
-</div>
-<div id="ref-spangenburg2008functional" class="csl-entry" role="listitem">
-Spangenburg, Espen E, Derek Le Roith, Chris W Ward, and Sue C Bodine. 2008. <span>“A Functional Insulin-Like Growth Factor Receptor Is Not Necessary for Load-Induced Skeletal Muscle Hypertrophy.”</span> <em>The Journal of Physiology</em> 586 (1): 283–91.
-</div>
-<div id="ref-yoon2011phosphatidic" class="csl-entry" role="listitem">
-Yoon, Mee-Sup, Yuting Sun, Edwin Arauz, Yu Jiang, and Jie Chen. 2011. <span>“Phosphatidic Acid Activates Mammalian Target of Rapamycin Complex 1 (mTORC1) Kinase by Displacing FK506 Binding Protein 38 (FKBP38) and Exerting an Allosteric Effect.”</span> <em>Journal of Biological Chemistry</em> 286 (34): 29568–74.
-</div>
-<div id="ref-you2018role" class="csl-entry" role="listitem">
-You, Jae-Sung, Rachel M McNally, Brittany L Jacobs, Rachel E Privett, David M Gundermann, Kuan-Hung Lin, Nate D Steinert, Craig A Goodman, and Troy A Hornberger. 2018. <span>“The Role of Raptor in the Mechanical Load-Induced Regulation of mTOR Signaling, Protein Synthesis, and Skeletal Muscle Hypertrophy.”</span> <em>The FASEB Journal</em> 33 (3): 4021.
 </div>
 </div></section></div></main> <!-- /main -->
 <hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">
