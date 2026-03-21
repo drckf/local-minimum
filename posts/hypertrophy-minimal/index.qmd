@@ -128,7 +128,21 @@ in muscle protein synthesis driven by mechanical stimuli.
 
 
 
-## Existing Models of Hypertrophy
+## Existing Models of Stress Induced Hypertrophy
+
+There's surprising little theoretical modeling on the response of skeletal muscle to resistance training. 
+The most popular approach is purely phenomenological, as in the broad class of fitness-fatigue models first 
+introduced by @banister1975systems; also see [@busso2003variable; @imbach2022use; @ceddia2025mathematical] and 
+associated references. The typical form for a fitness-fatigue model is
+$$
+P(t) = P_0 + \int_0^t dt' w(t') g(t - t')
+$$
+where 
+$$
+g(t) = k_1 e^{-t / \tau_1} - k_2 e^{-t/\tau_2}
+$$
+where the performance $P(t)$ (e.g., muscle strength in this context) is obtained by the time integral of 
+the stimulus $w(t')$ multiplied by the transfer function $g(t-t')$.
 
 
 # Theory 

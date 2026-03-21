@@ -243,8 +243,13 @@ window.Quarto = {
 <p>The hypertrophic response to mechanical stress is primarily controlled by the activation of the mTORC1 complex, which goes on to activate muscle protein synthesis. This response is mediated by three different pathways. First, eccentric contractions lead to the hyperphosphorylation of TSC2 and subsequent translocation of TSC2 away from the lysosome, preventing TSC2 from inhibiting mTORC1 <span class="citation" data-cites="jacobs2013eccentric">(<a href="#ref-jacobs2013eccentric" role="doc-biblioref">Jacobs et al. 2013</a>)</span>. Second, mechanical stimuli increase concentrations of phosphatidic acid (PA) — though, the precise cause of this is poorly understood <span class="citation" data-cites="bond2016regulation">(<a href="#ref-bond2016regulation" role="doc-biblioref">Bond 2016</a>)</span> — which directly activates mTORC1 <span class="citation" data-cites="yoon2011phosphatidic">(<a href="#ref-yoon2011phosphatidic" role="doc-biblioref">Yoon et al. 2011</a>)</span>. A third mechanism involves exercise induced increase of IGF-1, leading to activation of mTORC1 through the AKT pathway. The IGF-1 induced mechanism was once considered to be the dominant pathway regulating mechanical stress induced hypertrophy, but subsequent research has shown that the IGF-1/AKT pathway is not necessary <span class="citation" data-cites="spangenburg2008functional hornberger2011mechanotransduction miyazaki2011early">(<a href="#ref-spangenburg2008functional" role="doc-biblioref">Spangenburg et al. 2008</a>; <a href="#ref-hornberger2011mechanotransduction" role="doc-biblioref">Hornberger 2011</a>; <a href="#ref-miyazaki2011early" role="doc-biblioref">Miyazaki et al. 2011</a>)</span> even though mTORC1 activation is necessary <span class="citation" data-cites="you2018role">(<a href="#ref-you2018role" role="doc-biblioref">You et al. 2018</a>)</span>. Thus, current evidence suggests that the IGF-1/AKT pathway is only of secondary importance for the hypertrophic response to mechanical stimuli relative to the former pathways.</p>
 <p>Whatever the upstream mechanism, the activation of mTORC1 upregulates ribosomal activity and drives protein synthesis. As myofibrils accumulate protein they grow radially, and once they reach a sufficient size they split longitudinally, producing new myofibrils. So fiber growth is essentially an increase in the number of myofibrils packed into the fiber cross-section. Sarcomeres can also be added in series at the tips of myofibrils, increasing fiber length, though this is less dominant in the context of resistance training. Finally, muscle fibers are multinucleate cells because a myonucleus can only support a limited cytoplasmic volume, thus sustained hypertrophy is thought to require the incorporation of new nuclei, donated by satellite cells — resident stem cells that proliferate and fuse with the fiber in response to mechanical loading and local damage. However, the remaining of this post will focus only on the increase in muscle protein synthesis driven by mechanical stimuli.</p>
 </section>
-<section id="existing-models-of-hypertrophy" class="level2">
-<h2 class="anchored" data-anchor-id="existing-models-of-hypertrophy">Existing Models of Hypertrophy</h2>
+<section id="existing-models-of-stress-induced-hypertrophy" class="level2">
+<h2 class="anchored" data-anchor-id="existing-models-of-stress-induced-hypertrophy">Existing Models of Stress Induced Hypertrophy</h2>
+<p>There’s surprising little theoretical modeling on the response of skeletal muscle to resistance training. The most popular approach is purely phenomenological, as in the broad class of fitness-fatigue models first introduced by <span class="citation" data-cites="banister1975systems">Banister et al. (<a href="#ref-banister1975systems" role="doc-biblioref">1975</a>)</span>; also see <span class="citation" data-cites="busso2003variable imbach2022use ceddia2025mathematical">(<a href="#ref-busso2003variable" role="doc-biblioref">Busso 2003</a>; <a href="#ref-imbach2022use" role="doc-biblioref">Imbach et al. 2022</a>; <a href="#ref-ceddia2025mathematical" role="doc-biblioref">Ceddia, Bondell, and Taylor 2025</a>)</span> and associated references. The typical form for a fitness-fatigue model is <span class="math display">\[
+P(t) = P_0 + \int_0^t dt' w(t') g(t - t')
+\]</span> where <span class="math display">\[
+g(t) = k_1 e^{-t / \tau_1} - k_2 e^{-t/\tau_2}
+\]</span> where the performance <span class="math inline">\(P(t)\)</span> (e.g., muscle strength in this context) is obtained by the time integral of the stimulus <span class="math inline">\(w(t')\)</span> multiplied by the transfer function <span class="math inline">\(g(t-t')\)</span>.</p>
 </section>
 </section>
 <section id="theory" class="level1">
@@ -332,14 +337,26 @@ g^*
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-banister1975systems" class="csl-entry" role="listitem">
+Banister, Eric W, Thomas W Calvert, Margaret V Savage, and Tim Bach. 1975. <span>“A Systems Model of Training for Athletic Performance.”</span> <em>Aust J Sports Med</em> 7 (3): 57–61.
+</div>
 <div id="ref-bond2016regulation" class="csl-entry" role="listitem">
 Bond, Peter. 2016. <span>“Regulation of mTORC1 by Growth Factors, Energy Status, Amino Acids and Mechanical Stimuli at a Glance.”</span> <em>Journal of the International Society of Sports Nutrition</em> 13 (1): 8.
+</div>
+<div id="ref-busso2003variable" class="csl-entry" role="listitem">
+Busso, Thierry. 2003. <span>“Variable Dose-Response Relationship Between Exercise Training and Performance.”</span> <em>Medicine &amp; Science in Sports &amp; Exercise</em> 35 (7): 1188–95.
+</div>
+<div id="ref-ceddia2025mathematical" class="csl-entry" role="listitem">
+Ceddia, David, Howard Bondell, and Peter Taylor. 2025. <span>“Mathematical Modelling and Optimisation of Athletic Performance: Tapering and Periodisation.”</span> <em>arXiv Preprint arXiv:2505.20859</em>.
 </div>
 <div id="ref-frontera2015skeletal" class="csl-entry" role="listitem">
 Frontera, Walter R, and Julien Ochala. 2015. <span>“Skeletal Muscle: A Brief Review of Structure and Function.”</span> <em>Calcified Tissue International</em> 96 (3): 183–95.
 </div>
 <div id="ref-hornberger2011mechanotransduction" class="csl-entry" role="listitem">
 Hornberger, Troy A. 2011. <span>“Mechanotransduction and the Regulation of mTORC1 Signaling in Skeletal Muscle.”</span> <em>The International Journal of Biochemistry &amp; Cell Biology</em> 43 (9): 1267–76.
+</div>
+<div id="ref-imbach2022use" class="csl-entry" role="listitem">
+Imbach, Frank, Nicolas Sutton-Charani, Jacky Montmain, Robin Candau, and Stéphane Perrey. 2022. <span>“The Use of Fitness-Fatigue Models for Sport Performance Modelling: Conceptual Issues and Contributions from Machine-Learning.”</span> <em>Sports Medicine-Open</em> 8 (1): 29.
 </div>
 <div id="ref-jacobs2013eccentric" class="csl-entry" role="listitem">
 Jacobs, Brittany L, Jae-Sung You, John W Frey, Craig A Goodman, David M Gundermann, and Troy A Hornberger. 2013. <span>“Eccentric Contractions Increase the Phosphorylation of Tuberous Sclerosis Complex-2 (TSC2) and Alter the Targeting of TSC2 and the Mechanistic Target of Rapamycin to the Lysosome.”</span> <em>The Journal of Physiology</em> 591 (18): 4611–20.
