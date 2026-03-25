@@ -130,19 +130,48 @@ in muscle protein synthesis driven by mechanical stimuli.
 
 ## Existing Models of Stress Induced Hypertrophy
 
-There's surprising little theoretical modeling on the response of skeletal muscle to resistance training. 
-The most popular approach is purely phenomenological, as in the broad class of fitness-fatigue models first 
-introduced by @banister1975systems; also see [@busso2003variable; @imbach2022use; @ceddia2025mathematical] and 
-associated references. The typical form for a fitness-fatigue model is
+Fitness-fatigue models are a class of phenomenological model that are widely used to model the response to 
+training [@banister1975systems, @busso2003variable, @ceddia2025mathematical, @imbach2022use, @philippe2019modelling]. 
+Essentially, the idea is that the response to training reflects a balance 
+between two competing processes—a fitness component that improves performance, and a fatigue component that
+reduces performance—operating with different intensities and at different timescales. These models describe 
+the performance $p(t)$ at time $t$ as 
 $$
-P(t) = P_0 + \int_0^t dt' w(t') g(t - t')
+p(t) = p_0 + \underbrace{\int_0^t ds\, w(s)\, K_{+}(t,s)}_{\text{fitness}} 
+- \underbrace{\int_0^t ds\, w(s)\, K_{-}(t,s)}_{\text{fatigue}}
 $$
-where 
+where $p_0$ is the performance at $t=0$, $w(s)$ is the training stimulus, $K_{+}(t,s)$ is the fitness kernel, 
+and $K_{-}(t,s)$ is the fatigue kernel. In the context of resistance training, the performance in this model 
+class would most likely refer to a measure of muscle strength rather than muscle size. In the original formulation
+by @banister1975systems, the kernels are simple exponential decays with 
 $$
-g(t) = k_1 e^{-t / \tau_1} - k_2 e^{-t/\tau_2}
+K_{+}(t,s) = k_{+} e^{-(t-s) / \tau_{+}} \, ,
 $$
-where the performance $P(t)$ (e.g., muscle strength in this context) is obtained by the time integral of 
-the stimulus $w(t')$ multiplied by the transfer function $g(t-t')$.
+and
+$$
+K_{-}(t,s) = k_{-} e^{-(t-s) / \tau_{-}} \, .
+$$
+@busso2003variable extended this model using a state-dependent fatigue kernel
+$$
+K_{-}(t,s) = k_{-} e^{-(t-s) / \tau_{-}} \int_0^s du w(u) e^{-(s-u) / \tau_3}
+$$
+to account for non-linear effects of training on performance. @philippe2019modelling, on the other hand, 
+modified the fitness kernel to 
+$$
+K_{+}(t,s) = \begin{cases} k_A\left(1 - e^{-(t-s)/\tau_{A1}}\right) & t-s < \mathrm{TD} \\ k_A\, e^{-(t-s-\mathrm{TD})/\tau_{A2}} & t-s \geq \mathrm{TD} \end{cases}
+$$
+where $\mathrm{TD} = 4\tau_{A1}$ is a time delay.
+
+The first model by @banister1975systems is the simplest: both fitness and fatigue respond to each training bout 
+instantaneously and then decay exponentially, with fixed gain constants. @busso2003variable retains this structure 
+for fitness but makes the fatigue gain proportional to accumulated recent training load, so consecutive hard 
+sessions compound fatigue nonlinearly — capturing the inverted-U dose-response relationship between training 
+volume and performance. @philippe2019modelling instead modifies the fitness kernel, replacing the instantaneous 
+impulse response with a serial growth-then-decay shape that rises over ~days before decaying, better reflecting 
+the biological reality that structural adaptations like hypertrophy build progressively rather than appearing 
+immediately after a training session. Note, however, a variety of forms of fitness-fatigue models are used 
+to model various aspects of athletic performance, and I'm only highlighting these three to give an intuition 
+for the overall model class, and this shouldn't be thought of as a comprehensive discussion. 
 
 
 # Theory 

@@ -245,11 +245,19 @@ window.Quarto = {
 </section>
 <section id="existing-models-of-stress-induced-hypertrophy" class="level2">
 <h2 class="anchored" data-anchor-id="existing-models-of-stress-induced-hypertrophy">Existing Models of Stress Induced Hypertrophy</h2>
-<p>There’s surprising little theoretical modeling on the response of skeletal muscle to resistance training. The most popular approach is purely phenomenological, as in the broad class of fitness-fatigue models first introduced by <span class="citation" data-cites="banister1975systems">Banister et al. (<a href="#ref-banister1975systems" role="doc-biblioref">1975</a>)</span>; also see <span class="citation" data-cites="busso2003variable imbach2022use ceddia2025mathematical">(<a href="#ref-busso2003variable" role="doc-biblioref">Busso 2003</a>; <a href="#ref-imbach2022use" role="doc-biblioref">Imbach et al. 2022</a>; <a href="#ref-ceddia2025mathematical" role="doc-biblioref">Ceddia, Bondell, and Taylor 2025</a>)</span> and associated references. The typical form for a fitness-fatigue model is <span class="math display">\[
-P(t) = P_0 + \int_0^t dt' w(t') g(t - t')
-\]</span> where <span class="math display">\[
-g(t) = k_1 e^{-t / \tau_1} - k_2 e^{-t/\tau_2}
-\]</span> where the performance <span class="math inline">\(P(t)\)</span> (e.g., muscle strength in this context) is obtained by the time integral of the stimulus <span class="math inline">\(w(t')\)</span> multiplied by the transfer function <span class="math inline">\(g(t-t')\)</span>.</p>
+<p>Fitness-fatigue models are a class of phenomenological model that are widely used to model the response to training <span class="citation" data-cites="banister1975systems">Philippe et al. (<a href="#ref-philippe2019modelling" role="doc-biblioref">2019</a>)</span>. Essentially, the idea is that the response to training reflects a balance between two competing processes—a fitness component that improves performance, and a fatigue component that reduces performance—operating with different intensities and at different timescales. These models describe the performance <span class="math inline">\(p(t)\)</span> at time <span class="math inline">\(t\)</span> as <span class="math display">\[
+p(t) = p_0 + \underbrace{\int_0^t ds\, w(s)\, K_{+}(t,s)}_{\text{fitness}}
+- \underbrace{\int_0^t ds\, w(s)\, K_{-}(t,s)}_{\text{fatigue}}
+\]</span> where <span class="math inline">\(p_0\)</span> is the performance at <span class="math inline">\(t=0\)</span>, <span class="math inline">\(w(s)\)</span> is the training stimulus, <span class="math inline">\(K_{+}(t,s)\)</span> is the fitness kernel, and <span class="math inline">\(K_{-}(t,s)\)</span> is the fatigue kernel. In the context of resistance training, the performance in this model class would most likely refer to a measure of muscle strength rather than muscle size. In the original formulation by <span class="citation" data-cites="banister1975systems">Banister et al. (<a href="#ref-banister1975systems" role="doc-biblioref">1975</a>)</span>, the kernels are simple exponential decays with <span class="math display">\[
+K_{+}(t,s) = k_{+} e^{-(t-s) / \tau_{+}} \, ,
+\]</span> and <span class="math display">\[
+K_{-}(t,s) = k_{-} e^{-(t-s) / \tau_{-}} \, .
+\]</span> <span class="citation" data-cites="busso2003variable">Busso (<a href="#ref-busso2003variable" role="doc-biblioref">2003</a>)</span> extended this model using a state-dependent fatigue kernel <span class="math display">\[
+K_{-}(t,s) = k_{-} e^{-(t-s) / \tau_{-}} \int_0^s du w(u) e^{-(s-u) / \tau_3}
+\]</span> to account for non-linear effects of training on performance. <span class="citation" data-cites="philippe2019modelling">Philippe et al. (<a href="#ref-philippe2019modelling" role="doc-biblioref">2019</a>)</span>, on the other hand, modified the fitness kernel to <span class="math display">\[
+K_{+}(t,s) = \begin{cases} k_A\left(1 - e^{-(t-s)/\tau_{A1}}\right) &amp; t-s &lt; \mathrm{TD} \\ k_A\, e^{-(t-s-\mathrm{TD})/\tau_{A2}} &amp; t-s \geq \mathrm{TD} \end{cases}
+\]</span> where <span class="math inline">\(\mathrm{TD} = 4\tau_{A1}\)</span> is a time delay.</p>
+<p>The first model by <span class="citation" data-cites="banister1975systems">Banister et al. (<a href="#ref-banister1975systems" role="doc-biblioref">1975</a>)</span> is the simplest: both fitness and fatigue respond to each training bout instantaneously and then decay exponentially, with fixed gain constants. <span class="citation" data-cites="busso2003variable">Busso (<a href="#ref-busso2003variable" role="doc-biblioref">2003</a>)</span> retains this structure for fitness but makes the fatigue gain proportional to accumulated recent training load, so consecutive hard sessions compound fatigue nonlinearly — capturing the inverted-U dose-response relationship between training volume and performance. <span class="citation" data-cites="philippe2019modelling">Philippe et al. (<a href="#ref-philippe2019modelling" role="doc-biblioref">2019</a>)</span> instead modifies the fitness kernel, replacing the instantaneous impulse response with a serial growth-then-decay shape that rises over ~days before decaying, better reflecting the biological reality that structural adaptations like hypertrophy build progressively rather than appearing immediately after a training session. Note, however, a variety of forms of fitness-fatigue models are used to model various aspects of athletic performance, and I’m only highlighting these three to give an intuition for the overall model class, and this shouldn’t be thought of as a comprehensive discussion.</p>
 </section>
 </section>
 <section id="theory" class="level1">
@@ -366,6 +374,9 @@ Miyazaki, Mitsunori, John J McCarthy, Mark J Fedele, and Karyn A Esser. 2011. <s
 </div>
 <div id="ref-mukund2020skeletal" class="csl-entry" role="listitem">
 Mukund, Kavitha, and Shankar Subramaniam. 2020. <span>“Skeletal Muscle: A Review of Molecular Structure and Function, in Health and Disease.”</span> <em>Wiley Interdisciplinary Reviews: Systems Biology and Medicine</em> 12 (1): e1462.
+</div>
+<div id="ref-philippe2019modelling" class="csl-entry" role="listitem">
+Philippe, Antony G, Fabio Borrani, Anthony MJ Sanchez, Guillaume Py, and Robin Candau. 2019. <span>“Modelling Performance and Skeletal Muscle Adaptations with Exponential Growth Functions During Resistance Training.”</span> <em>Journal of Sports Sciences</em> 37 (3): 254–61.
 </div>
 <div id="ref-spangenburg2008functional" class="csl-entry" role="listitem">
 Spangenburg, Espen E, Derek Le Roith, Chris W Ward, and Sue C Bodine. 2008. <span>“A Functional Insulin-Like Growth Factor Receptor Is Not Necessary for Load-Induced Skeletal Muscle Hypertrophy.”</span> <em>The Journal of Physiology</em> 586 (1): 283–91.
