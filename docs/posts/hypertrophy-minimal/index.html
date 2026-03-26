@@ -211,7 +211,7 @@ window.Quarto = {
 
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>Skeletal muscle is the contractile tissue responsible for generating the forces that produce movement. Skeletal muscle also adapts to increasing demands for force production by building new contractile units within muscle cells, causing the cells to grow larger via a process known as hypertrophy. However, muscle tissue also adapts to this stimulus, and repeated application of the same stimulus does not drive additional growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights connections to robust adaptation in other biological systems.</p>
+<p>Skeletal muscle is the contractile tissue responsible for generating the forces that produce movement. Skeletal muscle also adapts to increasing demands for force production by building new contractile units within muscle cells, causing the cells to grow larger via a process known as hypertrophy. However, muscle tissue also adapts to this stimulus, and repeated application of the same stimulus does not drive additional growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights connections to adaptation in other biological systems.</p>
 <section id="organization-of-muscle-tissue" class="level2">
 <h2 class="anchored" data-anchor-id="organization-of-muscle-tissue">Organization of Muscle Tissue</h2>
 <p>Skeletal muscle is a post-mitotic tissue consisting of long, cylindrical cells called muscle fibers or myofibers. The following is a short overview of muscle physiology; see reviews <span class="citation" data-cites="frontera2015skeletal mukund2020skeletal">(<a href="#ref-frontera2015skeletal" role="doc-biblioref">Frontera and Ochala 2015</a>; <a href="#ref-mukund2020skeletal" role="doc-biblioref">Mukund and Subramaniam 2020</a>)</span> for more details. Each muscle fiber is a multinucleate cell that spans the length of the muscle, connecting via tendons to bones on each end (Figure 1A). Note that a myofiber is not a protein filament, but rather a whole cell that is typically micrometers in diameter and centimeters in length, in contrast to a myofibril, which is a component within muscle cells. Muscle fibers are typically aligned nearly parallel to the axis of force generation; however, in general the angle between the muscle fiber and the axis of force generation is called the pennation angle. Some muscles – such as the rectus femoris highlighted in Figure 1A – consist of fibers with different pennation angles (called bipennate or multipennate tissues) whereas others are unipennate and have fibers that run parallel to each other. For simplicity, I will develop the theory for unipennate, parallel muscle fibers with the understanding that it can be readily generalized to other fiber orientations (e.g., by including a <span class="math inline">\(\cos(\theta)\)</span> term where necessary).</p>
@@ -245,7 +245,8 @@ window.Quarto = {
 </section>
 <section id="existing-models-of-stress-induced-hypertrophy" class="level2">
 <h2 class="anchored" data-anchor-id="existing-models-of-stress-induced-hypertrophy">Existing Models of Stress Induced Hypertrophy</h2>
-<p>Fitness-fatigue models are a class of phenomenological model that are widely used to model the response to training <span class="citation" data-cites="banister1975systems">Philippe et al. (<a href="#ref-philippe2019modelling" role="doc-biblioref">2019</a>)</span>. Essentially, the idea is that the response to training reflects a balance between two competing processes—a fitness component that improves performance, and a fatigue component that reduces performance—operating with different intensities and at different timescales. These models describe the performance <span class="math inline">\(p(t)\)</span> at time <span class="math inline">\(t\)</span> as <span class="math display">\[
+<p>The literature on theoretical modeling of hypertrophy is surprisingly sparse, especially given the tremendous interest in biophysics in the molecular mechanisms of muscle contraction (i.e., the myosin powerstroke). That said, there is prior work into both phenomenological and mechanistic models of muscle growth and response to resistance training.</p>
+<p>The most widely used class of models for describing the response to training are probably fitness-fatigue models <span class="citation" data-cites="banister1975systems busso2003variable ceddia2025mathematical imbach2022use philippe2019modelling">(<a href="#ref-banister1975systems" role="doc-biblioref">Banister et al. 1975</a>; <a href="#ref-busso2003variable" role="doc-biblioref">Busso 2003</a>; <a href="#ref-ceddia2025mathematical" role="doc-biblioref">Ceddia, Bondell, and Taylor 2025</a>; <a href="#ref-imbach2022use" role="doc-biblioref">Imbach et al. 2022</a>; <a href="#ref-philippe2019modelling" role="doc-biblioref">Philippe et al. 2019</a>)</span>; though, other types of phenomenological models are used as well <span class="citation" data-cites="zhou2017modeling herold2021mathematical torres2018mathematical">(<a href="#ref-zhou2017modeling" role="doc-biblioref">Zhou, Roos, and Chen 2017</a>; <a href="#ref-herold2021mathematical" role="doc-biblioref">Herold and Sommer 2021</a>; <a href="#ref-torres2018mathematical" role="doc-biblioref">Torres et al. 2018</a>)</span>. Essentially, the idea behind fitness-fatigue models is that the response to training reflects a balance between two competing processes—a fitness component that improves performance, and a fatigue component that reduces performance—operating with different intensities and at different timescales. These models describe the performance <span class="math inline">\(p(t)\)</span> at time <span class="math inline">\(t\)</span> as <span class="math display">\[
 p(t) = p_0 + \underbrace{\int_0^t ds\, w(s)\, K_{+}(t,s)}_{\text{fitness}}
 - \underbrace{\int_0^t ds\, w(s)\, K_{-}(t,s)}_{\text{fatigue}}
 \]</span> where <span class="math inline">\(p_0\)</span> is the performance at <span class="math inline">\(t=0\)</span>, <span class="math inline">\(w(s)\)</span> is the training stimulus, <span class="math inline">\(K_{+}(t,s)\)</span> is the fitness kernel, and <span class="math inline">\(K_{-}(t,s)\)</span> is the fatigue kernel. In the context of resistance training, the performance in this model class would most likely refer to a measure of muscle strength rather than muscle size. In the original formulation by <span class="citation" data-cites="banister1975systems">Banister et al. (<a href="#ref-banister1975systems" role="doc-biblioref">1975</a>)</span>, the kernels are simple exponential decays with <span class="math display">\[
@@ -256,12 +257,20 @@ K_{-}(t,s) = k_{-} e^{-(t-s) / \tau_{-}} \, .
 K_{-}(t,s) = k_{-} e^{-(t-s) / \tau_{-}} \int_0^s du w(u) e^{-(s-u) / \tau_3}
 \]</span> to account for non-linear effects of training on performance. <span class="citation" data-cites="philippe2019modelling">Philippe et al. (<a href="#ref-philippe2019modelling" role="doc-biblioref">2019</a>)</span>, on the other hand, modified the fitness kernel to <span class="math display">\[
 K_{+}(t,s) = \begin{cases} k_A\left(1 - e^{-(t-s)/\tau_{A1}}\right) &amp; t-s &lt; \mathrm{TD} \\ k_A\, e^{-(t-s-\mathrm{TD})/\tau_{A2}} &amp; t-s \geq \mathrm{TD} \end{cases}
-\]</span> where <span class="math inline">\(\mathrm{TD} = 4\tau_{A1}\)</span> is a time delay.</p>
+\]</span> where <span class="math inline">\(\mathrm{TD} = 4\tau_{A1}\)</span> is a time delay to account for the fact that adaptations to exercise don’t occur immediately after training, but rather ramp up over some time period.</p>
 <p>The first model by <span class="citation" data-cites="banister1975systems">Banister et al. (<a href="#ref-banister1975systems" role="doc-biblioref">1975</a>)</span> is the simplest: both fitness and fatigue respond to each training bout instantaneously and then decay exponentially, with fixed gain constants. <span class="citation" data-cites="busso2003variable">Busso (<a href="#ref-busso2003variable" role="doc-biblioref">2003</a>)</span> retains this structure for fitness but makes the fatigue gain proportional to accumulated recent training load, so consecutive hard sessions compound fatigue nonlinearly — capturing the inverted-U dose-response relationship between training volume and performance. <span class="citation" data-cites="philippe2019modelling">Philippe et al. (<a href="#ref-philippe2019modelling" role="doc-biblioref">2019</a>)</span> instead modifies the fitness kernel, replacing the instantaneous impulse response with a serial growth-then-decay shape that rises over ~days before decaying, better reflecting the biological reality that structural adaptations like hypertrophy build progressively rather than appearing immediately after a training session. Note, however, a variety of forms of fitness-fatigue models are used to model various aspects of athletic performance, and I’m only highlighting these three to give an intuition for the overall model class, and this shouldn’t be thought of as a comprehensive discussion.</p>
+<p>As purely phenomenological models, the fitness-fatigue models don’t attempt to describe the underlying biology that leads to observed training responses. Mechanistic models, on the other hand, not only aim to describe the types of adaptations observed in response to mechanical stimuli, but also try to explain why those adaptations occur <span class="citation" data-cites="villota2021dynamical villota2022multi devold2025mechanochemical akberdin2021modular ibata2021exercise">(<a href="#ref-villota2021dynamical" role="doc-biblioref">Villota-Narvaez, Garzon-Alvarado, and Ramirez-Martinez 2021</a>; <a href="#ref-villota2022multi" role="doc-biblioref">Villota-Narvaez et al. 2022</a>; <a href="#ref-devold2025mechanochemical" role="doc-biblioref">Devold, Rognes, and Rangamani 2025</a>; <a href="#ref-akberdin2021modular" role="doc-biblioref">Akberdin et al. 2021</a>; <a href="#ref-ibata2021exercise" role="doc-biblioref">Ibata and Terentjev 2021</a>)</span>. As usual, the challenge is in balancing the molecular and biochemical details with the complexity of the mathematical model.</p>
 </section>
 </section>
 <section id="theory" class="level1">
 <h1>Theory</h1>
+<section id="adaptation-through-feedback" class="level2">
+<h2 class="anchored" data-anchor-id="adaptation-through-feedback">Adaptation through feedback</h2>
+<p>Muscle mass demonstrates adaptation in response to mechanical stimuli. A sufficiently strong mechanical stimulus causes an increase in muscle protein synthesis leading to the growth of new myofibrils. The response decreases to subsequent applications of the same stimulus until the stimulus no longer induces hypertrophy. In practice, this is why athletes need to progressively overload resistance exercise in order to continue to make gains from training. <span class="citation" data-cites="devold2025mechanochemical">Devold, Rognes, and Rangamani (<a href="#ref-devold2025mechanochemical" role="doc-biblioref">2025</a>)</span> note that there is a plausible feedback mechanism for hypertrophy caused by linking the rate of muscle protein synthesis to the cross sectional area of the muscle. However, the feedback component of this model is purely phenomenological-captured by making the rate of protein synthesis a Hill function of the cross sectional area of the muscle fiber–and is linked to a signalling model based on the IGF-1/AKT pathway, which is no longer believed to be responsible for mediating mechanical stress induced hypertrophy <span class="citation" data-cites="spangenburg2008functional hornberger2011mechanotransduction miyazaki2011early">(<a href="#ref-spangenburg2008functional" role="doc-biblioref">Spangenburg et al. 2008</a>; <a href="#ref-hornberger2011mechanotransduction" role="doc-biblioref">Hornberger 2011</a>; <a href="#ref-miyazaki2011early" role="doc-biblioref">Miyazaki et al. 2011</a>)</span>.</p>
+<p>Here, I introduce a minimal model aimed at describing the qualitative behavior of the hypertrophic response of skeletal muscle to mechanical stimuli that explains the origin the negative feedback that causes adaptation. The circuit stops short of implementing an integral feedback controller <span class="citation" data-cites="yi2000robust ang2013physical somvanshi2015implementation">(<a href="#ref-yi2000robust" role="doc-biblioref">Yi et al. 2000</a>; <a href="#ref-ang2013physical" role="doc-biblioref">Ang and McMillen 2013</a>; <a href="#ref-somvanshi2015implementation" role="doc-biblioref">Somvanshi et al. 2015</a>)</span>, as in other biological systems that exhibit perfect adaptation. A more complete model incorporating FOXO-mediated degradation could implement a closer approximation to integral feedback control, since the IGF-1/AKT pathway coordinates both mTORC1 activation and FOXO inhibition through a single upstream signal. Whether this is relevant to mechanically-induced hypertrophy remains an open question.</p>
+</section>
+<section id="mathematical-models" class="level2">
+<h2 class="anchored" data-anchor-id="mathematical-models">Mathematical models</h2>
 <p>Even though the details of the signaling networks leading to the hypertrophic response to mechanical stimulus are not entirely understood, it seems clear that mTORC1 activation – via whatever upstream mechanism – is the predominant signal for muscle growth.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -269,6 +278,7 @@ K_{+}(t,s) = \begin{cases} k_A\left(1 - e^{-(t-s)/\tau_{A1}}\right) &amp; t-s &l
 </figure>
 </div>
 <p><em>Figure 3. Illustrations of two minimal models of mechanical stress induced hypertrophy. In (A), force causes mechanical stress that induces a growth signal (i.e., mTORC1 activation) amd drives muscle protein synthesis, which leads to a decrease in stress at the same force output. The model in (B) is similar, but also accounts for a stress induced decrease in the fraction of active muscle fibers due to accumulated damage.</em></p>
+</section>
 <section id="hill-functions" class="level2">
 <h2 class="anchored" data-anchor-id="hill-functions">Hill Functions</h2>
 <p>We will be using the Hill function, so it is helpful to define some notation up front. The Hill function <span class="math display">\[
@@ -309,7 +319,7 @@ A_{\perp} = \frac{V}{L} = \frac{m}{\rho L}
 </section>
 <section id="complete-model" class="level2">
 <h2 class="anchored" data-anchor-id="complete-model">Complete Model</h2>
-<p>The complete model is defined by the following set of three ordinary differntial equations <span class="math display">\[
+<p>The complete model is defined by the following set of three ordinary differential equations <span class="math display">\[
 \begin{align}
 \tau_g \frac{d g}{d t} &amp;= \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} - g \, , \\
 \frac{d a}{d t} &amp;= -\eta \sigma a + \mu (1-a) \, , \\
@@ -345,6 +355,12 @@ g^*
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-akberdin2021modular" class="csl-entry" role="listitem">
+Akberdin, Ilya R, Ilya N Kiselev, Sergey S Pintus, Ruslan N Sharipov, Alexander Yu Vertyshev, Olga L Vinogradova, Daniil V Popov, and Fedor A Kolpakov. 2021. <span>“A Modular Mathematical Model of Exercise-Induced Changes in Metabolism, Signaling, and Gene Expression in Human Skeletal Muscle.”</span> <em>International Journal of Molecular Sciences</em> 22 (19): 10353.
+</div>
+<div id="ref-ang2013physical" class="csl-entry" role="listitem">
+Ang, Jordan, and David R McMillen. 2013. <span>“Physical Constraints on Biological Integral Control Design for Homeostasis and Sensory Adaptation.”</span> <em>Biophysical Journal</em> 104 (2): 505–15.
+</div>
 <div id="ref-banister1975systems" class="csl-entry" role="listitem">
 Banister, Eric W, Thomas W Calvert, Margaret V Savage, and Tim Bach. 1975. <span>“A Systems Model of Training for Athletic Performance.”</span> <em>Aust J Sports Med</em> 7 (3): 57–61.
 </div>
@@ -357,11 +373,20 @@ Busso, Thierry. 2003. <span>“Variable Dose-Response Relationship Between Exerc
 <div id="ref-ceddia2025mathematical" class="csl-entry" role="listitem">
 Ceddia, David, Howard Bondell, and Peter Taylor. 2025. <span>“Mathematical Modelling and Optimisation of Athletic Performance: Tapering and Periodisation.”</span> <em>arXiv Preprint arXiv:2505.20859</em>.
 </div>
+<div id="ref-devold2025mechanochemical" class="csl-entry" role="listitem">
+Devold, Ingvild S, Marie E Rognes, and Padmini Rangamani. 2025. <span>“Mechanochemical Modeling of Exercise-Induced Skeletal Muscle Hypertrophy.”</span> <em>bioRxiv</em>, 2025–12.
+</div>
 <div id="ref-frontera2015skeletal" class="csl-entry" role="listitem">
 Frontera, Walter R, and Julien Ochala. 2015. <span>“Skeletal Muscle: A Brief Review of Structure and Function.”</span> <em>Calcified Tissue International</em> 96 (3): 183–95.
 </div>
+<div id="ref-herold2021mathematical" class="csl-entry" role="listitem">
+Herold, Johannes L, and Andreas Sommer. 2021. <span>“A Mathematical Model-Based Approach to Optimize Loading Schemes of Isometric Resistance Training Sessions.”</span> <em>Sports Engineering</em> 24 (1): 1.
+</div>
 <div id="ref-hornberger2011mechanotransduction" class="csl-entry" role="listitem">
 Hornberger, Troy A. 2011. <span>“Mechanotransduction and the Regulation of mTORC1 Signaling in Skeletal Muscle.”</span> <em>The International Journal of Biochemistry &amp; Cell Biology</em> 43 (9): 1267–76.
+</div>
+<div id="ref-ibata2021exercise" class="csl-entry" role="listitem">
+Ibata, Neil, and Eugene M Terentjev. 2021. <span>“Why Exercise Builds Muscles: Titin Mechanosensing Controls Skeletal Muscle Growth Under Load.”</span> <em>Biophysical Journal</em> 120 (17): 3649–63.
 </div>
 <div id="ref-imbach2022use" class="csl-entry" role="listitem">
 Imbach, Frank, Nicolas Sutton-Charani, Jacky Montmain, Robin Candau, and Stéphane Perrey. 2022. <span>“The Use of Fitness-Fatigue Models for Sport Performance Modelling: Conceptual Issues and Contributions from Machine-Learning.”</span> <em>Sports Medicine-Open</em> 8 (1): 29.
@@ -378,14 +403,32 @@ Mukund, Kavitha, and Shankar Subramaniam. 2020. <span>“Skeletal Muscle: A Revi
 <div id="ref-philippe2019modelling" class="csl-entry" role="listitem">
 Philippe, Antony G, Fabio Borrani, Anthony MJ Sanchez, Guillaume Py, and Robin Candau. 2019. <span>“Modelling Performance and Skeletal Muscle Adaptations with Exponential Growth Functions During Resistance Training.”</span> <em>Journal of Sports Sciences</em> 37 (3): 254–61.
 </div>
+<div id="ref-somvanshi2015implementation" class="csl-entry" role="listitem">
+Somvanshi, Pramod R, Anilkumar K Patel, Sharad Bhartiya, and KV Venkatesh. 2015. <span>“Implementation of Integral Feedback Control in Biological Systems.”</span> <em>Wiley Interdisciplinary Reviews: Systems Biology and Medicine</em> 7 (5): 301–16.
+</div>
 <div id="ref-spangenburg2008functional" class="csl-entry" role="listitem">
 Spangenburg, Espen E, Derek Le Roith, Chris W Ward, and Sue C Bodine. 2008. <span>“A Functional Insulin-Like Growth Factor Receptor Is Not Necessary for Load-Induced Skeletal Muscle Hypertrophy.”</span> <em>The Journal of Physiology</em> 586 (1): 283–91.
+</div>
+<div id="ref-torres2018mathematical" class="csl-entry" role="listitem">
+Torres, Marcella, Eric T Trexler, Abbie E Smith-Ryan, and Angela Reynolds. 2018. <span>“A Mathematical Model of the Effects of Resistance Exercise-Induced Muscle Hypertrophy on Body Composition.”</span> <em>European Journal of Applied Physiology</em> 118 (2): 449–60.
+</div>
+<div id="ref-villota2021dynamical" class="csl-entry" role="listitem">
+Villota-Narvaez, Yesid, Diego A Garzon-Alvarado, and Angelica M Ramirez-Martinez. 2021. <span>“A Dynamical System for the IGF1-AKT Signaling Pathway in Skeletal Muscle Adaptation.”</span> <em>Biosystems</em> 202: 104355.
+</div>
+<div id="ref-villota2022multi" class="csl-entry" role="listitem">
+Villota-Narvaez, Yesid, Diego A Garzón-Alvarado, Oliver Röhrle, and Angelica M Ramı́rez-Martı́nez. 2022. <span>“Multi-Scale Mechanobiological Model for Skeletal Muscle Hypertrophy.”</span> <em>Frontiers in Physiology</em> 13: 899784.
+</div>
+<div id="ref-yi2000robust" class="csl-entry" role="listitem">
+Yi, Tau-Mu, Yun Huang, Melvin I Simon, and John Doyle. 2000. <span>“Robust Perfect Adaptation in Bacterial Chemotaxis Through Integral Feedback Control.”</span> <em>Proceedings of the National Academy of Sciences</em> 97 (9): 4649–53.
 </div>
 <div id="ref-yoon2011phosphatidic" class="csl-entry" role="listitem">
 Yoon, Mee-Sup, Yuting Sun, Edwin Arauz, Yu Jiang, and Jie Chen. 2011. <span>“Phosphatidic Acid Activates Mammalian Target of Rapamycin Complex 1 (mTORC1) Kinase by Displacing FK506 Binding Protein 38 (FKBP38) and Exerting an Allosteric Effect.”</span> <em>Journal of Biological Chemistry</em> 286 (34): 29568–74.
 </div>
 <div id="ref-you2018role" class="csl-entry" role="listitem">
 You, Jae-Sung, Rachel M McNally, Brittany L Jacobs, Rachel E Privett, David M Gundermann, Kuan-Hung Lin, Nate D Steinert, Craig A Goodman, and Troy A Hornberger. 2018. <span>“The Role of Raptor in the Mechanical Load-Induced Regulation of mTOR Signaling, Protein Synthesis, and Skeletal Muscle Hypertrophy.”</span> <em>The FASEB Journal</em> 33 (3): 4021.
+</div>
+<div id="ref-zhou2017modeling" class="csl-entry" role="listitem">
+Zhou, Xianlian, Paulien E Roos, and Xinyu Chen. 2017. <span>“Modeling of Muscle Atrophy and Exercise Induced Hypertrophy.”</span> In <em>International Conference on Applied Human Factors and Ergonomics</em>, 116–27. Springer.
 </div>
 </div></section></div></main> <!-- /main -->
 <hr style="margin: 2rem 0; border: 0; border-top: 2px solid #ccc;">

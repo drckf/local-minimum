@@ -17,7 +17,7 @@ tissue also adapts to this stimulus, and repeated application of the same stimul
 growth in muscle tissue. Continuing to grow muscle requires progressive overload in which the muscle is subjected
 to increasing stress over time. In this post, I examine the mechanism driving the adaptation of muscle tissue 
 to mechanical stress by developing a minimal mathematical model of stress induced hypertrophy that highlights 
-connections to robust adaptation in other biological systems.  
+connections to adaptation in other biological systems.  
 
 
 ## Organization of Muscle Tissue
@@ -130,12 +130,18 @@ in muscle protein synthesis driven by mechanical stimuli.
 
 ## Existing Models of Stress Induced Hypertrophy
 
-Fitness-fatigue models are a class of phenomenological model that are widely used to model the response to 
-training [@banister1975systems, @busso2003variable, @ceddia2025mathematical, @imbach2022use, @philippe2019modelling]. 
-Essentially, the idea is that the response to training reflects a balance 
-between two competing processes—a fitness component that improves performance, and a fatigue component that
-reduces performance—operating with different intensities and at different timescales. These models describe 
-the performance $p(t)$ at time $t$ as 
+The literature on theoretical modeling of hypertrophy is surprisingly sparse, especially given the tremendous 
+interest in biophysics in the molecular mechanisms of muscle contraction (i.e., the myosin powerstroke). That 
+said, there is prior work into both phenomenological and mechanistic models of muscle growth and response to 
+resistance training. 
+
+The most widely used class of models for describing the response to training are probably 
+fitness-fatigue models [@banister1975systems; @busso2003variable; @ceddia2025mathematical; @imbach2022use; 
+@philippe2019modelling]; though, other types of phenomenological models are used as well [@zhou2017modeling;
+@herold2021mathematical; @torres2018mathematical]. Essentially, the idea behind fitness-fatigue models is
+that the response to training reflects a balance between two competing processes—a fitness component that 
+improves performance, and a fatigue component that reduces performance—operating with different intensities and 
+at different timescales. These models describe the performance $p(t)$ at time $t$ as 
 $$
 p(t) = p_0 + \underbrace{\int_0^t ds\, w(s)\, K_{+}(t,s)}_{\text{fitness}} 
 - \underbrace{\int_0^t ds\, w(s)\, K_{-}(t,s)}_{\text{fatigue}}
@@ -160,7 +166,8 @@ modified the fitness kernel to
 $$
 K_{+}(t,s) = \begin{cases} k_A\left(1 - e^{-(t-s)/\tau_{A1}}\right) & t-s < \mathrm{TD} \\ k_A\, e^{-(t-s-\mathrm{TD})/\tau_{A2}} & t-s \geq \mathrm{TD} \end{cases}
 $$
-where $\mathrm{TD} = 4\tau_{A1}$ is a time delay.
+where $\mathrm{TD} = 4\tau_{A1}$ is a time delay to account for the fact that adaptations to exercise 
+don't occur immediately after training, but rather ramp up over some time period. 
 
 The first model by @banister1975systems is the simplest: both fitness and fatigue respond to each training bout 
 instantaneously and then decay exponentially, with fixed gain constants. @busso2003variable retains this structure 
@@ -173,8 +180,40 @@ immediately after a training session. Note, however, a variety of forms of fitne
 to model various aspects of athletic performance, and I'm only highlighting these three to give an intuition 
 for the overall model class, and this shouldn't be thought of as a comprehensive discussion. 
 
+As purely phenomenological models, the fitness-fatigue models don't attempt to describe the underlying biology 
+that leads to observed training responses. Mechanistic models, on the other hand, not only aim to describe the 
+types of adaptations observed in response to mechanical stimuli, but also try to explain why those adaptations 
+occur [@villota2021dynamical; @villota2022multi; @devold2025mechanochemical; @akberdin2021modular; 
+@ibata2021exercise]. As usual, the challenge is in balancing the molecular and biochemical details with 
+the complexity of the mathematical model.
+
 
 # Theory 
+
+## Adaptation through feedback 
+
+Muscle mass demonstrates adaptation in response to mechanical stimuli. A sufficiently strong mechanical stimulus 
+causes an increase in muscle protein synthesis leading to the growth of new myofibrils. The response decreases 
+to subsequent applications of the same stimulus until the stimulus no longer induces hypertrophy. In practice, 
+this is why athletes need to progressively overload resistance exercise in order to continue to make gains from 
+training. @devold2025mechanochemical note that there is a plausible feedback mechanism for hypertrophy caused by 
+linking the rate of muscle protein synthesis to the cross sectional area of the muscle. However, the feedback 
+component of this model is purely phenomenological-captured by making the rate of protein synthesis a Hill function 
+of the cross sectional area of the muscle fiber--and is linked to a signalling model 
+based on the IGF-1/AKT pathway, which is no longer believed to be responsible for mediating mechanical stress 
+induced hypertrophy [@spangenburg2008functional; @hornberger2011mechanotransduction; @miyazaki2011early]. 
+
+Here, I introduce a minimal model aimed at describing the qualitative behavior of the hypertrophic response of 
+skeletal muscle to mechanical stimuli that explains the origin the negative feedback that causes adaptation. 
+The circuit stops short of implementing an integral feedback controller 
+[@yi2000robust; @ang2013physical; @somvanshi2015implementation], as in other biological systems that exhibit 
+perfect adaptation. A more complete model incorporating FOXO-mediated degradation could implement a closer 
+approximation to integral feedback control, since the IGF-1/AKT pathway coordinates both mTORC1 activation 
+and FOXO inhibition through a single upstream signal. Whether this is relevant to mechanically-induced hypertrophy 
+remains an open question.
+
+
+## Mathematical models
 
 Even though the details of the signaling networks leading to the hypertrophic response to mechanical stimulus 
 are not entirely understood, it seems clear that mTORC1 activation -- via whatever upstream mechanism -- is the 
@@ -271,7 +310,7 @@ but leave them in the definitions for completeness.
 
 ## Complete Model
 
-The complete model is defined by the following set of three ordinary differntial equations
+The complete model is defined by the following set of three ordinary differential equations
 $$
 \begin{align}
 \tau_g \frac{d g}{d t} &= \Gamma \, \frac{\sigma}{K_{\sigma} + \sigma} - g \, , \\
