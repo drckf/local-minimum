@@ -187,7 +187,7 @@ occur [@villota2021dynamical; @villota2022multi; @devold2025mechanochemical; @ak
 @ibata2021exercise]. As usual, the challenge is in balancing the molecular and biochemical details with 
 the complexity of the mathematical model. In that spirit, @villota2021dynamical introduced a simplified 
 model of the IGF-1/AKT pathway with just four nodes coupled via Lotka-Volterra type ordinary differential 
-equations, which has also served as the basis for subsequent work linking the signalling network to 
+equations, which has also served as the basis for subsequent work linking the signaling network to 
 mechanical models of muscle tissue [@villota2022multi; @devold2025mechanochemical]. The system of equations 
 is roughly
 $$
@@ -199,7 +199,11 @@ $$
 \dot{z} &= f(x_{\text{FOXO}},\, x_{\text{mTOR}})
 \end{align}
 $$
-where $z$ denotes myofibrils and $f$ is a function relating the mTORC1 and FOXO activities to net protein synthesis.
+where $z$ denotes myofibrils and $f$ is a function relating the mTORC1 and FOXO activities to net protein synthesis. 
+The effect of resistance training was incorporated into this model by coupling to the activity of IGF-1 based on the 
+hypothesis that mechanical stimulus leads to an increase in IGF-1 signaling; however, as shown in Figure 2 and discussed 
+previously, IGF-1 signaling is no longer believed to be responsible for mediating mechanical stress 
+induced hypertrophy [@spangenburg2008functional; @hornberger2011mechanotransduction; @miyazaki2011early].
 
 
 # Theory 
