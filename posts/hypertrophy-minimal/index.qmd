@@ -185,7 +185,21 @@ that leads to observed training responses. Mechanistic models, on the other hand
 types of adaptations observed in response to mechanical stimuli, but also try to explain why those adaptations 
 occur [@villota2021dynamical; @villota2022multi; @devold2025mechanochemical; @akberdin2021modular; 
 @ibata2021exercise]. As usual, the challenge is in balancing the molecular and biochemical details with 
-the complexity of the mathematical model.
+the complexity of the mathematical model. In that spirit, @villota2021dynamical introduced a simplified 
+model of the IGF-1/AKT pathway with just four nodes coupled via Lotka-Volterra type ordinary differential 
+equations, which has also served as the basis for subsequent work linking the signalling network to 
+mechanical models of muscle tissue [@villota2022multi; @devold2025mechanochemical]. The system of equations 
+is roughly
+$$
+\begin{align}
+\dot{x}_{\text{IGF1}} &= x_{\text{IGF1}} \left( a_{\text{IGF1}}(t) - b_{\text{IGF1}} \, x_{\text{IGF1}} \right) \\
+\dot{x}_{\text{AKT}} &= x_{\text{AKT}} \left( a_{\text{AKT}}(t) - b_{\text{AKT}} \, x_{\text{AKT}} + c_{\text{AKT,IGF1}} \, x_{\text{IGF1}} \right) \\
+\dot{x}_{\text{FOXO}} &= x_{\text{FOXO}} \left( a_{\text{FOXO}} - b_{\text{FOXO}} \, x_{\text{FOXO}} - c_{\text{FOXO,AKT}} \, x_{\text{AKT}} \right) \\
+\dot{x}_{\text{mTOR}} &= x_{\text{mTOR}} \left( a_{\text{mTOR}} - b_{\text{mTOR}} \, x_{\text{mTOR}} + c_{\text{mTOR,AKT}} \, x_{\text{AKT}} - c_{\text{mTOR,FOXO}} \, x_{\text{FOXO}} \right) \\
+\dot{z} &= f(x_{\text{FOXO}},\, x_{\text{mTOR}})
+\end{align}
+$$
+where $z$ denotes myofibrils and $f$ is a function relating the mTORC1 and FOXO activities to net protein synthesis.
 
 
 # Theory 
