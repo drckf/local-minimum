@@ -1,8 +1,8 @@
 ---
 title: "A Minimal Model of Muscle Hypertrophy"
 author: "Charles Fisher"
-date: "2026-03-19"
-categories: [biophysics, theory, hypertrophy]
+date: "2026-04-01"
+categories: [biophysics, theory, hypertrophy, review, research]
 image: hypertrophy-minimal-thumbnail.png
 bibliography: hypertrophy.bib
 ---
@@ -73,7 +73,7 @@ may adapt to repeated training, for example by increasing firing rates or synchr
 Third, muscle cells may grow larger (i.e., hypertrophy) by producing additional contractile proteins. 
 
 
-## Hypertrophy 
+## Muscle Hypertrophy 
 
 Because muscle tissue is post-mitotic, hyperplasia -- the growth of new muscle fibers -- does not 
 generally happen under normal conditions. Instead, muscle growth involves growth in size of existing muscle fibers
@@ -127,8 +127,11 @@ mechanical loading and local damage. However, the remaining of this post will fo
 in muscle protein synthesis driven by mechanical stimuli. 
 
 
+## Hypertrophy Phenomena
 
-## Existing Models of Stress Induced Hypertrophy
+
+
+## Previous Models of Stress Induced Hypertrophy
 
 The literature on theoretical modeling of hypertrophy is surprisingly sparse, especially given the tremendous 
 interest in biophysics in the molecular mechanisms of muscle contraction (i.e., the myosin powerstroke). That 
@@ -147,7 +150,9 @@ p(t) = p_0 + \underbrace{\int_0^t ds\, w(s)\, K_{+}(t,s)}_{\text{fitness}}
 - \underbrace{\int_0^t ds\, w(s)\, K_{-}(t,s)}_{\text{fatigue}}
 $$
 where $p_0$ is the performance at $t=0$, $w(s)$ is the training stimulus, $K_{+}(t,s)$ is the fitness kernel, 
-and $K_{-}(t,s)$ is the fatigue kernel. In the context of resistance training, the performance in this model 
+and $K_{-}(t,s)$ is the fatigue kernel. It's worth noting that fitness-fatigue models were originally developed 
+for modeling response to aerobic training, and their extension to modeling hypertrophy is not trivial. 
+In the context of resistance training, the performance in this model 
 class would most likely refer to a measure of muscle strength rather than muscle size. In the original formulation
 by @banister1975systems, the kernels are simple exponential decays with 
 $$
@@ -205,10 +210,11 @@ hypothesis that mechanical stimulus leads to an increase in IGF-1 signaling; how
 previously, IGF-1 signaling is no longer believed to be responsible for mediating mechanical stress 
 induced hypertrophy [@spangenburg2008functional; @hornberger2011mechanotransduction; @miyazaki2011early].
 
+In summary, as far as I can tell, there isn't a well established theoretical model in the literature that describes 
+how hypertrophy is induced by mechanical stress, and that recapitulates the characteristics of the phenomenological 
+models while also reflecting the underlying biology. 
 
-# Theory 
-
-## Adaptation through feedback 
+## Adaptation through Feedback 
 
 Muscle mass demonstrates adaptation in response to mechanical stimuli. A sufficiently strong mechanical stimulus 
 causes an increase in muscle protein synthesis leading to the growth of new myofibrils. The response decreases 
@@ -229,6 +235,8 @@ perfect adaptation. A more complete model incorporating FOXO-mediated degradatio
 approximation to integral feedback control, since the IGF-1/AKT pathway coordinates both mTORC1 activation 
 and FOXO inhibition through a single upstream signal. Whether this is relevant to mechanically-induced hypertrophy 
 remains an open question.
+
+# Theory 
 
 
 ## Mathematical models
